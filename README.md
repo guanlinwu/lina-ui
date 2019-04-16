@@ -1,6 +1,10 @@
 # linaUi
 一个UI框架
 
+# 安装
+npm i lina-ui -S
+yarn add lina-ui
+
 # 组件
 ## 类型：操作反馈
 ### Toast
