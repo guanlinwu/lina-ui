@@ -29,8 +29,8 @@ packagesList.map(item => {
   }
 })
 
-console.log('components', components)
-console.log('methods', methods)
+// console.log('components', components)
+// console.log('methods', methods)
 
 const install = function (Vue, options = {}) {
   if (install.installed) return
@@ -39,8 +39,6 @@ const install = function (Vue, options = {}) {
    * 安装方法，附加在Vue的原型链，以$ + 名字（小写）暴露出来
    */
   for (let methodKey in methods) {
-    console.log(methodKey)
-    console.log(methods[methodKey])
     Object.defineProperty(Vue.prototype, `$${methodKey.toLowerCase()}`, { value: methods[methodKey] })
   }
   /**
