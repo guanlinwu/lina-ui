@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import App from './App.vue'
 import { setRem } from './utils/rem'
-import qmUi from './index'
+import linaUi from './index'
 
 setRem(document, window)
 
-console.log(qmUi)
+console.log(linaUi)
 
-Vue.use(qmUi)
+Vue.use(linaUi)
 
 new Vue({
   el: '#app',

@@ -1,4 +1,4 @@
-# qmUi
+# linaUi
 一个UI框架
 
 # 组件
@@ -18,9 +18,9 @@ export default {
 ```
 - 在非vue的js文件引入
 ```javascript
-import qmUi from './index'
+import linaUi from './index'
 
-qmUi.Toast({
+linaUi.Toast({
       message: '开启loading',
       duration: 1500
     })
