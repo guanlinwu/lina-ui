@@ -32,7 +32,7 @@ packagesList.map(item => {
 // console.log('components', components)
 // console.log('methods', methods)
 
-const install = function (Vue, options = {}) {
+let install = function (Vue, options = {}) {
   if (install.installed) return
 
   /**
@@ -47,6 +47,8 @@ const install = function (Vue, options = {}) {
   for (const componentKey in components) {
     components[componentKey] && components[componentKey].name && Vue.component(components[componentKey].name, components[componentKey])
   }
+
+  install.installed = true
 }
 
 typeof window !== 'undefined' && window.Vue && install(window.Vue)

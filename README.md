@@ -5,6 +5,13 @@
 npm i lina-ui -S
 yarn add lina-ui
 
+# 引入
+```javascript
+/** 引入 */
+import linaUi from 'lina-ui'
+import 'lina-ui/dist/lina-ui.min.css'
+```
+
 # 组件
 ## 类型：操作反馈
 ### Toast
