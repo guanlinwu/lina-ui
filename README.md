@@ -124,7 +124,7 @@ this.$dialog({
     preventMaskClose: true
 })
 ```
-- 事件
+> 事件
 ```javascript
 this.$dialog({
     title: '标题',
