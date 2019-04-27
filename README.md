@@ -1,9 +1,11 @@
 # linaUi
-一个UI框架
+一个轻量的UI框架
 
 # 安装
+```bash
 npm i lina-ui -S
 yarn add lina-ui
+```
 
 # 引入
 ```javascript
@@ -32,9 +34,9 @@ export default {
 import linaUi from './index'
 
 linaUi.Toast({
-      message: '开启loading',
-      duration: 1500
-    })
+    message: '开启loading',
+    duration: 1500
+})
 ```
 
 ### Loading
@@ -43,6 +45,14 @@ linaUi.Toast({
 export default {
   mounted() {
     this.$loading.show() // 显示
+    this.$loading.show('信息上传中') // 自定义文案
+    this.$loading.show({
+        message: '信息上传中'
+    }) // 自定义文案
+    this.$loading.show({
+        isHideMessage: false
+    }) // 隐藏文本提示
+
     this.$loading.hide() // 隐藏
   }
 }
@@ -70,7 +80,7 @@ this.$dialog({
 
 ```javascript
 this.$dialog({
-    id: 'my-dialog'
+    id: 'my-dialog',
     title: '标题',
     message: '内容',
     footer: {
@@ -91,7 +101,7 @@ this.$dialog({
     id: 'my-dialog'
     title: '标题',
     message: '内容',
-    isShowFooter: false
+    isHideFooter: true
 })
 ```
 - 一个按钮
@@ -104,6 +114,14 @@ this.$dialog({
             text: '确认'
         }
     }
+})
+```
+- 禁止点击蒙层关闭窗口
+```javascript
+this.$dialog({
+    title: '提示',
+    message: '你点蒙层是没反应的',
+    preventMaskClose: true
 })
 ```
 - 事件

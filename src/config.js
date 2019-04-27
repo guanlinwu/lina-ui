@@ -23,6 +23,14 @@ export default {
       'desc': 'Dialog',
       'type': 'method|component',
       'author': ['lin']
+    },
+    {
+      'version': '1.0.0',
+      'name': 'ActionSheet',
+      'chnName': '动作面板',
+      'desc': 'ActionSheet',
+      'type': 'component',
+      'author': ['lin']
     }
   ]
 }

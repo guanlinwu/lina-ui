@@ -25,7 +25,7 @@ ToastConstructor.prototype.close = function () {
 let Toast = (options = {}) => {
   let instance = new ToastConstructor().$mount()
   let duration = options.duration || 2500
-  instance.message = typeof options === 'string' ? options : options.message
+  instance.message = typeof options === 'string' || typeof options === 'number' ? options : options.message
   instance.position = options.position || 'middle'
   document.body.appendChild(instance.$el)
   Vue.nextTick(() => {

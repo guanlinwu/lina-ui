@@ -1,15 +1,14 @@
 import { version } from '../package.json'
 import config from './config'
-import Loading from './packages/Loading' // Loading
-import Toast from './packages/Toast' // Toast
-import Dialog from './packages/Dialog' // Dialog
+import { Loading, Toast, Dialog, ActionSheet } from '@/packages'
 
 import './styles/index.scss' // 样式
 
 const packages = {
   Loading,
   Toast,
-  Dialog
+  Dialog,
+  ActionSheet
 }
 
 let packagesList = config.packages
@@ -22,6 +21,7 @@ packagesList.map(item => {
     return
   }
   if (/component/.test(item.type)) {
+    console.log(pkg.component.name)
     components[pkg.component.name] = pkg.component
   }
   if (/method/.test(item.type)) {

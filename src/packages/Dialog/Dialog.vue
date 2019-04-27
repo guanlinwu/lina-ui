@@ -8,7 +8,7 @@
               <div class="pop-message" v-html="dialog.message"></div>
             </slot>
           </div>
-          <div v-if="dialog.isShowFooter || dialog.isShowFooter === undefined" name="footer" class="pop-footer">
+          <div v-if="!dialog.isHideFooter" name="footer" class="pop-footer">
             <slot name="footer">
               <a v-for="(item, index) in dialog.footer" :key="`btn-${index}`" @click="handleBtnClick(item)" class="btn hardline" href="javascript:;">{{item.text}}</a>
             </slot>
@@ -36,7 +36,7 @@
       title: '标题',
       message: '内容',
       isShow: false,
-      isShowFooter: true,
+      isHideFooter: false,
       footer: {
         confirm: {
           text: '确认',
@@ -73,7 +73,7 @@ export default {
   methods: {
     closeDialog () {
       this.dialog.isShow = false
-      this.$emit('update:dialog', false)
+      this.$emit('update:dialog', this.dialog)
     },
     handleBtnClick (footerItem) {
       let callBack = footerItem.callBack
@@ -122,12 +122,12 @@ export default {
     line-height: 90px;
     text-align: center;
     color: #383838;
-
+    overflow: hidden;
     @include border-width-1px(0, 0, 1, 0, #eee);
   }
 
   .content {
-    padding: 30px 30px 0;
+    padding: 30px 30px 30px;
     min-height: 100px;
     max-height: 484px;
     overflow-y: scroll;
@@ -135,7 +135,7 @@ export default {
   }
 
   .pop-footer {
-    padding: 30px 30px 30px;
+    padding: 0px 30px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
