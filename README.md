@@ -17,7 +17,7 @@ import 'lina-ui/dist/lina-ui.min.css'
 # 组件
 ## 类型：操作反馈
 ### Toast
-- 基本用法
+> 基本用法
 ```javascript
 export default {
   mounted() {
@@ -29,7 +29,7 @@ export default {
   }
 }
 ```
-- 在非vue的js文件引入
+> 在非vue的js文件引入
 ```javascript
 import linaUi from './index'
 
@@ -40,7 +40,7 @@ linaUi.Toast({
 ```
 
 ### Loading
-- 基本用法
+> 基本用法
 ```javascript
 export default {
   mounted() {
@@ -59,7 +59,7 @@ export default {
 ```
 
 ### Dialog
-- 基本用法
+> 基本用法
 ```javascript
 this.$dialog({
     title: '标题',
@@ -74,7 +74,7 @@ this.$dialog({
     }
 })
 ```
-- ID
+> ID
 
 同一个页面中，id相同的Dialog的DOM只会同时存在一个，不指定id时，id的默认值为dialog-default-id。
 
@@ -93,7 +93,7 @@ this.$dialog({
     }
 })
 ```
-- 隐藏底部按钮
+> 隐藏底部按钮
 
 有时候需要一些不能关闭的弹窗
 ```javascript
@@ -104,7 +104,7 @@ this.$dialog({
     isHideFooter: true
 })
 ```
-- 一个按钮
+> 一个按钮
 ```javascript
 this.$dialog({
     title: '标题',
@@ -116,7 +116,7 @@ this.$dialog({
     }
 })
 ```
-- 禁止点击蒙层关闭窗口
+> 禁止点击蒙层关闭窗口
 ```javascript
 this.$dialog({
     title: '提示',
@@ -145,7 +145,7 @@ this.$dialog({
     }
 })
 ```
-- 标签式写法
+> 标签式写法
 ```html
 <Dialog :dialog="dialog">
     <h3>我是弹窗里面的内容</h3>
