@@ -15,6 +15,9 @@ const defaultData = { // 默认属性
   }
 }
 
+/**
+ * 实例构建
+ */
 let Dialog = (options = {}) => {
   options.id = options.id || 'dialog-default-id' // 标识符，相同者共享一个实例
 

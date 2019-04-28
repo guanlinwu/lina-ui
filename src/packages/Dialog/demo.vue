@@ -27,7 +27,7 @@
 export default {
   name: 'demo-dialog',
   methods: {
-    handle1() {
+    handle1 () {
       this.$dialog({
         title: '确定删除App？',
         message: '真的不考虑一下留着我吗，<br> 点击蒙层也是可以关闭弹窗',
@@ -41,7 +41,7 @@ export default {
         }
       })
     },
-    handle2() {
+    handle2 () {
       this.$dialog({
         id: 'my-dialog',
         title: '对不起',
@@ -49,14 +49,14 @@ export default {
         isHideFooter: true
       })
     },
-    handle3() {
+    handle3 () {
       this.$dialog({
         title: '提示',
         message: '你点蒙层是没反应的',
         preventMaskClose: true
       })
     },
-    handle4() {
+    handle4 () {
       this.$dialog({
         title: '提示',
         message: '只有一个按钮',
@@ -67,7 +67,7 @@ export default {
         }
       })
     },
-    handle5() {
+    handle5 () {
       this.$dialog({
         title: '提示',
         message: '事件处理',

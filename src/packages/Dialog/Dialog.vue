@@ -55,7 +55,7 @@ export default {
   props: {
     dialog: {
       type: Object,
-      default() {
+      default () {
         return {
           id: null,
           footer: {
@@ -71,10 +71,16 @@ export default {
     } // 对话框的基本信息
   },
   methods: {
+    /**
+     * 关闭弹窗
+     */
     closeDialog () {
       this.dialog.isShow = false
       this.$emit('update:dialog', this.dialog)
     },
+    /**
+     * 处理按钮点击
+     */
     handleBtnClick (footerItem) {
       let callBack = footerItem.callBack
       typeof callBack === 'function' && callBack()

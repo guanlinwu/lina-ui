@@ -14,7 +14,7 @@
 <script>
 export default {
   name: 'index',
-  data() {
+  data () {
     return {
       demoData: [
         {
@@ -42,7 +42,7 @@ export default {
       foldStore: []
     }
   },
-  created() {
+  created () {
     console.log('create')
     let foldStatus = JSON.parse(sessionStorage.getItem('foldStatus'))
     this.foldStore = foldStatus || []

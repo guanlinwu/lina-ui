@@ -11,7 +11,7 @@
 <script>
 export default {
   name: 'Toast',
-  data() {
+  data () {
     return {
       isVisible: false,
       message: '',

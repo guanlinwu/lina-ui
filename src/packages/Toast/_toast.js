@@ -22,6 +22,9 @@ ToastConstructor.prototype.close = function () {
   this.$el.addEventListener('transitionend', removeDom)
 }
 
+/**
+ * 实例构建
+ */
 let Toast = (options = {}) => {
   let instance = new ToastConstructor().$mount()
   let duration = options.duration || 2500

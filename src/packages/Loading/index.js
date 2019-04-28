@@ -17,4 +17,3 @@ export {
 export default {
   method: Loading()
 }
-

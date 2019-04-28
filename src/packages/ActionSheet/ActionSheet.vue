@@ -64,29 +64,29 @@ export default {
       default: () => []
     }
   },
-  data() {
+  data () {
     return {}
   },
   watch: {
-    isShow(value) {
+    isShow (value) {
       !!value && this.$emit('open')
     }
   },
   methods: {
-    isHighlight(item) {
+    isHighlight (item) {
       return (
         (this.chooseTagValue && this.chooseTagValue === item[this.optionTag]) ||
         this.chooseTagValue === 0
       )
     },
-    closeActionSheet() {
+    closeActionSheet () {
       this.$emit('close')
       this.$emit('update:isShow', false)
     },
-    clickActionSheetMask() {
+    clickActionSheetMask () {
       !!this.isClickCloseMask && this.closeActionSheet()
     },
-    chooseItem(item) {
+    chooseItem (item) {
       this.$emit('choose', item)
       this.closeActionSheet()
     }

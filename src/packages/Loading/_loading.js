@@ -32,6 +32,9 @@ LoadingConstructor.prototype.show = (options) => {
   instance.isVisible = true
 }
 
+/**
+ * 实例构建
+ */
 let Loading = (options = {}) => {
   if (instance === null) {
     instance = new LoadingConstructor().$mount(document.createElement('div'))
