@@ -1,6 +1,6 @@
 <template>
   <div class="page-index">
-    <div class="demo-list-box" :class="{'e-unfold': foldStore[index]}" v-for="(demoDataItem, index) in demoData" :key="`demoData-${index}`">
+    <div class="demo-list-box" :class="{'e-unfold': !foldStore[index]}" v-for="(demoDataItem, index) in demoData" :key="`demoData-${index}`">
       <h4 class="type" @click="toggleFold(index)">{{demoDataItem.typeName}}<i class="icon-arrow"></i></h4>
       <ul class="demo-list">
         <li class="demo-list-item" v-for="(demoItem, demoItemIndex) in demoDataItem.demoList" :key="`demo-item-${index}-${demoItemIndex}`">

@@ -1,6 +1,9 @@
 # linaUi
 一个轻量的UI框架
 
+# demo page
+[在线demo page预览][1]
+
 # 安装
 ```bash
 npm i lina-ui -S
@@ -176,3 +179,7 @@ export default {
   }
 }
 ```
+
+
+
+[1]: https://guanlinwu.github.io/lina-ui/dist/index.html#/index
