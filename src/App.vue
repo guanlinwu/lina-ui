@@ -40,7 +40,7 @@ export default {
 
 <style lang="scss">
   html {
-    max-width: 750px;
+    max-width: 750Px;
     margin: 0 auto;
     background: #f6f6f6;
   }
