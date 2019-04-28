@@ -2,7 +2,9 @@
   <transition name='f-fade'>
     <div class="u-pop" :id="dialog.id" @click.self.stop="!dialog.preventMaskClose && !!closeDialog && closeDialog()" v-show="dialog && dialog.isShow">
       <div class="pop-content">
-          <header v-if="!!dialog.title && dialog.title !== ''" class="pop-header">{{dialog.title}}</header>
+          <slot name="header">
+            <header v-if="!!dialog.title && dialog.title !== ''" class="pop-header">{{dialog.title}}</header>
+          </slot>
           <div class="content">
             <slot>
               <div class="pop-message" v-html="dialog.message"></div>
@@ -133,7 +135,7 @@ export default {
   }
 
   .content {
-    padding: 30px 30px 30px;
+    padding: 30px 30px 20px;
     min-height: 100px;
     max-height: 484px;
     overflow-y: scroll;
@@ -141,7 +143,7 @@ export default {
   }
 
   .pop-footer {
-    padding: 0px 30px 30px;
+    padding: 20px 30px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;

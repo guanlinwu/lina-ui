@@ -149,9 +149,20 @@ this.$dialog({
 })
 ```
 > 标签式写法
+
++ 标签式demo1
+
 ```html
 <Dialog :dialog="dialog">
-    <h3>我是弹窗里面的内容</h3>
+    <div slot="header">
+        自定义头部
+    </div>
+    <div>
+        自定义内容
+    </div>
+    <div>
+        自定义内容
+    </div>
     <div slot="footer">
         自定义按钮的dom以及事件
     </div>
@@ -177,6 +188,49 @@ export default {
       }
     }
   }
+}
+```
++ 标签式demo2
+
+```html
+<!-- 活动规则 -->
+<Dialog :dialog="ruleDialog">
+    <!-- 自定义内容 -->
+    <div class="rules">
+    <p>1 活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则</p>
+    <p>2 活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则</p>
+    <p>3 活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则</p>
+    <p>4 活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则</p>
+    <p>4 活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则</p>
+    <p>4 活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则</p>
+    </div>
+</Dialog>
+```
+```javascript
+export default {
+  data() {
+    return {
+      ruleDialog: {
+        id: 'rule-dialog',
+        title: '活动规则',
+        isShow: true,
+        footer: {
+          confirm: {
+            text: '确定'
+          }
+        }
+      }
+    }
+  }
+}
+```
+```scss
+.rules {
+    text-align: left;
+    font-size: 28px;
+    font-weight: 400;
+    color: #929292;
+    line-height: 44px;
 }
 ```
 
