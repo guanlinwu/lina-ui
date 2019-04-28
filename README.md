@@ -15,6 +15,8 @@ yarn add lina-ui
 /** 引入 */
 import linaUi from 'lina-ui'
 import 'lina-ui/dist/lina-ui.min.css'
+
+Vue.use(linaUi)
 ```
 
 # 组件

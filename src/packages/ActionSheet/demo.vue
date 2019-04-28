@@ -1,16 +1,16 @@
 <template>
-  <div class="page-demo-toast">
-    toast
+  <div class="page-demo-actionsheet">
+    构思ing
   </div>
 </template>
 
 <script>
 export default {
-  name: 'demo-toast'
+  name: 'demo-actionsheet'
 }
 </script>
 
 <style lang="scss" scoped>
-.page-demo-toast {
+.page-demo-actionsheet {
 }
 </style>
