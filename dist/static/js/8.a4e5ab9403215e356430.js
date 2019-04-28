@@ -32,69 +32,111 @@ var render = function() {
   return _c(
     "div",
     { staticClass: "page-index" },
-    _vm._l(_vm.demoData, function(demoDataItem, index) {
-      return _c(
-        "div",
-        {
-          key: "demoData-" + index,
-          staticClass: "demo-list-box",
-          class: { "e-unfold": !_vm.foldStore[index] }
-        },
-        [
-          _c(
-            "h4",
-            {
-              staticClass: "type",
-              on: {
-                click: function($event) {
-                  return _vm.toggleFold(index)
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _vm._l(_vm.demoData, function(demoDataItem, index) {
+        return _c(
+          "div",
+          {
+            key: "demoData-" + index,
+            staticClass: "demo-list-box",
+            class: { "e-unfold": !_vm.foldStore[index] }
+          },
+          [
+            _c(
+              "h4",
+              {
+                staticClass: "type",
+                on: {
+                  click: function($event) {
+                    return _vm.toggleFold(index)
+                  }
                 }
-              }
-            },
-            [
-              _vm._v(_vm._s(demoDataItem.typeName)),
-              _c("i", { staticClass: "icon-arrow" })
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "ul",
-            { staticClass: "demo-list" },
-            _vm._l(demoDataItem.demoList, function(demoItem, demoItemIndex) {
-              return _c(
-                "li",
-                {
-                  key: "demo-item-" + index + "-" + demoItemIndex,
-                  staticClass: "demo-list-item"
-                },
-                [
-                  _c(
-                    "router-link",
-                    {
-                      staticClass: "router-link",
-                      attrs: { to: demoItem.router }
-                    },
-                    [_vm._v(_vm._s(demoItem.name))]
-                  )
-                ],
-                1
-              )
-            }),
-            0
-          )
-        ]
-      )
-    }),
-    0
+              },
+              [
+                _vm._v(_vm._s(demoDataItem.typeName)),
+                _c("i", { staticClass: "icon-arrow" })
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "ul",
+              { staticClass: "demo-list" },
+              _vm._l(demoDataItem.demoList, function(demoItem, demoItemIndex) {
+                return _c(
+                  "li",
+                  {
+                    key: "demo-item-" + index + "-" + demoItemIndex,
+                    staticClass: "demo-list-item"
+                  },
+                  [
+                    _c(
+                      "router-link",
+                      {
+                        staticClass: "router-link",
+                        attrs: { to: demoItem.router }
+                      },
+                      [_vm._v(_vm._s(demoItem.name))]
+                    )
+                  ],
+                  1
+                )
+              }),
+              0
+            )
+          ]
+        )
+      })
+    ],
+    2
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("header", { staticClass: "header-box" }, [
+      _c("h3", { staticClass: "title" }, [_vm._v("LinaUi 1.0")]),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "github-btn",
+          attrs: {
+            href: "https://github.com/guanlinwu/lina-ui",
+            target: "_blank"
+          }
+        },
+        [_vm._v("Github")]
+      ),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "npm-btn",
+          attrs: {
+            href: "https://www.npmjs.com/package/lina-ui",
+            target: "_blank"
+          }
+        },
+        [_vm._v("npm")]
+      )
+    ])
+  }
+]
 render._withStripped = true
 
 
 // CONCATENATED MODULE: ./src/views/index.vue?vue&type=template&id=a83bd3b0&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/babel-loader/lib??ref--1!./node_modules/vue-loader/lib??vue-loader-options!./src/views/index.vue?vue&type=script&lang=js&
+//
+//
+//
+//
+//
 //
 //
 //
