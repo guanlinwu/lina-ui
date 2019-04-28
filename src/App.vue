@@ -40,6 +40,8 @@ export default {
 
 <style lang="scss">
   html {
+    max-width: 750px;
+    margin: 0 auto;
     background: #f6f6f6;
   }
   // 公共
