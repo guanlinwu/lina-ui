@@ -37,6 +37,12 @@ export default [
         component: function (resolve) {
           require(['@/packages/Dialog/demo'], resolve)
         }
+      },
+      {
+        path: 'ActionSheet',
+        component: function (resolve) {
+          require(['@/packages/ActionSheet/demo'], resolve)
+        }
       }
     ],
     meta: {

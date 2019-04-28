@@ -8,7 +8,9 @@ export function setRem (doc, win) {
     var clientWidth = docEl.clientWidth
     // console.log(clientWidth)
     if (!clientWidth) return
-    docEl.style.fontSize = 75 * (clientWidth / 750) + 'px'
+    let fontSize = 75 * (clientWidth / 750)
+    fontSize = Math.min(fontSize, 75)
+    docEl.style.fontSize = fontSize + 'px'
   }
   if (!doc.addEventListener) return
   win.addEventListener(resizeEvt, reCaculate, false)

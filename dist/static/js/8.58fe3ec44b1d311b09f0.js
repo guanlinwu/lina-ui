@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[7],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[8],{
 
 /***/ 27:
 /***/ (function(module, exports, __webpack_require__) {
@@ -7,7 +7,7 @@
 
 /***/ }),
 
-/***/ 32:
+/***/ 33:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18,7 +18,7 @@
 
 /***/ }),
 
-/***/ 37:
+/***/ 39:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -69,7 +69,7 @@ render._withStripped = true
 // CONCATENATED MODULE: ./src/views/demo-total.vue?vue&type=script&lang=js&
  /* harmony default export */ var views_demo_totalvue_type_script_lang_js_ = (demo_totalvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/views/demo-total.vue?vue&type=style&index=0&id=76d41f74&lang=scss&scoped=true&
-var demo_totalvue_type_style_index_0_id_76d41f74_lang_scss_scoped_true_ = __webpack_require__(32);
+var demo_totalvue_type_style_index_0_id_76d41f74_lang_scss_scoped_true_ = __webpack_require__(33);
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(1);

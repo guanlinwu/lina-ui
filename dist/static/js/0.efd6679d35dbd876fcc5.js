@@ -233,7 +233,9 @@ function setRem(doc, win) {
     var clientWidth = docEl.clientWidth; // console.log(clientWidth)
 
     if (!clientWidth) return;
-    docEl.style.fontSize = 75 * (clientWidth / 750) + 'px';
+    var fontSize = 75 * (clientWidth / 750);
+    fontSize = Math.min(fontSize, 75);
+    docEl.style.fontSize = fontSize + 'px';
   };
 
   if (!doc.addEventListener) return;
@@ -280,7 +282,7 @@ var vue_router_esm = __webpack_require__(11);
   path: '/index',
   name: '首页',
   component: function component(resolve) {
-    __webpack_require__.e(/* AMD require */ 8).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(36)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+    __webpack_require__.e(/* AMD require */ 9).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(38)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
   },
   meta: {
     keepAlive: false
@@ -289,22 +291,27 @@ var vue_router_esm = __webpack_require__(11);
   path: '/demo',
   name: '示例',
   component: function component(resolve) {
-    __webpack_require__.e(/* AMD require */ 7).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(37)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+    __webpack_require__.e(/* AMD require */ 8).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(39)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
   },
   children: [{
     path: 'Toast',
     component: function component(resolve) {
-      __webpack_require__.e(/* AMD require */ 6).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(38)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+      __webpack_require__.e(/* AMD require */ 7).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(40)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
     }
   }, {
     path: 'Loading',
     component: function component(resolve) {
-      __webpack_require__.e(/* AMD require */ 5).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(39)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+      __webpack_require__.e(/* AMD require */ 6).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(41)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
     }
   }, {
     path: 'Dialog',
     component: function component(resolve) {
-      __webpack_require__.e(/* AMD require */ 4).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(40)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+      __webpack_require__.e(/* AMD require */ 5).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(42)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+    }
+  }, {
+    path: 'ActionSheet',
+    component: function component(resolve) {
+      __webpack_require__.e(/* AMD require */ 4).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(43)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
     }
   }],
   meta: {
