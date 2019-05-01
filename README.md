@@ -36,7 +36,7 @@ export default {
 ```
 > 在非vue的js文件引入
 ```javascript
-import linaUi from './index'
+import linaUi from 'lina-ui'
 
 linaUi.Toast({
     message: '开启loading',
@@ -235,11 +235,11 @@ export default {
     line-height: 44px;
 }
 ```
-### Popup
+### Popup （BETA，尽量别用，还在尝试如何变得精炼实用）
 > 基本用法
 
 ```html
-自定义
+<!-- 自定义 -->
 <Popup :isShow.sync="isShow1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
     <p style="color: #fff;">这是一个Popup，空空如也</p>
 </Popup>
