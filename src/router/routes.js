@@ -43,6 +43,12 @@ export default [
         component: function (resolve) {
           require(['@/packages/ActionSheet/demo'], resolve)
         }
+      },
+      {
+        path: 'Popup',
+        component: function (resolve) {
+          require(['@/packages/Popup/demo'], resolve)
+        }
       }
     ],
     meta: {

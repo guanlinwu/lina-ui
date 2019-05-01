@@ -31,6 +31,14 @@ export default {
       'desc': 'ActionSheet',
       'type': 'component',
       'author': ['lin']
+    },
+    {
+      'version': '1.0.0',
+      'name': 'Popup',
+      'chnName': '弹出蒙层',
+      'desc': 'Popup',
+      'type': 'component',
+      'author': ['lin']
     }
   ]
 }

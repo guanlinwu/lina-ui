@@ -235,7 +235,40 @@ export default {
     line-height: 44px;
 }
 ```
+### Popup
+> 基本用法
 
+```html
+自定义
+<Popup :isShow.sync="isShow1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
+    <p style="color: #fff;">这是一个Popup，空空如也</p>
+</Popup>
 
+<Popup :isShow.sync="isShow2" :closeCallBack="handle2CloseCallBack">
+    <p style="color: #fff;">这是一个Popup，关闭之前有事件</p>
+</Popup>
+```
+
+```javascript
+export default {
+  data () {
+    return {
+      isShow1: false,
+      isShow2: false
+    }
+  },
+  methods: {
+    handle1 () {
+      this.isShow1 = !this.isShow1
+    },
+    handle2 () {
+      this.isShow2 = !this.isShow2
+    },
+    handle2CloseCallBack () {
+      alert('关闭Popup')
+    }
+  }
+}
+```
 
 [1]: https://guanlinwu.github.io/lina-ui/dist/index.html#/index

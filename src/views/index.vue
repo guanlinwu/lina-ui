@@ -40,6 +40,10 @@ export default {
             {
               name: 'ActionSheet',
               router: '/demo/ActionSheet'
+            },
+            {
+              name: 'Popup',
+              router: '/demo/Popup'
             }
           ]
         }

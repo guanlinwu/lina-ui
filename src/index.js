@@ -1,15 +1,8 @@
 import { version } from '../package.json'
 import config from './config'
-import { Loading, Toast, Dialog, ActionSheet } from '@/packages'
+import * as packages from '@/packages'
 
 import './styles/index.scss' // 样式
-
-const packages = {
-  Loading,
-  Toast,
-  Dialog,
-  ActionSheet
-}
 
 let packagesList = config.packages
 let components = {} // 组件

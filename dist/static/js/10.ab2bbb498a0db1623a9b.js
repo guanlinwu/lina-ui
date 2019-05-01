@@ -1,24 +1,24 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[9],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[10],{
 
-/***/ 26:
+/***/ 28:
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
 
-/***/ 32:
+/***/ 35:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(26);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(28);
 /* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
-/***/ 38:
+/***/ 42:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -169,6 +169,9 @@ render._withStripped = true
         }, {
           name: 'ActionSheet',
           router: '/demo/ActionSheet'
+        }, {
+          name: 'Popup',
+          router: '/demo/Popup'
         }]
       }],
       foldStore: []
@@ -192,10 +195,10 @@ render._withStripped = true
 // CONCATENATED MODULE: ./src/views/index.vue?vue&type=script&lang=js&
  /* harmony default export */ var src_viewsvue_type_script_lang_js_ = (viewsvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/views/index.vue?vue&type=style&index=0&id=a83bd3b0&lang=scss&scoped=true&
-var viewsvue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true_ = __webpack_require__(32);
+var viewsvue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true_ = __webpack_require__(35);
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
-var componentNormalizer = __webpack_require__(1);
+var componentNormalizer = __webpack_require__(0);
 
 // CONCATENATED MODULE: ./src/views/index.vue
 
