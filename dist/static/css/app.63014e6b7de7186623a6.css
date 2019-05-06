@@ -275,6 +275,7 @@ html {
     -webkit-box-sizing: border-box;
        -moz-box-sizing: border-box;
             box-sizing: border-box;
+    border-radius: 10Px;
 }
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
 .u-pop .content {
@@ -300,6 +301,7 @@ html {
           -webkit-transform-origin: 0 0;
                   transform-origin: 0 0;
           pointer-events: none;
+          border-radius: 0.26667rem;
 }
 }
 .u-pop .pop-footer {
@@ -736,12 +738,12 @@ html {
 }
 .u-popup .popup-container[data-v-8b0b5200] {
     position: absolute;
-    top: 40%;
+    top: 0;
     left: 50%;
     min-width: 8rem;
     z-index: 10;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, 0);
+            transform: translate(-50%, 0);
     border-radius: 0.13333rem;
     padding: 0.53333rem 0.13333rem;
 }

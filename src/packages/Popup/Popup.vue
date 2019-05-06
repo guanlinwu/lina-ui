@@ -80,11 +80,11 @@ export default {
 
   .popup-container {
     position: absolute;
-    top: 40%;
+    top: 0;
     left: 50%;
     min-width: 600px;
     z-index: 10;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 0);
     border-radius: 10px;
     padding: 40px 10px;
 

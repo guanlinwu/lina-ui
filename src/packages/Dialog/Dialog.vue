@@ -139,7 +139,7 @@ export default {
     min-height: 100px;
     max-height: 484px;
     overflow-y: scroll;
-    @include border-width-1px(1, 0, 0, 0, #eee);
+    @include border-width-1px(1, 0, 0, 0, #eee, 20px);
   }
 
   .pop-footer {

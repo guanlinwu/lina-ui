@@ -45,7 +45,7 @@
 /* 13 */
 /***/ (function(module) {
 
-module.exports = {"a":"0.0.11"};
+module.exports = {"a":"0.0.12"};
 
 /***/ }),
 /* 14 */,
