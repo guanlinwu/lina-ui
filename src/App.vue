@@ -90,7 +90,7 @@ export default {
       padding: 0 10px;
       .demo-list-item {
         margin: 0 20px;
-        height: 90px;
+        padding: 22px 30px 22px 0;
         font-size: 0;
         border-top: 1Px solid #edeef1;
         border-radius: 4px;
@@ -102,7 +102,7 @@ export default {
           display: block;
           font-size: 24px;
           font-weight: 400;
-          line-height: 90px;
+          line-height: 46px;
           color: #282828;
 
           &:active {

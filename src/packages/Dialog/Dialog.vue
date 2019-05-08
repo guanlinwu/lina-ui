@@ -1,20 +1,31 @@
 <template>
-  <transition name='f-fade'>
-    <div class="u-pop" :id="dialog.id" @click.self.stop="!dialog.preventMaskClose && !!closeDialog && closeDialog()" v-show="dialog && dialog.isShow">
+  <transition name="f-fade">
+    <div
+      class="u-pop"
+      :id="dialog.id"
+      @click.self.stop="!dialog.preventMaskClose && !!closeDialog && closeDialog('mask')"
+      v-show="dialog && dialog.isShow"
+    >
       <div class="pop-content">
-          <slot name="header">
-            <header v-if="!!dialog.title && dialog.title !== ''" class="pop-header">{{dialog.title}}</header>
+        <slot name="header">
+          <header v-if="!!dialog.title && dialog.title !== ''" class="pop-header">{{dialog.title}}</header>
+        </slot>
+        <div class="content">
+          <slot>
+            <div class="pop-message" v-html="dialog.message"></div>
           </slot>
-          <div class="content">
-            <slot>
-              <div class="pop-message" v-html="dialog.message"></div>
-            </slot>
-          </div>
-          <div v-if="!dialog.isHideFooter" name="footer" class="pop-footer">
-            <slot name="footer">
-              <a v-for="(item, index) in dialog.footer" :key="`btn-${index}`" @click="handleBtnClick(item)" class="btn hardline" href="javascript:;">{{item.text}}</a>
-            </slot>
-          </div>
+        </div>
+        <div v-if="!dialog.isHideFooter" name="footer" class="pop-footer">
+          <slot name="footer">
+            <a
+              v-for="(item, key) in dialog.footer"
+              :key="`btn-${key}`"
+              @click="handleBtnClick(item, key)"
+              class="btn hardline"
+              href="javascript:;"
+            >{{item.text}}</a>
+          </slot>
+        </div>
       </div>
     </div>
   </transition>
@@ -72,21 +83,29 @@ export default {
       }
     } // 对话框的基本信息
   },
+  data () {
+    return {
+      promiseCallBack: null, // 构造函数生成的弹窗，用于按钮操作唤起promise
+      removeDomCallBack: null // 构造函数生成的弹窗，移除dom的回调函数
+    }
+  },
   methods: {
     /**
      * 关闭弹窗
      */
-    closeDialog () {
+    closeDialog (key = '') {
       this.dialog.isShow = false
       this.$emit('update:dialog', this.dialog)
+      typeof this.removeDomCallBack === 'function' && this.removeDomCallBack()
+      typeof this.promiseCallBack === 'function' && this.promiseCallBack(key) // 返回promise 用于confirm
     },
     /**
      * 处理按钮点击
      */
-    handleBtnClick (footerItem) {
+    handleBtnClick (footerItem, key) {
       let callBack = footerItem.callBack
       typeof callBack === 'function' && callBack()
-      this.closeDialog()
+      this.closeDialog(key)
     }
   }
 }
@@ -148,7 +167,7 @@ export default {
     justify-content: space-between;
     align-items: center;
 
-    >a {
+    > a {
       flex: 1;
       margin: 0 30px;
       // width:296px;
@@ -157,13 +176,13 @@ export default {
       border-radius: 10px;
       font-size: 32px;
       font-weight: 400;
-      color: #5995EF;
+      color: #5995ef;
       background-color: rgba(255, 255, 255, 1);
-      @include border-width-1px(1, 1, 1, 1, #5995EF, 20px);
+      @include border-width-1px(1, 1, 1, 1, #5995ef, 20px);
 
       &:last-child {
         color: #fff;
-        background-image: linear-gradient(to right, #04BBFA 0%, #547AF4 100%);
+        background-image: linear-gradient(to right, #04bbfa 0%, #547af4 100%);
         // background-color: #5995EF;
         @include border-width-1px(0, 0, 0, 0, transparent, 20px);
       }
@@ -177,7 +196,7 @@ export default {
     }
 
     .pop-footer {
-      >a {
+      > a {
         width: 100%;
       }
     }
@@ -185,14 +204,14 @@ export default {
 }
 
 // 针对主题的弹窗
-$blue-theme-color: #009CF8; // 蓝色主题
+$blue-theme-color: #009cf8; // 蓝色主题
 
 // 蓝色主题
 .e-theme-blue {
   .u-pop {
     .pop-footer {
-      >a {
-        color:$blue-theme-color;
+      > a {
+        color: $blue-theme-color;
         @include border-width-1px(1, 1, 1, 1, $blue-theme-color, 20px);
 
         &:last-child {
@@ -212,7 +231,7 @@ $black-theme-bg: #000; // 背景色
 .e-theme-black {
   .u-pop {
     .pop-footer {
-      >a {
+      > a {
         color: #ac9374;
         @include border-width-1px(1, 1, 1, 1, #ac9374, 20px);
 

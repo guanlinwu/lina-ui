@@ -17,7 +17,7 @@ export default {
       'author': ['lin']
     },
     {
-      'version': '1.0.0',
+      'version': '1.0.1',
       'name': 'Dialog',
       'chnName': '对话框',
       'desc': 'Dialog',

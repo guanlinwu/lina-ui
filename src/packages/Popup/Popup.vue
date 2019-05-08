@@ -82,7 +82,8 @@ export default {
     position: absolute;
     top: 0;
     left: 50%;
-    min-width: 600px;
+    width: 100%;
+    // min-width: 600px;
     z-index: 10;
     transform: translate(-50%, 0);
     border-radius: 10px;

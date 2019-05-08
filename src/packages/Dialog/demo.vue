@@ -19,6 +19,9 @@
           <a @click="handle6" class="router-link">自定义弹窗内部内容，例如弹出活动规则</a>
         </li>
         <li class="demo-list-item">
+          <a @click="handle7" class="router-link">拓展性的confirm框(this.$dialog.$confirm), 返回Promise</a>
+        </li>
+        <li class="demo-list-item">
           <a @click="handle2" class="router-link">不能关闭的弹窗</a>
         </li>
       </ul>
@@ -80,6 +83,7 @@ export default {
     },
     handle3 () {
       this.$dialog({
+        id: 'preventMaskClose-dialog',
         title: '提示',
         message: '你点蒙层是没反应的',
         preventMaskClose: true
@@ -118,6 +122,16 @@ export default {
     },
     handle6 () {
       this.ruleDialog.isShow = true
+    },
+    handle7 () {
+      this.$dialog.$confirm({
+        title: '提示',
+        message: '此操作将永久删除该文件, 是否继续?'
+      }).then(() => {
+        console.log('confirm')
+      }).catch((error) => {
+        console.log(error)
+      })
     }
   }
 }

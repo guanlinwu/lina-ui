@@ -69,7 +69,7 @@ export default {
 this.$dialog({
     title: '标题',
     message: '内容',
-    footer: {
+    footer: { // 按钮的位置可以交换的，把confirm和cancel换下位置就好
         confirm: {
             text: '确认'
         },
@@ -150,6 +150,39 @@ this.$dialog({
     }
 })
 ```
+
+> 拓展的$confirm，返回promise（2019-05-08 新增）
+```javascript
+// 默认配置，按钮为双按钮，一个文本是确认，一个文本是取消
+this.$dialog.$confirm({
+  title: '提示',
+  message: '此操作将永久删除该文件, 是否继续?'
+}).then(() => {
+  console.log('confirm')
+}).catch((error) => {
+  console.log(error) // error 为‘cancel-close’的时候，说明点击了取消按钮，为‘mask-close’的时候，说明点击了蒙层关闭
+})
+// 定制按钮
+this.$dialog.$confirm({
+  title: '提示',
+  message: '此操作将永久删除该文件, 是否继续?',
+  // preventMaskClose: true, // 禁用点击蒙层
+  footer: {
+    confirm: {
+      text: '确定'
+    },
+    cancel: { // 隐藏其中一个就是单按钮了
+      text: '取消'
+    }
+  }
+}).then(() => {
+  console.log('confirm')
+}).catch((error) => {
+  console.log(error)
+})
+// 什么，你要单按钮？你要禁用点击蒙层？那就结合上面的demo，可以配置
+```
+
 > 标签式写法
 
 + 标签式demo1

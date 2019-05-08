@@ -1,7 +1,7 @@
 <template>
   <div class="page-index">
     <header class="header-box">
-      <h3 class="title">LinaUi 1.0 20px</h3>
+      <h3 class="title">LinaUi 1.0</h3>
       <a href="https://github.com/guanlinwu/lina-ui" target="_blank" class="github-btn">Github</a>
       <a href="https://www.npmjs.com/package/lina-ui" target="_blank" class="npm-btn">npm</a>
     </header>
