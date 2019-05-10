@@ -276,9 +276,17 @@ export default {
 <Popup :isShow.sync="isShow1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
     <p style="color: #fff;">这是一个Popup，空空如也</p>
 </Popup>
-
+<!-- :closeCallBack 传递回调 -->
 <Popup :isShow.sync="isShow2" :closeCallBack="handle2CloseCallBack">
     <p style="color: #fff;">这是一个Popup，关闭之前有事件</p>
+</Popup>
+<!-- @closeCallBack 触发回调 -->
+<Popup :isShow.sync="isShow2" @closeCallBack="handle2CloseCallBack">
+  <p style="color: #fff;">这是一个Popup，关闭之前有事件</p>
+</Popup>
+<!-- preventMaskClose 禁止点击蒙层关闭popup -->
+<Popup :isShow.sync="isShow1" :preventMaskClose="preventMaskClose1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
+  <p style="color: #fff;">这是一个Popup，空空如也</p>
 </Popup>
 ```
 
@@ -287,7 +295,8 @@ export default {
   data () {
     return {
       isShow1: false,
-      isShow2: false
+      isShow2: false,
+      preventMaskClose1: true
     }
   },
   methods: {

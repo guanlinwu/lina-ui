@@ -3,9 +3,9 @@
     <div
       class="u-pop"
       :id="dialog.id"
-      @click.self.stop="!dialog.preventMaskClose && !!closeDialog && closeDialog('mask')"
       v-show="dialog && dialog.isShow"
     >
+      <div class="pop-mask" @click.self.stop="!dialog.preventMaskClose && !!closeDialog && closeDialog('mask')" @touchmove.prevent></div>
       <div class="pop-content">
         <slot name="header">
           <header v-if="!!dialog.title && dialog.title !== ''" class="pop-header">{{dialog.title}}</header>
@@ -120,9 +120,19 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 30;
+  // background: rgba(0, 0, 0, 0.8);
   text-align: center;
+
+  .pop-mask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, .7);
+    z-index: 1;
+  }
 
   .pop-content {
     position: absolute;
@@ -132,6 +142,7 @@ export default {
     width: 670px;
     background: rgba(255, 255, 255, 1);
     border-radius: 10px;
+    z-index: 3;
   }
 
   .pop-message {

@@ -1,10 +1,10 @@
 <template>
   <transition name='f-fade'>
     <div class="u-popup" v-if="selfShow">
-      <div class="popup-mask" @touchmove.prevent></div>
+      <div class="popup-mask" @click.self.stop="!preventMaskClose && close()" @touchmove.prevent></div>
       <div class="popup-container">
         <slot></slot>
-        <div class="close" v-if="closeable" @click="close"></div>
+        <div class="close" v-if="isShowClose" @click="close"></div>
       </div>
     </div>
   </transition>
@@ -23,7 +23,7 @@ export default {
       required: true,
       default: false
     },
-    closeable: {
+    isShowClose: {
       type: Boolean,
       required: false,
       default: true
@@ -31,6 +31,11 @@ export default {
     closeCallBack: {
       type: Function,
       required: false
+    },
+    preventMaskClose: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   computed: {
@@ -45,10 +50,11 @@ export default {
   },
   methods: {
     async close () {
+      this.$emit('closeCallBack')
       if (this.closeCallBack) {
         await this.closeCallBack()
       }
-      if (this.closeable) {
+      if (this.isShowClose) {
         this.selfShow = false
       }
     }
