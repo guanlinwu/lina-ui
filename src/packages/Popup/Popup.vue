@@ -4,7 +4,7 @@
       <div class="popup-mask" @click.self.stop="!preventMaskClose && close()" @touchmove.prevent></div>
       <div class="popup-container">
         <slot></slot>
-        <div class="close" v-if="isShowClose" @click="close"></div>
+        <div class="close" v-if="!isHideClose" @click="close"></div>
       </div>
     </div>
   </transition>
@@ -23,10 +23,10 @@ export default {
       required: true,
       default: false
     },
-    isShowClose: {
+    isHideClose: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     },
     closeCallBack: {
       type: Function,
@@ -54,9 +54,7 @@ export default {
       if (this.closeCallBack) {
         await this.closeCallBack()
       }
-      if (this.isShowClose) {
-        this.selfShow = false
-      }
+      this.selfShow = false
     }
   }
 }

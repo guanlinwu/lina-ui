@@ -45,7 +45,7 @@
 /* 13 */
 /***/ (function(module) {
 
-module.exports = {"a":"0.0.14"};
+module.exports = {"a":"0.0.15"};
 
 /***/ }),
 /* 14 */,
@@ -1418,7 +1418,7 @@ var Popupvue_type_template_id_8b0b5200_scoped_true_render = function() {
             [
               _vm._t("default"),
               _vm._v(" "),
-              _vm.isShowClose
+              !_vm.isHideClose
                 ? _c("div", { staticClass: "close", on: { click: _vm.close } })
                 : _vm._e()
             ],
@@ -1460,10 +1460,10 @@ Popupvue_type_template_id_8b0b5200_scoped_true_render._withStripped = true
       required: true,
       default: false
     },
-    isShowClose: {
+    isHideClose: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     },
     closeCallBack: {
       type: Function,
@@ -1505,9 +1505,7 @@ Popupvue_type_template_id_8b0b5200_scoped_true_render._withStripped = true
                 return this.closeCallBack();
 
               case 4:
-                if (this.isShowClose) {
-                  this.selfShow = false;
-                }
+                this.selfShow = false;
 
               case 5:
               case "end":

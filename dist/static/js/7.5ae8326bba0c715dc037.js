@@ -68,6 +68,14 @@ var render = function() {
               { staticClass: "router-link", on: { click: _vm.handle4 } },
               [_vm._v("显示popup 禁止点击蒙层关闭popup")]
             )
+          ]),
+          _vm._v(" "),
+          _c("li", { staticClass: "demo-list-item" }, [
+            _c(
+              "a",
+              { staticClass: "router-link", on: { click: _vm.handle5 } },
+              [_vm._v("显示popup 隐藏close按钮")]
+            )
           ])
         ])
       ]),
@@ -77,6 +85,7 @@ var render = function() {
         {
           attrs: {
             isShow: _vm.isShow1,
+            isHideClose: _vm.isHideClose1,
             preventMaskClose: _vm.preventMaskClose1,
             closeCallBack: function() {
               this$1.isShow1 = !this$1.isShow1
@@ -183,6 +192,9 @@ render._withStripped = true
 //
 //
 //
+//
+//
+//
 /* harmony default export */ var demovue_type_script_lang_js_ = ({
   name: 'demo-popup',
   data: function data() {
@@ -190,12 +202,17 @@ render._withStripped = true
       isShow1: false,
       isShow2: false,
       isShow3: false,
-      preventMaskClose1: false
+      preventMaskClose1: false,
+      // 是否禁止点击蒙层关闭popup
+      isHideClose1: false // 是否显示close按钮
+
     };
   },
   methods: {
     handle1: function handle1() {
       this.isShow1 = !this.isShow1;
+      this.isHideClose1 = false;
+      this.preventMaskClose1 = false;
     },
     handle2: function handle2() {
       this.isShow2 = !this.isShow2;
@@ -205,7 +222,13 @@ render._withStripped = true
     },
     handle4: function handle4() {
       this.preventMaskClose1 = true;
+      this.isHideClose1 = false;
       this.isShow1 = !this.isShow1;
+    },
+    handle5: function handle5() {
+      this.isShow1 = !this.isShow1;
+      this.preventMaskClose1 = false;
+      this.isHideClose1 = true;
     },
     handle2CloseCallBack: function handle2CloseCallBack() {
       alert('关闭Popup');

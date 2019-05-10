@@ -273,8 +273,8 @@ export default {
 
 ```html
 <!-- 自定义 -->
-<Popup :isShow.sync="isShow1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
-    <p style="color: #fff;">这是一个Popup，空空如也</p>
+<Popup :isShow.sync="isShow1" :isHideClose="isHideClose1" :preventMaskClose="preventMaskClose1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
+  <p style="color: #fff;">这是一个Popup，空空如也</p>
 </Popup>
 <!-- :closeCallBack 传递回调 -->
 <Popup :isShow.sync="isShow2" :closeCallBack="handle2CloseCallBack">
@@ -296,7 +296,8 @@ export default {
     return {
       isShow1: false,
       isShow2: false,
-      preventMaskClose1: true
+      preventMaskClose1: false, // 是否禁止点击蒙层关闭popup
+      isHideClose1: false // 是否显示close按钮
     }
   },
   methods: {
