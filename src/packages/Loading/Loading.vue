@@ -17,7 +17,7 @@ export default {
     return {
       time: 0, // 调用次数
       isVisible: false,
-      defaultMessage: '数据加载中',
+      defaultMessage: '加载中',
       message: '',
       isHideMessage: false
     }
