@@ -2,6 +2,12 @@
 
 @import './mixin.scss';
 
+// 箭头
+.u-arrow {
+  @include arrow();
+}
+
+// 功能
 .f-left {
   float: left
 }
@@ -30,19 +36,4 @@
 
 .f-pointer {
   cursor: pointer;
-}
-
-/**
- * 渐进动画
-*/
-.f-fade-enter-active, .f-fade-leave-active {
-  transition: opacity .2s;
-  opacity: 1;
-}
-.f-fade-enter, .f-fade-leave-active {
-  opacity: 0;
-}
-
-.u-arrow {
-  @include arrow();
 }

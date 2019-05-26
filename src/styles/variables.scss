@@ -2,3 +2,8 @@ $g-font-family: "Microsoft Yahei", sans-serif;
 $g-shadow-color: #9da5ab;
 $g-theme-color: #3a4750;
 $g-border-color: #dedede;
+
+// ---- Animation ----
+$g-animation-timing-fun: cubic-bezier(0.55, 0.085, 0.68, 0.53) !default;
+$g-animation-duration: .25s !default;
+$g-ease-in-out: cubic-bezier(0.445, 0.05, 0.55, 0.95);

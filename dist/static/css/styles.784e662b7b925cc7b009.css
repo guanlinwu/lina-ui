@@ -78,41 +78,6 @@ img {
 * top,right,bottom,left 值为 1 或者 0;
 * @include border-width-1px(0, 0, 2, 0, #f57c38);
 */
-.f-left {
-  float: left; }
-
-.f-right {
-  float: right; }
-
-.f-clearfix {
-  zoom: 1;
-  clear: both; }
-
-.f-clearfix:after {
-  visibility: hidden;
-  display: block;
-  font-size: 0;
-  content: " ";
-  clear: both;
-  height: 0; }
-
-.f-none {
-  display: none; }
-
-.f-pointer {
-  cursor: pointer; }
-
-/**
- * 渐进动画
-*/
-.f-fade-enter-active, .f-fade-leave-active {
-  -webkit-transition: opacity .2s;
-  transition: opacity .2s;
-  opacity: 1; }
-
-.f-fade-enter, .f-fade-leave-active {
-  opacity: 0; }
-
 .u-arrow {
   position: absolute;
   display: block;
@@ -151,4 +116,96 @@ img {
     height: 0;
     border-color: transparent;
     border-style: solid; }
+
+.f-left {
+  float: left; }
+
+.f-right {
+  float: right; }
+
+.f-clearfix {
+  zoom: 1;
+  clear: both; }
+
+.f-clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0; }
+
+.f-none {
+  display: none; }
+
+.f-pointer {
+  cursor: pointer; }
+
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+.f-fade-enter-active, .f-fade-leave-active {
+  -webkit-transition: opacity .2s;
+  transition: opacity .2s;
+  opacity: 1; }
+
+.f-fade-enter, .f-fade-leave-to {
+  opacity: 0; }
+
+@-webkit-keyframes f-slide-up-in {
+  from {
+    -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
+    visibility: visible; }
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0); } }
+
+@keyframes f-slide-up-in {
+  from {
+    -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
+    visibility: visible; }
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0); } }
+
+@-webkit-keyframes f-slide-up-out {
+  from {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0); }
+  to {
+    visibility: hidden;
+    -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0); } }
+
+@keyframes f-slide-up-out {
+  from {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0); }
+  to {
+    visibility: hidden;
+    -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0); } }
+
+.f-slide-up-enter-active, .f-slide-up-in,
+.f-slide-up-leave-active, .f-slide-up-out {
+  -webkit-animation-duration: 0.25s;
+          animation-duration: 0.25s;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+  -webkit-animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+          animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95); }
+
+.f-slide-up-enter-active, .f-slide-up-in {
+  -webkit-animation-name: f-slide-up-in;
+          animation-name: f-slide-up-in; }
+
+.f-slide-up-leave-active, .f-slide-up-out {
+  -webkit-animation-name: f-slide-up-out;
+          animation-name: f-slide-up-out; }
 

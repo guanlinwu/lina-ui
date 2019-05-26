@@ -105,8 +105,26 @@
   position: fixed;
   z-index: 30;
   top: 0;
+  bottom: 0;
   right: 0;
   left: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.8);
+}
+
+@mixin make-animation($keyframeName, $timingFun: $g-animation-timing-fun, $duration: $g-animation-duration) {
+  .#{$keyframeName}-enter-active, .#{$keyframeName}-in,
+  .#{$keyframeName}-leave-active, .#{$keyframeName}-out {
+    animation-duration: $duration;
+    animation-fill-mode: both;
+    animation-timing-function: $timingFun;
+  }
+  
+  .#{$keyframeName}-enter-active, .#{$keyframeName}-in {
+    animation-name: #{$keyframeName}-in;
+  }
+
+  .#{$keyframeName}-leave-active, .#{$keyframeName}-out {
+    animation-name: #{$keyframeName}-out;
+  }
 }

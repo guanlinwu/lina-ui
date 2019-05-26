@@ -1,0 +1,29 @@
+// @keyframes f-fade-in {
+//   from {
+//     opacity: 0;
+//   }
+
+//   to {
+//     opacity: 1;
+//   }
+// }
+
+// @keyframes f-fade-out {
+//   from {
+//     opacity: 1;
+//   }
+
+//   to {
+//     opacity: 0
+//   }
+// }
+
+// @include make-animation('f-fade', $g-ease-in-out);
+
+.f-fade-enter-active, .f-fade-leave-active {
+  transition: opacity .2s;
+  opacity: 1;
+}
+.f-fade-enter, .f-fade-leave-to {
+  opacity: 0;
+}

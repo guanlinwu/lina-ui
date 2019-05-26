@@ -1,9 +1,9 @@
 <template>
   <div class="u-actionsheet">
-    <transition :name="isAnimation?'f-fade':''">
+    <transition name="f-fade">
       <div class="u-actionsheet-mask" @click="clickActionSheetMask" v-show="isShow"></div>
     </transition>
-    <transition :name="isAnimation?'f-slideUp':''">
+    <transition name="f-slide-up">
       <div class="u-actionsheet-panel" v-show="isShow">
         <div class="u-actionsheet-custom" v-if="$slots.custom">
           <slot name="custom" v-html="custom"></slot>
@@ -25,7 +25,7 @@
             @click="chooseItem(item)"
           >{{item[optionTag]}}</li>
         </ul>
-        <div class="u-actionsheet-cancel" v-if="cancelTxt" @click="closeActionSheet">{{cancelTxt}}</div>
+        <div class="u-actionsheet-cancel" v-if="cancelText" @click="closeActionSheet">{{cancelText}}</div>
       </div>
     </transition>
   </div>
@@ -35,19 +35,15 @@
 export default {
   name: 'ActionSheet',
   props: {
-    isAnimation: {
-      type: Boolean,
-      default: true
-    },
     isShow: {
       type: Boolean,
       default: false
     },
-    isClickCloseMask: {
+    preventMaskClose: {
       type: Boolean,
-      default: true
+      default: false
     },
-    cancelTxt: {
+    cancelText: {
       type: String,
       default: ''
     },
@@ -79,16 +75,26 @@ export default {
         this.chooseTagValue === 0
       )
     },
+    /**
+     * 关闭事件
+     */
     closeActionSheet () {
       this.$emit('close')
       this.$emit('update:isShow', false)
     },
+    /**
+     * 点击蒙层
+     */
     clickActionSheetMask () {
-      !!this.isClickCloseMask && this.closeActionSheet()
+      !this.preventMaskClose && this.closeActionSheet()
     },
+    /**
+     * 选中
+     */
     chooseItem (item) {
       this.$emit('choose', item)
-      this.closeActionSheet()
+      this.$emit('update:isShow', false)
+      // this.closeActionSheet()
     }
   }
 }

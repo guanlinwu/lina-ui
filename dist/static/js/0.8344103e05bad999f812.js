@@ -45,7 +45,7 @@
 /* 13 */
 /***/ (function(module) {
 
-module.exports = {"a":"0.0.17"};
+module.exports = {"a":"0.0.18"};
 
 /***/ }),
 /* 14 */,
@@ -442,7 +442,7 @@ var ActionSheetvue_type_template_id_5a47430c_render = function() {
     "div",
     { staticClass: "u-actionsheet" },
     [
-      _c("transition", { attrs: { name: _vm.isAnimation ? "f-fade" : "" } }, [
+      _c("transition", { attrs: { name: "f-fade" } }, [
         _c("div", {
           directives: [
             {
@@ -457,89 +457,85 @@ var ActionSheetvue_type_template_id_5a47430c_render = function() {
         })
       ]),
       _vm._v(" "),
-      _c(
-        "transition",
-        { attrs: { name: _vm.isAnimation ? "f-slideUp" : "" } },
-        [
-          _c(
-            "div",
-            {
-              directives: [
-                {
-                  name: "show",
-                  rawName: "v-show",
-                  value: _vm.isShow,
-                  expression: "isShow"
-                }
-              ],
-              staticClass: "u-actionsheet-panel"
-            },
-            [
-              _vm.$slots.custom
-                ? _c(
-                    "div",
-                    { staticClass: "u-actionsheet-custom" },
-                    [_vm._t("custom")],
+      _c("transition", { attrs: { name: "f-slide-up" } }, [
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.isShow,
+                expression: "isShow"
+              }
+            ],
+            staticClass: "u-actionsheet-panel"
+          },
+          [
+            _vm.$slots.custom
+              ? _c(
+                  "div",
+                  { staticClass: "u-actionsheet-custom" },
+                  [_vm._t("custom")],
+                  2
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.$slots.title || _vm.$slots.subTitle
+              ? _c("dl", { staticClass: "u-actionsheet-modal" }, [
+                  _c(
+                    "dt",
+                    { staticClass: "u-actionsheet-title" },
+                    [_vm._t("title")],
+                    2
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "dd",
+                    { staticClass: "u-actionsheet-sub-title" },
+                    [_vm._t("sub-title")],
                     2
                   )
-                : _vm._e(),
-              _vm._v(" "),
-              _vm.$slots.title || _vm.$slots.subTitle
-                ? _c("dl", { staticClass: "u-actionsheet-modal" }, [
-                    _c(
-                      "dt",
-                      { staticClass: "u-actionsheet-title" },
-                      [_vm._t("title")],
-                      2
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "dd",
-                      { staticClass: "u-actionsheet-sub-title" },
-                      [_vm._t("sub-title")],
-                      2
-                    )
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              _c(
-                "ul",
-                { staticClass: "u-actionsheet-menu" },
-                _vm._l(_vm.menuItems, function(item, index) {
-                  return _c(
-                    "li",
-                    {
-                      key: index,
-                      staticClass: "u-actionsheet-item",
-                      class: {
-                        "u-actionsheet-item-active": _vm.isHighlight(item)
-                      },
-                      on: {
-                        click: function($event) {
-                          return _vm.chooseItem(item)
-                        }
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _c(
+              "ul",
+              { staticClass: "u-actionsheet-menu" },
+              _vm._l(_vm.menuItems, function(item, index) {
+                return _c(
+                  "li",
+                  {
+                    key: index,
+                    staticClass: "u-actionsheet-item",
+                    class: {
+                      "u-actionsheet-item-active": _vm.isHighlight(item)
+                    },
+                    on: {
+                      click: function($event) {
+                        return _vm.chooseItem(item)
                       }
-                    },
-                    [_vm._v(_vm._s(item[_vm.optionTag]))]
-                  )
-                }),
-                0
-              ),
-              _vm._v(" "),
-              _vm.cancelTxt
-                ? _c(
-                    "div",
-                    {
-                      staticClass: "u-actionsheet-cancel",
-                      on: { click: _vm.closeActionSheet }
-                    },
-                    [_vm._v(_vm._s(_vm.cancelTxt))]
-                  )
-                : _vm._e()
-            ]
-          )
-        ]
-      )
+                    }
+                  },
+                  [_vm._v(_vm._s(item[_vm.optionTag]))]
+                )
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _vm.cancelText
+              ? _c(
+                  "div",
+                  {
+                    staticClass: "u-actionsheet-cancel",
+                    on: { click: _vm.closeActionSheet }
+                  },
+                  [_vm._v(_vm._s(_vm.cancelText))]
+                )
+              : _vm._e()
+          ]
+        )
+      ])
     ],
     1
   )
@@ -587,19 +583,15 @@ ActionSheetvue_type_template_id_5a47430c_render._withStripped = true
 /* harmony default export */ var ActionSheetvue_type_script_lang_js_ = ({
   name: 'ActionSheet',
   props: {
-    isAnimation: {
-      type: Boolean,
-      default: true
-    },
     isShow: {
       type: Boolean,
       default: false
     },
-    isClickCloseMask: {
+    preventMaskClose: {
       type: Boolean,
-      default: true
+      default: false
     },
-    cancelTxt: {
+    cancelText: {
       type: String,
       default: ''
     },
@@ -630,16 +622,28 @@ ActionSheetvue_type_template_id_5a47430c_render._withStripped = true
     isHighlight: function isHighlight(item) {
       return this.chooseTagValue && this.chooseTagValue === item[this.optionTag] || this.chooseTagValue === 0;
     },
+
+    /**
+     * 关闭事件
+     */
     closeActionSheet: function closeActionSheet() {
       this.$emit('close');
       this.$emit('update:isShow', false);
     },
+
+    /**
+     * 点击蒙层
+     */
     clickActionSheetMask: function clickActionSheetMask() {
-      !!this.isClickCloseMask && this.closeActionSheet();
+      !this.preventMaskClose && this.closeActionSheet();
     },
+
+    /**
+     * 选中
+     */
     chooseItem: function chooseItem(item) {
       this.$emit('choose', item);
-      this.closeActionSheet();
+      this.$emit('update:isShow', false); // this.closeActionSheet()
     }
   }
 });
