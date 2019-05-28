@@ -44,6 +44,15 @@ linaUi.Toast({
 })
 ```
 
+> API
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| option        |    如果为Object，则分option.duration和option.message，如果是String，则为option.message	    |  String | Object  | 无 |
+| option.duration	     | 展示时长（毫秒） |   Number	  | 2000 |
+| option.message        |   文案	   |   String   | 无 |
+
+
 ### Loading
 > 基本用法
 ```javascript
@@ -62,6 +71,14 @@ export default {
   }
 }
 ```
+
+> API
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| option        |    如果为Object，则分option.duration和option.message，如果是String，则为option.message	    |  String | Object  | 无 |
+| option.isHideMessage	     | 是否隐藏文案 |   boolean	  | false |
+| option.message        |   文案	   |   String   | 无 |
 
 ### Dialog
 > 基本用法
@@ -182,6 +199,22 @@ this.$dialog.$confirm({
 })
 // 什么，你要单按钮？你要禁用点击蒙层？那就结合上面的demo，可以配置
 ```
+> 隐藏关闭按钮(isHideClose)
+```javascript
+  this.$dialog({
+    title: '确定删除App？',
+    message: '真的不考虑一下留着我吗，<br> 点击蒙层也是可以关闭弹窗',
+    isHideClose: true,
+    footer: {
+      cancel: {
+        text: '删除'
+      },
+      confirm: {
+        text: '考虑'
+      }
+    }
+  })
+```
 
 > 标签式写法
 
@@ -268,6 +301,23 @@ export default {
     line-height: 44px;
 }
 ```
+
+> API
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| option.id	     | 标识符，相同者共享一个实例 |   String|Number		  | 无 |
+| option.title	        |   标题	   |   String   | 无 |
+| option.isShow	        |   是否显示弹窗	   |   Boolean   | false |
+| option.isHideFooter	        |   是否隐藏底部	   |   Boolean   | false |
+| option.isHideClose	        |   是否右上角关闭按钮	   |   Boolean   | false |
+| option.preventMaskClose	        |   是否禁止点击蒙层关闭窗口	   |   Boolean   | false |
+| option.preventMaskClose	        |   是否禁止点击蒙层关闭窗口	   |   Boolean   | false |
+| option.footer	        |   底部按钮的配置	   |   Boolean   | false |
+| option.footer.$name	        |   底部按钮, $name是一个对象，名称可以自定义,   |   Object   | 无 |
+| option.footer.$name.text	        |   底部按钮的文本   |   String   | 无 |
+| option.footer.$name.callBack        |   底部按钮的回调事件   |   Function   | 无 |
+
 ### Popup （BETA，尽量别用，还在尝试如何变得精炼实用）
 > 基本用法
 
@@ -313,6 +363,16 @@ export default {
   }
 }
 ```
+
+> Prop
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| isShow     | 是否可见 |   Boolean  | false |
+| isHideClose        |   关闭按钮可见	   |   Boolean   | true |
+| preventMaskClose        |    是否点击mask蒙层关闭	    |  Boolean  | false |
+| closeCallBack        |    关闭蒙层的回调事件	    |  Function  | 无 |
+
 
 ### ActionSheet
 > 基本用法

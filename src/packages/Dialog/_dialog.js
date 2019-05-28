@@ -30,6 +30,7 @@ let Dialog = (options = {}) => {
 
   if (options.isHideFooter === true) {
     options.preventMaskClose = true
+    options.isHideClose = true
   }
 
   let instance = new DialogConstructor({
@@ -99,6 +100,8 @@ Dialog.$confirm = (options = {}) => {
         reject('cancel-close')  // eslint-disable-line
       } else if (key === 'mask') {
         reject('mask-close')  // eslint-disable-line
+      } else if (key === 'icon-close') {
+        reject('icon-close')  // eslint-disable-line
       } else {
         console.warn('footer key wrong')
       }

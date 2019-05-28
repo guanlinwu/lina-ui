@@ -26,6 +26,7 @@
             >{{item.text}}</a>
           </slot>
         </div>
+        <div class="pop-close" v-if="!dialog.isHideClose" @click="!!closeDialog && closeDialog('icon-close')"></div>
       </div>
     </div>
   </transition>
@@ -50,6 +51,8 @@
       message: '内容',
       isShow: false,
       isHideFooter: false,
+      isHideClose: false,
+      preventMaskClose: false,
       footer: {
         confirm: {
           text: '确认',
@@ -145,6 +148,17 @@ export default {
     z-index: 3;
   }
 
+  .pop-close {
+    position: absolute;
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEQAAABECAMAAAAPzWOAAAAAtFBMVEUAAAD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////oK74hAAAAO3RSTlMAiAOXpQX2Kv3qoVedUql9CfPus5FgJB36jHhdL+DQlOTZv62CSSHHxLdpZU043NVxF7FtDs3Ju0Q/MwS8CrYAAANBSURBVFjDnZfpeqowEIanIJtsggpVVLSurdpq7c7939cxE1wgJJDz/dDHZHzJZJYE4CtKFt7n2NJ16/XLW9grkFXHbk+zksaOq0kg9k6QVSpURw0Rv9+ZQN19A4TxdLU3Z++Dw9a2t4dB99W8YVZ1e/HwmJtOe+7H/cyHm152SfeFezN6o2aP7R+FnVWWXr6eicFnJDp9Uhpzw+7QlQYuz2KR+xw12bNh5ayi0ii6UKOExv+hao4y1jHUKprwKA840dYa5fO82qM+Dg+gmRQHzUue/+kMQyykBEZhfTP0BZpLQY8+770fkJGNJlXnuLv+XexJIloxSCkikdZvdbQh0B1IKsHMhFxL8usdpIW5u79biB7LQ4zH21J+CbAnz8jjTHtdi9T+sTj90u6zUfU3aae4tyQgKXYbkmdO0f5UURpKi13wnERVuyR8qXG2sMBYRvYMqEJI3Jz2CiVvaJkyjOylaKdZ1AvFqqpqlVLKDNaOrmBEJn+ARxEzwCbDK9iS2HSARxEz4EjGbay9CQCXwmegxliF3fOnBwKKkAHP55kWkE6yABFFxIDeeeoLSHC2IKKIGDA8z82A5GsCfIqYgRk1BXErUcUMmu8hMF2bzfV6SIDuCBhiygndsbAiRIz6jWVDzNSLWhfiNZtsbM2JKN94XmHaCxlIEaY9FqD5IWAIKUcaXIN8LUUMpIhaQQwYngGfIaY4eVv0yGWZCRzzF0rpV7RH9XIa/jIFjgyGohbHdpe96ATskeHz+qnNOTKgTRpkXFzmsNWvqBO1xDDM61G0/99jFB9vGrfTXY/kGSPz7jbxQ882aa3J//4KFw1bEoG5ns2LF41wJccwdLzWlG7CX3IXP3whGTIjntKcoWE+rrXCRuNlOJWLbhZG5XJEitJwHcgwmVPCR4rX7AXhGY1PVd2S6DNqEBfcQezMHEqQ1CCUF51hMB5lT4Yw19doZJ54BnaQv4tGXE/y99FwKfB2kqHM+U6riInbzajWK2HsfD23sxy7cEGOk3aYTwWHuhiuutlV4+/UP/T7B199mt5GvRjqtX/P+DK9UdNu07OqEdOBAc2l7dRZmfCWLhWQVewO25vJOAzHk40zdI98y3/0ge6+0uM9swAAAABJRU5ErkJggg==') no-repeat;
+    background-size: 38px 38px;
+    background-position: center center;
+    width: 52px;
+    height: 52px;
+    top: -62px;
+    right: -7px;
+  }
+
   .pop-message {
     padding: 14px 0;
     font-size: 28px;
@@ -173,14 +187,14 @@ export default {
   }
 
   .pop-footer {
-    padding: 20px 30px 30px;
+    padding: 20px 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 
     > a {
       flex: 1;
-      margin: 0 30px;
+      margin: 0 15px;
       // width:296px;
       height: 80px;
       line-height: 80px;
@@ -189,13 +203,13 @@ export default {
       font-weight: 400;
       color: #5995ef;
       background-color: rgba(255, 255, 255, 1);
-      @include border-width-1px(1, 1, 1, 1, #5995ef, 20px);
+      @include border-width-1px(1, 1, 1, 1, #5995ef, 10px);
 
       &:last-child {
         color: #fff;
         background-image: linear-gradient(to right, #04bbfa 0%, #547af4 100%);
         // background-color: #5995EF;
-        @include border-width-1px(0, 0, 0, 0, transparent, 20px);
+        @include border-width-1px(0, 0, 0, 0, transparent, 10px);
       }
     }
   }

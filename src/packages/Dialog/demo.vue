@@ -24,6 +24,9 @@
         <li class="demo-list-item">
           <a @click="handle2" class="router-link">不能关闭的弹窗</a>
         </li>
+        <li class="demo-list-item">
+          <a @click="handle8" class="router-link">隐藏关闭按钮</a>
+        </li>
       </ul>
     </div>
 
@@ -129,8 +132,25 @@ export default {
         message: '此操作将永久删除该文件, 是否继续?'
       }).then(() => {
         console.log('confirm')
+        alert('confirm')
       }).catch((error) => {
         console.log(error)
+        alert(error)
+      })
+    },
+    handle8 () {
+      this.$dialog({
+        title: '确定删除App？',
+        message: '真的不考虑一下留着我吗，<br> 点击蒙层也是可以关闭弹窗',
+        isHideClose: true,
+        footer: {
+          cancel: {
+            text: '删除'
+          },
+          confirm: {
+            text: '考虑'
+          }
+        }
       })
     }
   }
