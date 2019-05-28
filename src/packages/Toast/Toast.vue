@@ -36,7 +36,7 @@ $toast-theme-color: rgba(79, 79, 79, 0.9); //背景和阴影颜色
   text-align: center;
   font-size: 0;
   border-radius: 50px;
-  z-index: 9999;
+  z-index: 999;
 
   > .message {
     position: relative;

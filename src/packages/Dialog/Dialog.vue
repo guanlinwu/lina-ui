@@ -125,6 +125,7 @@ export default {
   height: 100%;
   // background: rgba(0, 0, 0, 0.8);
   text-align: center;
+  z-index: 30;
 
   .pop-mask {
     position: absolute;
