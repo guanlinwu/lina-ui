@@ -1,3 +1,20 @@
+import config from '@/config'
+
+let demoChildrenRoutes = [] // demo路由
+
+config.packages.map(item => {
+  const name = item.name
+
+  demoChildrenRoutes.push(
+    {
+      path: name,
+      component: function (resolve) {
+        require([`@/packages/${name}/demo`], resolve)
+      }
+    }
+  )
+})
+
 export default [
   {
     path: '/',
@@ -20,36 +37,7 @@ export default [
       require(['@/views/demo-total'], resolve)
     },
     children: [
-      {
-        path: 'Toast',
-        component: function (resolve) {
-          require(['@/packages/Toast/demo'], resolve)
-        }
-      },
-      {
-        path: 'Loading',
-        component: function (resolve) {
-          require(['@/packages/Loading/demo'], resolve)
-        }
-      },
-      {
-        path: 'Dialog',
-        component: function (resolve) {
-          require(['@/packages/Dialog/demo'], resolve)
-        }
-      },
-      {
-        path: 'ActionSheet',
-        component: function (resolve) {
-          require(['@/packages/ActionSheet/demo'], resolve)
-        }
-      },
-      {
-        path: 'Popup',
-        component: function (resolve) {
-          require(['@/packages/Popup/demo'], resolve)
-        }
-      }
+      ...demoChildrenRoutes
     ],
     meta: {
       keepAlive: false

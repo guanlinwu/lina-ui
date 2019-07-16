@@ -44,6 +44,10 @@ export default {
             {
               name: 'Popup',
               router: '/demo/Popup'
+            },
+            {
+              name: 'PreLoad',
+              router: '/demo/PreLoad'
             }
           ]
         }

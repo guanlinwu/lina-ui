@@ -31,6 +31,13 @@ LoadingConstructor.prototype.show = (options) => {
   instance.time++
   instance.isVisible = true
 }
+// 实现loading的展示方法
+LoadingConstructor.prototype.setMessage = (options) => {
+  if (options) {
+    instance.message = typeof options === 'string' || typeof options === 'number' ? options : options.message
+    instance.isHideMessage = false
+  }
+}
 
 /**
  * 实例构建

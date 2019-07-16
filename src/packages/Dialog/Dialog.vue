@@ -207,10 +207,16 @@ export default {
       @include border-width-1px(1, 1, 1, 1, #5995ef, 10px);
 
       &:last-child {
+        flex: 0 0 540px;
+        margin: auto;
         color: #fff;
         background-image: linear-gradient(to right, #04bbfa 0%, #547af4 100%);
         // background-color: #5995EF;
         @include border-width-1px(0, 0, 0, 0, transparent, 10px);
+      }
+      &:last-child:not(:first-child) {
+        flex: 1;
+        margin: 0 15px;
       }
     }
   }

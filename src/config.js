@@ -39,6 +39,14 @@ export default {
       'desc': 'Popup',
       'type': 'component',
       'author': ['lin']
+    },
+    {
+      'version': '1.0.0',
+      'name': 'PreLoad',
+      'chnName': '预加载',
+      'desc': 'PreLoad',
+      'type': 'method',
+      'author': ['lin']
     }
   ]
 }

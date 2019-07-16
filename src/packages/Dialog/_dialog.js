@@ -6,11 +6,11 @@ let DialogConstructor = Vue.extend(DialogVue)
 const defaultData = { // 默认属性
   id: null,
   footer: {
-    confirm: {
-      text: '确认'
-    },
     cancel: {
       text: '取消'
+    },
+    confirm: {
+      text: '确认'
     }
   }
 }

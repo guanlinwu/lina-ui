@@ -6,15 +6,16 @@ import './styles/index.scss' // 样式
 
 let packagesList = config.packages
 let components = {} // 组件
-let methods = {} // 组件
+let methods = {} // 方法 $挂载
 
 packagesList.map(item => {
   const pkg = packages[item.name]
+
   if (!pkg) {
     return
   }
   if (/component/.test(item.type)) {
-    console.log(pkg.component.name)
+    // console.log(pkg.component.name)
     components[pkg.component.name] = pkg.component
   }
   if (/method/.test(item.type)) {
@@ -41,6 +42,8 @@ let install = function (Vue, options = {}) {
     components[componentKey] && components[componentKey].name && Vue.component(components[componentKey].name, components[componentKey])
   }
 
+  console.info(`lina-ui has been installed， version： ${version} `)
+
   install.installed = true
 }
 
@@ -50,5 +53,7 @@ export default {
   version,
   install,
   ...components,
-  ...methods
+  methods: {
+    ...methods
+  }
 }

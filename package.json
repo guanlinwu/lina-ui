@@ -1,6 +1,6 @@
 {
   "name": "lina-ui",
-  "version": "0.0.20",
+  "version": "0.0.23",
   "description": "移动端Vue组件库",
   "main": "dist/lina-ui.min.js",
   "scripts": {

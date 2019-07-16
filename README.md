@@ -66,7 +66,7 @@ export default {
     this.$loading.show({
         isHideMessage: false
     }) // 隐藏文本提示
-
+    this.$loading.setMessage('自定义文本') // 该方法可以设置显示中的loading的文案
     this.$loading.hide() // 隐藏
   }
 }
@@ -493,5 +493,52 @@ export default {
 | --------   | -----:  | :----:  |
 | choose     | 选择之后触发	 |   选中列表项   |
 | close	        |  关闭时触发	   |   无   |
+
+### Preload
+> 图片预加载 this.$preload.loadImgs
+
+```javascript
+// 图片预加载 this.$preload.loadImgs
+async handle1 () {
+  let self = this
+  self.$loading.show()
+  /**
+   * 预加载图片
+   * @param {array | object} opts         如果opts是数组，则直接作为opts.urls处理
+   * @param {array} opts.urls             图片链接
+   * @param {function} opts.eachLoadFunc  每张图片加载完毕的回调，回调参数是percent（加载的百分数，1-100）
+   * @param {function} opts.callback      所有图片加载完毕的回调
+   * @param {function} opts.maxPercent    加载完毕后最大百分数,默认是100，需要设置的情形是，假如设置80，则先加载完成图片，百分数是80%，然后剩下20%，额外处理，例如加载视频或者其他东西
+   * @returns Promise
+   */
+  await this.$preload.loadImgs({
+    urls: [
+      'http://img.daimg.com/uploads/allimg/190716/1-1ZG6160132.jpg',
+      'http://img.daimg.com/uploads/allimg/190712/1-1ZG2164231.jpg',
+      'http://img.daimg.com/uploads/allimg/190628/1-1Z62R30555.jpg',
+      'http://qumi.inrice.top/carowner/images/zwlcr.jpg',
+      'http://qumi.inrice.top/carowner/images/zhuzhuche.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG1002105.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG11IZ6.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG11H912.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG11FH5.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG1143T7.jpg',
+      'https://cdn.dribbble.com/assets/art-banners/twisted-511f83427b2e298f5859b4a101073a4e05f7cd89f974cd103278640390a3599a.gif',
+      'https://cdn.dribbble.com/users/2894633/screenshots/6785772/pottery_4x.jpg',
+      'https://cdn.dribbble.com/users/1227650/screenshots/6784592/accord_4x.jpg'
+    ],
+    eachLoadFunc (percent) { // 每张图片加载完毕的回调，回调参数是percent（加载的百分数，1-100）
+      console.log(percent)
+      self.$loading.setMessage(percent)
+    },
+    callback () { // 所有图片加载完毕的回调
+      self.$toast('加载完毕')
+    }
+  })
+  self.$loading.hide()
+}
+```
+
+
 
 [1]: https://guanlinwu.github.io/lina-ui/dist/index.html#/index

@@ -12,6 +12,9 @@
         <li class="demo-list-item">
           <a @click="handle3" class="router-link">显示Loading，并且隐藏文案</a>
         </li>
+        <li class="demo-list-item">
+          <a @click="handle4" class="router-link">显示Loading，在显示过程中设置文案</a>
+        </li>
       </ul>
     </div>
   </div>
@@ -41,6 +44,17 @@ export default {
       }) // 隐藏文本提示
       setTimeout(() => {
         this.$loading.hide() // 隐藏
+      }, 2000)
+    },
+    handle4 () {
+      this.$loading.show({
+        isHideMessage: true
+      }) // 隐藏文本提示
+      setTimeout(() => {
+        this.$loading.setMessage('2s后关闭') // 隐藏
+        setTimeout(() => {
+          this.$loading.hide('2s后关闭') // 隐藏
+        }, 2000)
       }, 2000)
     }
   }
