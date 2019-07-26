@@ -309,6 +309,7 @@ export default {
 | option.id	     | 标识符，相同者共享一个实例 |   String|Number		  | 无 |
 | option.title	        |   标题	   |   String   | 无 |
 | option.isShow	        |   是否显示弹窗	   |   Boolean   | false |
+| option.isUnlimitedHeight	        |   内容高度超出，是否限制高度，设置滚动	   |   Boolean   | false |
 | option.isHideFooter	        |   是否隐藏底部	   |   Boolean   | false |
 | option.isHideClose	        |   是否右上角关闭按钮	   |   Boolean   | false |
 | option.preventMaskClose	        |   是否禁止点击蒙层关闭窗口	   |   Boolean   | false |

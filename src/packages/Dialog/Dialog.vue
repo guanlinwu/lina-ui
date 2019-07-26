@@ -10,7 +10,7 @@
         <slot name="header">
           <header v-if="!!dialog.title && dialog.title !== ''" class="pop-header">{{dialog.title}}</header>
         </slot>
-        <div class="content">
+        <div class="content" :class="[{'e-unlimited-height': dialog.isUnlimitedHeight}]">
           <slot>
             <div class="pop-message" v-html="dialog.message"></div>
           </slot>
@@ -50,6 +50,7 @@
       title: '标题',
       message: '内容',
       isShow: false,
+      isUnlimitedHeight: false,
       isHideFooter: false,
       isHideClose: false,
       preventMaskClose: false,
@@ -184,6 +185,10 @@ export default {
     min-height: 100px;
     max-height: 484px;
     overflow-y: scroll;
+    &.e-unlimited-height {
+      max-height: none;
+      overflow-y: auto;
+    }
     @include border-width-1px(1, 0, 0, 0, #eee, 20px);
   }
 

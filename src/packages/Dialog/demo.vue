@@ -19,6 +19,9 @@
           <a @click="handle6" class="router-link">自定义弹窗内部内容，例如弹出活动规则</a>
         </li>
         <li class="demo-list-item">
+          <a @click="handle9" class="router-link">自定义弹窗内部内容，例如弹出活动规则，内容不限制高度</a>
+        </li>
+        <li class="demo-list-item">
           <a @click="handle7" class="router-link">拓展性的confirm框(this.$dialog.$confirm), 返回Promise</a>
         </li>
         <li class="demo-list-item">
@@ -125,6 +128,7 @@ export default {
     },
     handle6 () {
       this.ruleDialog.isShow = true
+      this.ruleDialog.isUnlimitedHeight = false
     },
     handle7 () {
       this.$dialog.$confirm({
@@ -152,6 +156,10 @@ export default {
           }
         }
       })
+    },
+    handle9 () {
+      this.ruleDialog.isShow = true
+      this.ruleDialog.isUnlimitedHeight = true
     }
   }
 }
