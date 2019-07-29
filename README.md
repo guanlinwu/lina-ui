@@ -11,7 +11,7 @@ yarn add lina-ui
 ```
 
 # 更新日志
-[CHANGELOG](CHANGELOG.md)
+[CHANGELOG](https://github.com/guanlinwu/lina-ui/blob/master/CHANGELOG.md)
 
 # 引入
 ```javascript
