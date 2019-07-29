@@ -10,6 +10,9 @@ npm i lina-ui -S
 yarn add lina-ui
 ```
 
+# 更新日志
+[CHANGELOG](CHANGELOG.md)
+
 # 引入
 ```javascript
 /** 引入 */
@@ -313,13 +316,12 @@ export default {
 | option.isHideFooter	        |   是否隐藏底部	   |   Boolean   | false |
 | option.isHideClose	        |   是否右上角关闭按钮	   |   Boolean   | false |
 | option.preventMaskClose	        |   是否禁止点击蒙层关闭窗口	   |   Boolean   | false |
-| option.preventMaskClose	        |   是否禁止点击蒙层关闭窗口	   |   Boolean   | false |
 | option.footer	        |   底部按钮的配置	   |   Boolean   | false |
 | option.footer.$name	        |   底部按钮, $name是一个对象，名称可以自定义,   |   Object   | 无 |
 | option.footer.$name.text	        |   底部按钮的文本   |   String   | 无 |
 | option.footer.$name.callBack        |   底部按钮的回调事件   |   Function   | 无 |
 
-### Popup （BETA，尽量别用，还在尝试如何变得精炼实用）
+### Popup
 > 基本用法
 
 ```html
@@ -540,6 +542,74 @@ async handle1 () {
 }
 ```
 
+### PopCurtain
+> 基本用法
 
+```html
+<!-- 普通用法 -->
+<PopCurtain :dialog.sync="dialog1"/>
+<!-- 内嵌slot -->
+<PopCurtain :dialog.sync="dialog2">
+  <img style="width: 300px;" src="https://dummyimage.com/600x400/ff45ff/ffffff" alt="">
+</PopCurtain>
+<!-- 设置关闭按钮 -->
+<PopCurtain :dialog.sync="dialog3" />
+<!-- 监听点击幕帘内容事件 -->
+<PopCurtain :dialog.sync="dialog4" @clickCurtain="handleClickDialog" />
+```
+
+```javascript
+export default {
+  name: 'demo-popCurtain',
+  data () {
+    return {
+      dialog1: {
+        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
+        isShow: false
+      },
+      dialog3: {
+        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
+        isShow: false
+      },
+      dialog2: {
+        isShow: false
+      },
+      dialog4: {
+        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
+        link: 'http://www.baidu.com',
+        isShow: false
+      }
+    }
+  },
+  methods: {
+    handle1 () {
+      this.dialog1.isShow = true
+    },
+    handle2 () {
+      this.dialog2.isShow = true
+    },
+    handle3 () {
+      this.dialog3.isShow = true
+      this.dialog3.closeBtnPosition = 'top'
+    },
+    handle4 () {
+      this.dialog4.isShow = true
+    },
+    handleClickDialog (dialog) {
+      this.$toast('即将跳转链接')
+      setTimeout(() => {
+        window.location.href = dialog.link
+      }, 2000)
+    }
+  }
+}
+```
+
+> Prop
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| dialog.isShow     | 是否可见 |   Boolean  | false |
+| dialog.closeBtnPosition        |    关闭按钮位置，'top', 'top-left', 'top-right', 'bottom', 'bottom-left', 'bottom-right'	    |  Function  | ‘bottom’ |
 
 [1]: https://guanlinwu.github.io/lina-ui/dist/index.html#/index

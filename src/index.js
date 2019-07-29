@@ -8,6 +8,8 @@ let packagesList = config.packages
 let components = {} // 组件
 let methods = {} // 方法 $挂载
 
+console.log(packagesList)
+
 packagesList.map(item => {
   const pkg = packages[item.name]
 
@@ -15,7 +17,7 @@ packagesList.map(item => {
     return
   }
   if (/component/.test(item.type)) {
-    // console.log(pkg.component.name)
+    console.log(pkg.component.name)
     components[pkg.component.name] = pkg.component
   }
   if (/method/.test(item.type)) {

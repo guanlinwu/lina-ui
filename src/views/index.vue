@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import config from '@/config'
+
 export default {
   name: 'index',
   data () {
@@ -24,6 +26,7 @@ export default {
       demoData: [
         {
           typeName: '操作反馈', // 名称
+          typeEnName: 'operate feedback', // 英文
           demoList: [
             {
               name: 'Toast',
@@ -44,6 +47,10 @@ export default {
             {
               name: 'Popup',
               router: '/demo/Popup'
+            },
+            {
+              name: 'PopCurtain',
+              router: '/demo/PopCurtain'
             },
             {
               name: 'PreLoad',
@@ -67,6 +74,25 @@ export default {
     toggleFold (index) {
       this.$set(this.foldStore, index, !this.foldStore[index])
       sessionStorage.setItem('foldStatus', JSON.stringify(this.foldStore))
+    },
+    /**
+     * 处理demoData，把组件分类，组成路由
+     */
+    handleDemoData () {
+      let demoChildrenRoutes = [] // demo路由
+
+      config.packages.map(item => {
+        const name = item.name
+
+        demoChildrenRoutes.push(
+          {
+            path: name,
+            component: function (resolve) {
+              require([`@/packages/${name}/demo`], resolve)
+            }
+          }
+        )
+      })
     }
   }
 }
