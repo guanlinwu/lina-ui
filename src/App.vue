@@ -52,6 +52,12 @@ export default {
     border-radius: 10px;
     overflow: hidden;
 
+    // 直接展示类型
+    &.e-view {
+      width: 100%;
+      background: none;
+    }
+
     &.e-unfold {
       .type .icon-arrow {
         transform: rotate(180deg);
@@ -98,6 +104,7 @@ export default {
         background-size: 20px 20px;
         overflow: hidden;
 
+        // 链接
         .router-link {
           display: block;
           font-size: 24px;
@@ -109,6 +116,15 @@ export default {
             color: #000;
             font-weight: 600;
           }
+        }
+        // 被展示内容
+        .view-content {
+          margin-top: 20px;
+        }
+        // 直接展示类型
+        &.e-view {
+          padding: 22px 0;
+          background: none;
         }
       }
     }

@@ -30,6 +30,9 @@
         <li class="demo-list-item">
           <a @click="handle8" class="router-link">隐藏关闭按钮</a>
         </li>
+        <li class="demo-list-item">
+          <a @click="handle10" class="router-link">设置主题</a>
+        </li>
       </ul>
     </div>
 
@@ -160,6 +163,21 @@ export default {
     handle9 () {
       this.ruleDialog.isShow = true
       this.ruleDialog.isUnlimitedHeight = true
+    },
+    handle10 () {
+      this.$dialog({
+        title: '金色主题',
+        message: '金色主题，传入属性 {theme: "gold"}',
+        theme: 'gold',
+        footer: {
+          cancel: {
+            text: '删除'
+          },
+          confirm: {
+            text: '考虑'
+          }
+        }
+      })
     }
   }
 }

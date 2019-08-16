@@ -23,42 +23,8 @@ export default {
   name: 'index',
   data () {
     return {
-      demoData: [
-        {
-          typeName: '操作反馈', // 名称
-          typeEnName: 'operate feedback', // 英文
-          demoList: [
-            {
-              name: 'Toast',
-              router: '/demo/Toast'
-            },
-            {
-              name: 'Loading',
-              router: '/demo/Loading'
-            },
-            {
-              name: 'Dialog',
-              router: '/demo/Dialog'
-            },
-            {
-              name: 'ActionSheet',
-              router: '/demo/ActionSheet'
-            },
-            {
-              name: 'Popup',
-              router: '/demo/Popup'
-            },
-            {
-              name: 'PopCurtain',
-              router: '/demo/PopCurtain'
-            },
-            {
-              name: 'PreLoad',
-              router: '/demo/PreLoad'
-            }
-          ]
-        }
-      ],
+      packagesTypes: [], // 组件的类型
+      demoData: [], // 路由
       foldStore: []
     }
   },
@@ -66,6 +32,8 @@ export default {
     console.log('create')
     let foldStatus = JSON.parse(sessionStorage.getItem('foldStatus'))
     this.foldStore = foldStatus || []
+
+    this.handleDemoData() //  处理demoData，把组件分类，组成路由
   },
   methods: {
     /**
@@ -79,20 +47,36 @@ export default {
      * 处理demoData，把组件分类，组成路由
      */
     handleDemoData () {
-      let demoChildrenRoutes = [] // demo路由
+      let self = this
+      let packagesData = [
+        ...config.packagesTypes
+      ]
+      let packagesDataMap = new Map()
+
+      /**
+       * 组装key value，优化查找效率
+       */
+      for (const item of packagesData) {
+        item.demoList = []
+        packagesDataMap.set(item.typeEnName, item)
+      }
 
       config.packages.map(item => {
         const name = item.name
+        const chnName = item.chnName
+        const belong = item.belong
 
-        demoChildrenRoutes.push(
-          {
-            path: name,
-            component: function (resolve) {
-              require([`@/packages/${name}/demo`], resolve)
-            }
-          }
-        )
+        let belongData = packagesDataMap.get(belong)
+
+        belongData.demoList.push({
+          name: `${name} ${chnName}`,
+          router: `/demo/${name}`
+        })
       })
+
+      self.demoData = [
+        ...packagesData
+      ]
     }
   }
 }

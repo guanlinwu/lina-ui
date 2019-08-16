@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[1],[
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[0],[
 /* 0 */,
 /* 1 */,
 /* 2 */,
@@ -15,21 +15,44 @@
 
 "use strict";
 /**
- *  {
+ * packagesTypes => { 组件分类列表
+    typeName: '操作反馈', // 名称 【*必须】
+    typeEnName: 'operate feedback' // 英文 【*必须】
+ * }
+ *
+ *  packages => { 组件列表
       'version': '1.0.0', // 版本
-      'name': 'Toast', // 组件名称
-      'chnName': '吐司', // 组件中文名
-      'desc': '轻提示。', // 组件描述
-      'type': 'method', // 组件类型，method | component
-      'belong': 'operate feedback', // 组件所属大类，operate feedback（操作反馈）
+      'name': 'Toast', // 组件名称 【*必须】
+      'chnName': '吐司', // 组件中文名 【*必须】
+      'desc': '轻提示。', // 组件描述 【*必须】
+      'type': 'method', // 组件类型，method | component 【*必须】
+      'belong': 'operate feedback', // 组件所属大类，operate feedback（操作反馈） 【*必须】
       'author': ['lin'] // 作者
     },
  */
 /* harmony default export */ __webpack_exports__["a"] = ({
-  packages: [{
+  packagesTypes: [// 组件分类列表
+  {
+    typeName: '操作反馈',
+    // 名称
+    typeEnName: 'operate feedback' // 英文
+
+  }, {
+    typeName: '视图组件',
+    // 名称
+    typeEnName: 'view component' // 英文
+
+  }, {
+    typeName: '通用函数',
+    // 名称
+    typeEnName: 'general function' // 英文
+
+  }],
+  packages: [// 组件列表
+  {
     'version': '1.0.0',
     'name': 'Toast',
-    'chnName': '吐司',
+    'chnName': '轻提示',
     'desc': '轻提示。',
     'type': 'method',
     'belong': 'operate feedback',
@@ -69,10 +92,10 @@
   }, {
     'version': '1.0.0',
     'name': 'PopCurtain',
-    'chnName': '弹层幕帘',
+    'chnName': '广告图弹窗',
     'desc': 'PopCurtain',
     'type': 'component',
-    'belong': 'operate feedback',
+    'belong': 'view component',
     'author': ['lin']
   }, {
     'version': '1.0.0',
@@ -80,7 +103,15 @@
     'chnName': '预加载',
     'desc': 'PreLoad',
     'type': 'method',
-    'belong': 'operate feedback',
+    'belong': 'general function',
+    'author': ['lin']
+  }, {
+    'version': '1.0.0',
+    'name': 'CarouselNotice',
+    'chnName': '滚动公告',
+    'desc': '滚动公告',
+    'type': 'component',
+    'belong': 'view component',
     'author': ['lin']
   }]
 });
@@ -122,17 +153,23 @@
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 13 */,
-/* 14 */,
-/* 15 */
-/***/ (function(module) {
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = {"a":"0.0.26"};
+// extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 16 */,
+/* 14 */,
+/* 15 */,
+/* 16 */
+/***/ (function(module) {
+
+module.exports = {"a":"0.0.28"};
+
+/***/ }),
 /* 17 */,
-/* 18 */
+/* 18 */,
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -142,11 +179,11 @@ module.exports = {"a":"0.0.26"};
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 19 */,
 /* 20 */,
 /* 21 */,
 /* 22 */,
-/* 23 */
+/* 23 */,
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -156,7 +193,7 @@ module.exports = {"a":"0.0.26"};
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_ActionSheet_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -166,7 +203,7 @@ module.exports = {"a":"0.0.26"};
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_Dialog_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -176,7 +213,7 @@ module.exports = {"a":"0.0.26"};
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_style_index_0_id_4245a560_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -186,7 +223,7 @@ module.exports = {"a":"0.0.26"};
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_style_index_0_id_be65e294_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -196,7 +233,7 @@ module.exports = {"a":"0.0.26"};
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_Popup_vue_vue_type_style_index_0_id_8b0b5200_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -206,8 +243,18 @@ module.exports = {"a":"0.0.26"};
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_PopCurtain_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
-/* 29 */,
 /* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_CarouselNotice_vue_vue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_CarouselNotice_vue_vue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_CarouselNotice_vue_vue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_CarouselNotice_vue_vue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+/* 31 */,
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -221,9 +268,10 @@ __webpack_require__.d(packages_namespaceObject, "Toast", function() { return pac
 __webpack_require__.d(packages_namespaceObject, "Popup", function() { return packages_Popup; });
 __webpack_require__.d(packages_namespaceObject, "PreLoad", function() { return PreLoad; });
 __webpack_require__.d(packages_namespaceObject, "PopCurtain", function() { return packages_PopCurtain; });
+__webpack_require__.d(packages_namespaceObject, "CarouselNotice", function() { return packages_CarouselNotice; });
 
 // EXTERNAL MODULE: ./node_modules/vue/dist/vue.esm.js
-var vue_esm = __webpack_require__(1);
+var vue_esm = __webpack_require__(2);
 
 // CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=7ba5bd90&
 var Appvue_type_template_id_7ba5bd90_render = function() {
@@ -244,7 +292,7 @@ Appvue_type_template_id_7ba5bd90_render._withStripped = true
 // CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=7ba5bd90&
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(2);
+var regenerator = __webpack_require__(1);
 var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/asyncToGenerator.js
@@ -309,7 +357,7 @@ var asyncToGenerator_default = /*#__PURE__*/__webpack_require__.n(asyncToGenerat
 // CONCATENATED MODULE: ./src/App.vue?vue&type=script&lang=js&
  /* harmony default export */ var src_Appvue_type_script_lang_js_ = (Appvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/App.vue?vue&type=style&index=0&lang=scss&
-var Appvue_type_style_index_0_lang_scss_ = __webpack_require__(18);
+var Appvue_type_style_index_0_lang_scss_ = __webpack_require__(19);
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(0);
@@ -389,7 +437,7 @@ var autoRem = function autoRem(docEl, padBaseSize) {
   }
 };
 // EXTERNAL MODULE: ./node_modules/vue-router/dist/vue-router.esm.js
-var vue_router_esm = __webpack_require__(14);
+var vue_router_esm = __webpack_require__(15);
 
 // EXTERNAL MODULE: ./src/config.js
 var config = __webpack_require__(6);
@@ -403,7 +451,7 @@ config["a" /* default */].packages.map(function (item) {
   demoChildrenRoutes.push({
     path: name,
     component: function component(resolve) {
-      __webpack_require__.e(/* AMD require */ 0).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(59)("./".concat(name, "/demo"))]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+      __webpack_require__.e(/* AMD require */ 4).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(65)("./".concat(name, "/demo"))]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
     }
   });
 });
@@ -414,7 +462,7 @@ config["a" /* default */].packages.map(function (item) {
   path: '/index',
   name: '首页',
   component: function component(resolve) {
-    __webpack_require__.e(/* AMD require */ 6).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(60)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+    __webpack_require__.e(/* AMD require */ 5).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(66)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
   },
   meta: {
     keepAlive: false
@@ -423,7 +471,7 @@ config["a" /* default */].packages.map(function (item) {
   path: '/demo',
   name: '示例',
   component: function component(resolve) {
-    __webpack_require__.e(/* AMD require */ 5).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(61)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+    __webpack_require__.e(/* AMD require */ 6).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(67)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
   },
   children: [].concat(demoChildrenRoutes),
   meta: {
@@ -476,7 +524,7 @@ var objectSpread = __webpack_require__(4);
 var objectSpread_default = /*#__PURE__*/__webpack_require__.n(objectSpread);
 
 // EXTERNAL MODULE: ./package.json
-var package_0 = __webpack_require__(15);
+var package_0 = __webpack_require__(16);
 
 // CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/packages/ActionSheet/ActionSheet.vue?vue&type=template&id=5a47430c&
 var ActionSheetvue_type_template_id_5a47430c_render = function() {
@@ -695,7 +743,7 @@ ActionSheetvue_type_template_id_5a47430c_render._withStripped = true
 // CONCATENATED MODULE: ./src/packages/ActionSheet/ActionSheet.vue?vue&type=script&lang=js&
  /* harmony default export */ var ActionSheet_ActionSheetvue_type_script_lang_js_ = (ActionSheetvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/packages/ActionSheet/ActionSheet.vue?vue&type=style&index=0&lang=scss&scope=true&
-var ActionSheetvue_type_style_index_0_lang_scss_scope_true_ = __webpack_require__(23);
+var ActionSheetvue_type_style_index_0_lang_scss_scope_true_ = __webpack_require__(24);
 
 // CONCATENATED MODULE: ./src/packages/ActionSheet/ActionSheet.vue
 
@@ -751,6 +799,7 @@ var Dialogvue_type_template_id_96b01234_render = function() {
           }
         ],
         staticClass: "u-pop",
+        class: ["e-theme-" + _vm.dialog.theme],
         attrs: { id: _vm.dialog.id }
       },
       [
@@ -976,7 +1025,7 @@ Dialogvue_type_template_id_96b01234_render._withStripped = true
 // CONCATENATED MODULE: ./src/packages/Dialog/Dialog.vue?vue&type=script&lang=js&
  /* harmony default export */ var Dialog_Dialogvue_type_script_lang_js_ = (Dialogvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/packages/Dialog/Dialog.vue?vue&type=style&index=0&lang=scss&
-var Dialogvue_type_style_index_0_lang_scss_ = __webpack_require__(24);
+var Dialogvue_type_style_index_0_lang_scss_ = __webpack_require__(25);
 
 // CONCATENATED MODULE: ./src/packages/Dialog/Dialog.vue
 
@@ -1209,7 +1258,7 @@ Loadingvue_type_template_id_4245a560_scoped_true_render._withStripped = true
 // CONCATENATED MODULE: ./src/packages/Loading/Loading.vue?vue&type=script&lang=js&
  /* harmony default export */ var Loading_Loadingvue_type_script_lang_js_ = (Loadingvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/packages/Loading/Loading.vue?vue&type=style&index=0&id=4245a560&lang=scss&scoped=true&
-var Loadingvue_type_style_index_0_id_4245a560_lang_scss_scoped_true_ = __webpack_require__(25);
+var Loadingvue_type_style_index_0_id_4245a560_lang_scss_scoped_true_ = __webpack_require__(26);
 
 // CONCATENATED MODULE: ./src/packages/Loading/Loading.vue
 
@@ -1376,7 +1425,7 @@ Toastvue_type_template_id_be65e294_scoped_true_render._withStripped = true
 // CONCATENATED MODULE: ./src/packages/Toast/Toast.vue?vue&type=script&lang=js&
  /* harmony default export */ var Toast_Toastvue_type_script_lang_js_ = (Toastvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/packages/Toast/Toast.vue?vue&type=style&index=0&id=be65e294&lang=scss&scoped=true&
-var Toastvue_type_style_index_0_id_be65e294_lang_scss_scoped_true_ = __webpack_require__(26);
+var Toastvue_type_style_index_0_id_be65e294_lang_scss_scoped_true_ = __webpack_require__(27);
 
 // CONCATENATED MODULE: ./src/packages/Toast/Toast.vue
 
@@ -1604,7 +1653,7 @@ Popupvue_type_template_id_8b0b5200_scoped_true_render._withStripped = true
 // CONCATENATED MODULE: ./src/packages/Popup/Popup.vue?vue&type=script&lang=js&
  /* harmony default export */ var Popup_Popupvue_type_script_lang_js_ = (Popupvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/packages/Popup/Popup.vue?vue&type=style&index=0&id=8b0b5200&lang=scss&scoped=true&
-var Popupvue_type_style_index_0_id_8b0b5200_lang_scss_scoped_true_ = __webpack_require__(27);
+var Popupvue_type_style_index_0_id_8b0b5200_lang_scss_scoped_true_ = __webpack_require__(28);
 
 // CONCATENATED MODULE: ./src/packages/Popup/Popup.vue
 
@@ -1839,7 +1888,7 @@ PopCurtainvue_type_template_id_73830274_render._withStripped = true
 // CONCATENATED MODULE: ./src/packages/PopCurtain/PopCurtain.vue?vue&type=script&lang=js&
  /* harmony default export */ var PopCurtain_PopCurtainvue_type_script_lang_js_ = (PopCurtainvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/packages/PopCurtain/PopCurtain.vue?vue&type=style&index=0&lang=scss&scope=true&
-var PopCurtainvue_type_style_index_0_lang_scss_scope_true_ = __webpack_require__(28);
+var PopCurtainvue_type_style_index_0_lang_scss_scope_true_ = __webpack_require__(29);
 
 // CONCATENATED MODULE: ./src/packages/PopCurtain/PopCurtain.vue
 
@@ -1877,6 +1926,472 @@ PopCurtain.install = function (Vue) {
 /* harmony default export */ var packages_PopCurtain = ({
   component: PopCurtain
 });
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=template&id=31d35fe6&scoped=true&
+var CarouselNoticevue_type_template_id_31d35fe6_scoped_true_render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("transition", { attrs: { name: "f-fade" } }, [
+    _c("div", { staticClass: "u-app-carousel-text" }, [
+      _c("section", { staticClass: "u-widget-inner" }, [
+        _c(
+          "div",
+          { staticClass: "carousel-text-outter", style: _vm.boxStyle },
+          [
+            _c(
+              "div",
+              { staticClass: "carousel-text-list" },
+              [
+                _c(
+                  "transition",
+                  {
+                    attrs: { css: false },
+                    on: {
+                      enter: _vm.enter,
+                      leave: _vm.leave,
+                      "before-enter": _vm.beforeEnter,
+                      "after-enter": _vm.afterEnter
+                    }
+                  },
+                  [
+                    _c(
+                      "div",
+                      {
+                        key: _vm.nowIndex,
+                        ref: "contentRef",
+                        staticClass: "carousel-text-item"
+                      },
+                      [
+                        _c(
+                          "a",
+                          {
+                            staticClass: "link",
+                            attrs: { href: "javascript:;" },
+                            on: {
+                              click: function($event) {
+                                return _vm.handleClick(_vm.scrollData)
+                              }
+                            }
+                          },
+                          [
+                            _c("div", { staticClass: "news-tag-box" }, [
+                              _c(
+                                "span",
+                                {
+                                  staticClass: "news-tag",
+                                  style: {
+                                    borderColor:
+                                      _vm.scrollData.tag &&
+                                      _vm.scrollData.tag.color,
+                                    color:
+                                      _vm.scrollData.tag &&
+                                      _vm.scrollData.tag.color
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    _vm._s(
+                                      (_vm.scrollData.tag &&
+                                        _vm.scrollData.tag.title) ||
+                                        "消息"
+                                    )
+                                  )
+                                ]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("h3", { staticClass: "content" }, [
+                              _c("p", {
+                                ref: "contentInnerRef",
+                                staticClass: "content-inner",
+                                style: _vm.textStyle,
+                                domProps: {
+                                  innerHTML: _vm._s(_vm.scrollData.title)
+                                }
+                              })
+                            ])
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ],
+              1
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _vm.isShowClose
+          ? _c("div", {
+              staticClass: "carousel-text-close",
+              on: { click: _vm.close }
+            })
+          : _vm._e()
+      ])
+    ])
+  ])
+}
+var CarouselNoticevue_type_template_id_31d35fe6_scoped_true_staticRenderFns = []
+CarouselNoticevue_type_template_id_31d35fe6_scoped_true_render._withStripped = true
+
+
+// CONCATENATED MODULE: ./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=template&id=31d35fe6&scoped=true&
+
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib??ref--1!./node_modules/vue-loader/lib??vue-loader-options!./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=script&lang=js&
+
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ var CarouselNoticevue_type_script_lang_js_ = ({
+  name: 'CarouselNotice',
+  components: {},
+  data: function data() {
+    return {
+      nowIndex: 0 // 当先显示的文字的index
+
+    };
+  },
+  props: {
+    intervals: {
+      // 上下滚动的间隔时间，不包括左右滚动  ms
+      type: Number,
+      default: 3000,
+      validator: function validator(value) {
+        return value > 0;
+      }
+    },
+    duration: {
+      // 上下动画过渡时间 ms
+      type: Number,
+      default: 500,
+      validator: function validator(value) {
+        return value > 0;
+      }
+    },
+    textStyle: {
+      // 文本内容样式
+      type: Object
+    },
+    boxStyle: {
+      // 外框内容样式
+      type: Object
+    },
+    dataList: {
+      // 数据
+      type: Array
+    },
+    isShowClose: {
+      // 是否显示关闭按钮
+      type: Boolean,
+      default: false
+    },
+    isNeedHorizontal: {
+      // 是否需要先横向滚动文字，滚动完毕纵向滚动
+      type: Boolean,
+      default: true
+    },
+    slideSpeed: {
+      // 横向移动的速度 像素/s
+      type: Number,
+      default: 50,
+      validator: function validator(value) {
+        return value > 0;
+      }
+    }
+  },
+  computed: {
+    /**
+     * 从传入的数组中实时获取内容
+     */
+    scrollData: function scrollData() {
+      return this.dataList.length ? this.dataList[this.nowIndex] : '请提供内容';
+    }
+  },
+  mounted: function mounted() {
+    this.$nextTick(function () {
+      this.startScroll(); // 开始轮播
+    });
+  },
+
+  /**
+   * 销毁则停止计时器
+   */
+  destroyed: function destroyed() {
+    console.log('destroyed');
+  },
+  methods: {
+    /**
+     * 阻塞
+     */
+    sleep: function sleep(time) {
+      return new Promise(function (resolve) {
+        setTimeout(function () {
+          resolve();
+        }, time || 0);
+      });
+    },
+
+    /**
+     *  当内容进入轮播框之前执行的操作
+     *  el---> 目标元素
+     */
+    beforeEnter: function beforeEnter(el) {
+      var outHeight = this.$refs.contentRef.offsetHeight; // 获取轮播框的高度
+      // 初始化轮播内容的位置和透明度
+
+      el.style = "transition: all ".concat(this.duration, "ms ease-in; -webkit-transition: all ").concat(this.duration, "ms ease-in;transform: translateY(").concat(outHeight, "px);-webkit-transform: translateY(").concat(outHeight, "px);opactity: 0;");
+    },
+
+    /**
+     * 当内容进入这个轮播框时执行的操作，即一些入场动画
+     * el ---> 目标元素
+     * done 表示进入完成的回调。
+     */
+    enter: function enter(el, done) {
+      el.style = "transition: all ".concat(this.duration, "ms ease-in; -webkit-transition: all ").concat(this.duration, "ms ease-in;transform: translateY(", 0, "px);-webkit-transform: translateY(", 0, "px);opactity: 1;");
+      setTimeout(function () {
+        done();
+      }, this.duration);
+    },
+
+    /**
+     * 当内容离开这个轮播框时执行的操作，即一些出场动画
+     * el ---> 目标元素
+     * done 表示离开完成的回调。
+     */
+    leave: function leave(el, done) {
+      var outHeight = this.$refs.contentRef.offsetHeight; // 获取轮播框的高度
+
+      el.style = "transition: all ".concat(this.duration, "ms ease-in; -webkit-transition: all ").concat(this.duration, "ms ease-in;transform: translateY(-").concat(outHeight, "px);-webkit-transform: translateY(-").concat(outHeight, "px);opactity: 0;");
+      setTimeout(function () {
+        done();
+      }, this.duration);
+    },
+
+    /**
+     * 当内容进入后，执行的操作
+     * el ---> 目标元素
+     */
+    afterEnter: function () {
+      var _afterEnter = asyncToGenerator_default()(
+      /*#__PURE__*/
+      regenerator_default.a.mark(function _callee(el) {
+        var _this = this;
+
+        return regenerator_default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return this.scrollHorizontal();
+
+              case 2:
+                setTimeout(function () {
+                  _this.changeShow();
+                }, this.intervals);
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function afterEnter(_x) {
+        return _afterEnter.apply(this, arguments);
+      }
+
+      return afterEnter;
+    }(),
+
+    /**
+     * 开始进行轮播滚动，即入口
+     */
+    startScroll: function () {
+      var _startScroll = asyncToGenerator_default()(
+      /*#__PURE__*/
+      regenerator_default.a.mark(function _callee2() {
+        return regenerator_default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return this.sleep(this.intervals);
+
+              case 2:
+                _context2.next = 4;
+                return this.scrollHorizontal();
+
+              case 4:
+                this.changeShow();
+
+              case 5:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function startScroll() {
+        return _startScroll.apply(this, arguments);
+      }
+
+      return startScroll;
+    }(),
+
+    /**
+     * 改变显示的内容，这是触发事件
+     */
+    changeShow: function changeShow() {
+      this.nowIndex++;
+      this.nowIndex = this.nowIndex % this.dataList.length;
+    },
+
+    /**
+     * 水平方向单条滚动文字
+     */
+    scrollHorizontal: function scrollHorizontal(index) {
+      var _this2 = this;
+
+      return new Promise(function (resolve, reject) {
+        var self = _this2;
+        var $contentInner = self.$refs.contentInnerRef;
+        var offsetWidth = $contentInner.offsetWidth;
+        var scrollWidth = $contentInner.scrollWidth;
+        /**
+         * 文字回复原位置
+         */
+
+        self.$refs.contentInnerRef.style.transition = "";
+        self.$refs.contentInnerRef.style.transform = "translateX(0)";
+
+        if (scrollWidth > offsetWidth) {
+          // 如果文本超出，则先向左滚动至完全显示
+          var slideDistance = scrollWidth - offsetWidth; // 滚动距离
+
+          slideDistance *= 1.0; // 实际横向滚动的距离，比传进来的内容多10%的距离
+
+          var slideSpeed = self.slideSpeed; // 滚动速率
+
+          var slideTime = +(slideDistance / slideSpeed).toFixed(3); // 滚动时间 = 滚动距离 / 滚动速率
+
+          /**
+           * 1s后开始滚动 同时缓解一个bug
+           */
+
+          setTimeout(function () {
+            $contentInner.style.transition = "transform ".concat(slideTime, "s linear");
+            $contentInner.style.transform = "translateX(".concat(-slideDistance, "px)");
+          }, 1000);
+          /**
+          * 滚动结束，下一条
+          */
+
+          setTimeout(function () {
+            resolve();
+          }, slideTime * 1000);
+        } else {
+          resolve();
+        }
+      });
+    },
+
+    /**
+     * 处理每一个公告点击
+     */
+    handleClick: function handleClick(item) {
+      this.$emit('click');
+    },
+
+    /**
+     * 点击关闭按钮
+     */
+    close: function close() {
+      this.isShowClose && this.$emit('close');
+    }
+  }
+});
+// CONCATENATED MODULE: ./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=script&lang=js&
+ /* harmony default export */ var CarouselNotice_CarouselNoticevue_type_script_lang_js_ = (CarouselNoticevue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=style&index=0&id=31d35fe6&lang=scss&scoped=true&
+var CarouselNoticevue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true_ = __webpack_require__(30);
+
+// CONCATENATED MODULE: ./src/packages/CarouselNotice/CarouselNotice.vue
+
+
+
+
+
+
+/* normalize component */
+
+var CarouselNotice_component = Object(componentNormalizer["a" /* default */])(
+  CarouselNotice_CarouselNoticevue_type_script_lang_js_,
+  CarouselNoticevue_type_template_id_31d35fe6_scoped_true_render,
+  CarouselNoticevue_type_template_id_31d35fe6_scoped_true_staticRenderFns,
+  false,
+  null,
+  "31d35fe6",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var CarouselNotice_api; }
+CarouselNotice_component.options.__file = "src/packages/CarouselNotice/CarouselNotice.vue"
+/* harmony default export */ var CarouselNotice = (CarouselNotice_component.exports);
+// CONCATENATED MODULE: ./src/packages/CarouselNotice/index.js
+
+
+CarouselNotice.install = function (Vue) {
+  Vue.component(CarouselNotice.name, CarouselNotice);
+};
+
+ // 最后将以上内容导出，即可在其他地方进行使用
+
+/* harmony default export */ var packages_CarouselNotice = ({
+  component: CarouselNotice
+});
 // CONCATENATED MODULE: ./src/packages/index.js
 
 
@@ -1885,8 +2400,9 @@ PopCurtain.install = function (Vue) {
 
 
 
+
 // EXTERNAL MODULE: ./src/styles/index.scss
-var styles = __webpack_require__(29);
+var styles = __webpack_require__(31);
 
 // CONCATENATED MODULE: ./src/index.js
 
@@ -1972,4 +2488,4 @@ new vue_esm["a" /* default */]({
 });
 
 /***/ })
-],[[30,2,3,4]]]);
+],[[32,1,2,3]]]);

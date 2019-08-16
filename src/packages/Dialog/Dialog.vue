@@ -1,7 +1,7 @@
 <template>
   <transition name="f-fade">
     <div
-      class="u-pop"
+      class="u-pop" :class="[`e-theme-${dialog.theme}`]"
       :id="dialog.id"
       v-show="dialog && dialog.isShow"
     >
@@ -238,6 +238,25 @@ export default {
       }
     }
   }
+
+  // 针对黑色主题的弹窗
+  $black-theme-bg: #000; // 背景色
+
+  // 黑色主题
+  &.e-theme-gold {
+    .pop-footer {
+      > a {
+        color: #ac9374;
+        @include border-width-1px(1, 1, 1, 1, #ac9374, 20px);
+
+        &:last-child {
+          color: #fff;
+          background: linear-gradient(to right, #d8bb9a, #8b6e4c);
+          @include border-width-1px(0, 0, 0, 0, transparent, 20px);
+        }
+      }
+    }
+  }
 }
 
 // 针对主题的弹窗
@@ -261,24 +280,4 @@ $blue-theme-color: #009cf8; // 蓝色主题
   }
 }
 
-// 针对黑色主题的弹窗
-$black-theme-bg: #000; // 背景色
-
-// 黑色主题
-.e-theme-black {
-  .u-pop {
-    .pop-footer {
-      > a {
-        color: #ac9374;
-        @include border-width-1px(1, 1, 1, 1, #ac9374, 20px);
-
-        &:last-child {
-          color: #fff;
-          background: linear-gradient(to right, #d8bb9a, #8b6e4c);
-          @include border-width-1px(0, 0, 0, 0, transparent, 20px);
-        }
-      }
-    }
-  }
-}
 </style>

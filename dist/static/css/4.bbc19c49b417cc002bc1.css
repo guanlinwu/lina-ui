@@ -15,13 +15,6 @@
 * top,right,bottom,left 值为 1 或者 0;
 * @include border-width-1px(0, 0, 2, 0, #f57c38);
 */
-.page-demo-dialog .rules[data-v-23b4513e] {
-  text-align: left;
-  font-size: 0.37333rem;
-  font-weight: 400;
-  color: #929292;
-  line-height: 0.58667rem;
-}
 
 @charset "UTF-8";
 /* define mixin */
@@ -31,6 +24,13 @@
 * top,right,bottom,left 值为 1 或者 0;
 * @include border-width-1px(0, 0, 2, 0, #f57c38);
 */
+.page-demo-dialog .rules[data-v-23b4513e] {
+  text-align: left;
+  font-size: 0.37333rem;
+  font-weight: 400;
+  color: #929292;
+  line-height: 0.58667rem;
+}
 
 @charset "UTF-8";
 /* define mixin */

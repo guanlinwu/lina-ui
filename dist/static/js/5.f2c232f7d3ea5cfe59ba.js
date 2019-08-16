@@ -1,24 +1,80 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[6],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[5],{
 
-/***/ 39:
+/***/ 41:
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
 
-/***/ 49:
+/***/ 51:
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithoutHoles = __webpack_require__(52);
+
+var iterableToArray = __webpack_require__(53);
+
+var nonIterableSpread = __webpack_require__(54);
+
+function _toConsumableArray(arr) {
+  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
+}
+
+module.exports = _toConsumableArray;
+
+/***/ }),
+
+/***/ 52:
+/***/ (function(module, exports) {
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+module.exports = _arrayWithoutHoles;
+
+/***/ }),
+
+/***/ 53:
+/***/ (function(module, exports) {
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+module.exports = _iterableToArray;
+
+/***/ }),
+
+/***/ 54:
+/***/ (function(module, exports) {
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+module.exports = _nonIterableSpread;
+
+/***/ }),
+
+/***/ 55:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(39);
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(41);
 /* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
 /* unused harmony reexport * */
  /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_lib_loader_js_ref_5_3_node_modules_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_lib_index_js_vue_loader_options_index_vue_vue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
-/***/ 60:
+/***/ 66:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -131,10 +187,15 @@ render._withStripped = true
 
 // CONCATENATED MODULE: ./src/views/index.vue?vue&type=template&id=a83bd3b0&scoped=true&
 
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/toConsumableArray.js
+var toConsumableArray = __webpack_require__(51);
+var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
+
 // EXTERNAL MODULE: ./src/config.js
 var config = __webpack_require__(6);
 
 // CONCATENATED MODULE: ./node_modules/babel-loader/lib??ref--1!./node_modules/vue-loader/lib??vue-loader-options!./src/views/index.vue?vue&type=script&lang=js&
+
 //
 //
 //
@@ -158,34 +219,10 @@ var config = __webpack_require__(6);
   name: 'index',
   data: function data() {
     return {
-      demoData: [{
-        typeName: '操作反馈',
-        // 名称
-        typeEnName: 'operate feedback',
-        // 英文
-        demoList: [{
-          name: 'Toast',
-          router: '/demo/Toast'
-        }, {
-          name: 'Loading',
-          router: '/demo/Loading'
-        }, {
-          name: 'Dialog',
-          router: '/demo/Dialog'
-        }, {
-          name: 'ActionSheet',
-          router: '/demo/ActionSheet'
-        }, {
-          name: 'Popup',
-          router: '/demo/Popup'
-        }, {
-          name: 'PopCurtain',
-          router: '/demo/PopCurtain'
-        }, {
-          name: 'PreLoad',
-          router: '/demo/PreLoad'
-        }]
-      }],
+      packagesTypes: [],
+      // 组件的类型
+      demoData: [],
+      // 路由
       foldStore: []
     };
   },
@@ -193,6 +230,7 @@ var config = __webpack_require__(6);
     console.log('create');
     var foldStatus = JSON.parse(sessionStorage.getItem('foldStatus'));
     this.foldStore = foldStatus || [];
+    this.handleDemoData(); //  处理demoData，把组件分类，组成路由
   },
   methods: {
     /**
@@ -207,24 +245,58 @@ var config = __webpack_require__(6);
      * 处理demoData，把组件分类，组成路由
      */
     handleDemoData: function handleDemoData() {
-      var demoChildrenRoutes = []; // demo路由
+      var self = this;
+
+      var packagesData = toConsumableArray_default()(config["a" /* default */].packagesTypes);
+
+      var packagesDataMap = new Map();
+      /**
+       * 组装key value，优化查找效率
+       */
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = packagesData[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var item = _step.value;
+          item.demoList = [];
+          packagesDataMap.set(item.typeEnName, item);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
 
       config["a" /* default */].packages.map(function (item) {
         var name = item.name;
-        demoChildrenRoutes.push({
-          path: name,
-          component: function component(resolve) {
-            __webpack_require__.e(/* AMD require */ 0).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(59)("./".concat(name, "/demo"))]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
-          }
+        var chnName = item.chnName;
+        var belong = item.belong;
+        var belongData = packagesDataMap.get(belong);
+        belongData.demoList.push({
+          name: "".concat(name, " ").concat(chnName),
+          router: "/demo/".concat(name)
         });
       });
+      self.demoData = toConsumableArray_default()(packagesData);
     }
   }
 });
 // CONCATENATED MODULE: ./src/views/index.vue?vue&type=script&lang=js&
  /* harmony default export */ var src_viewsvue_type_script_lang_js_ = (viewsvue_type_script_lang_js_); 
 // EXTERNAL MODULE: ./src/views/index.vue?vue&type=style&index=0&id=a83bd3b0&lang=scss&scoped=true&
-var viewsvue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true_ = __webpack_require__(49);
+var viewsvue_type_style_index_0_id_a83bd3b0_lang_scss_scoped_true_ = __webpack_require__(55);
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(0);
