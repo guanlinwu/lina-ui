@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.29 (2019-08-16)
+
+### Bug Fixes
++ 修复CarouselNotice(轮播公告组件)的tag边框在某些设备下无法显示的bug
+
 ## 0.0.28 (2019-08-16)
 
 ### Bug Fixes

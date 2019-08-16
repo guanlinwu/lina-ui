@@ -284,7 +284,7 @@ export default {
           line-height: 42px;
           font-size: 28px;
           color: #fa5661;
-          border: 1px solid #fa5661;
+          border: 1Px solid #fa5661;
           border-radius: 4px;
         }
       }
