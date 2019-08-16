@@ -316,6 +316,7 @@ export default {
 | option.isHideFooter	        |   是否隐藏底部	   |   Boolean   | false |
 | option.isHideClose	        |   是否右上角关闭按钮	   |   Boolean   | false |
 | option.preventMaskClose	        |   是否禁止点击蒙层关闭窗口	   |   Boolean   | false |
+| option.theme	        |   主题	   |   String   | 默认为空，可选'gold'金色主题 |
 | option.footer	        |   底部按钮的配置	   |   Boolean   | false |
 | option.footer.$name	        |   底部按钮, $name是一个对象，名称可以自定义,   |   Object   | 无 |
 | option.footer.$name.text	        |   底部按钮的文本   |   String   | 无 |
@@ -611,5 +612,94 @@ export default {
 | --------   | -----:  | :----:  | :----:  |
 | dialog.isShow     | 是否可见 |   Boolean  | false |
 | dialog.closeBtnPosition        |    关闭按钮位置，'top', 'top-left', 'top-right', 'bottom', 'bottom-left', 'bottom-right'	    |  Function  | ‘bottom’ |
+
+
+### CarouselNotice
+> 基本用法
+
+```html
+<!-- 上下跑马灯 -->
+<CarouselNotice :dataList="dataList" :isNeedHorizontal="false" :isShow="true"/>
+<!-- 先左右再上下跑马灯（默认） -->
+<CarouselNotice :dataList="dataList" :isShow="true"/>
+<!-- 显示关闭按钮 -->
+<CarouselNotice :dataList="dataList" :isShowClose="true" :isShow="true" @close="close3"/>
+<!-- 设置横行滚动速度 -->
+<CarouselNotice :dataList="dataList" :slideSpeed="100" :isShow="true"/>
+<!-- 设置内容文本样式 -->
+<CarouselNotice :dataList="dataList" :textStyle="textStyle" :isShow="true"/>
+<!-- 设置外框样式 -->
+<CarouselNotice :dataList="dataList" :boxStyle="boxStyle" :isShow="true"/>
+```
+
+```javascript
+export default {
+  name: 'demo-carouselNotice',
+  data () {
+    return {
+      textStyle: { // 设置内容文本样式
+        color: '#20aadf',
+        fontWeight: 300
+      },
+      boxStyle: { // 设置外框样式
+        height: '36px',
+        borderRadius: '30px',
+        opacity: 0.8,
+        backgroundColor: '#0c0c0c'
+      },
+      dataList: [
+        {
+          id: 0,
+          title: '这是轮播公告栏',
+          tag: {
+            title: '基础'
+          }
+        },
+        {
+          id: 1,
+          title: '请注意，请注意，如果字数溢出，则先左右轮播，然后再上下轮播'
+        },
+        {
+          id: 2,
+          title: '被设置了tag的内容和颜色',
+          tag: {
+            title: '重点',
+            borderColor: '#20aadf',
+            color: '#20aadf'
+          }
+        }
+      ],
+      data1: {
+      }
+    }
+  },
+  methods: {
+    close3 () {
+      this.$toast('close, you can do something')
+    }
+  }
+}
+```
+
+> Prop
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| intervals     | 上下滚动的间隔时间，不包括左右滚动，ms为单位 |   Number  | 3000 |
+| duration        |    上下动画过渡时间，ms为单位	    |  Number  | 500 |
+| textStyle        |    文本内容样式	    |  Object  | - |
+| boxStyle        |    外框内容样式	    |  Object  | - |
+| dataList        |    数据	    |  Array  | - |
+| dataList[index].tag     |    tag配置，demo: {title: 'tag文本',borderColor: '#20aadf',color: '#20aadf'}	    |  Object  | - |
+| isShowClose        |    是否显示关闭按钮	    |  Boolean  | false |
+| isNeedHorizontal        |    是否需要先横向滚动文字，滚动完毕纵向滚动	    |  Boolean  | true |
+| slideSpeed        |    横向移动的速度 像素/s	    |  Number  | 50 |
+
+> Event
+
+| 名称        | 说明   |  回调参数  |
+| --------   | -----:  | :----:  |
+| click     | 点击每一条公告触发	 |   选中列表项   |
+| close	        |  关闭时触发	   |   无   |
 
 [1]: https://guanlinwu.github.io/lina-ui/dist/index.html#/index

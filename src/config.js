@@ -1,20 +1,39 @@
 /**
- *  {
+ * packagesTypes => { 组件分类列表
+    typeName: '操作反馈', // 名称 【*必须】
+    typeEnName: 'operate feedback' // 英文 【*必须】
+ * }
+ *
+ *  packages => { 组件列表
       'version': '1.0.0', // 版本
-      'name': 'Toast', // 组件名称
-      'chnName': '吐司', // 组件中文名
-      'desc': '轻提示。', // 组件描述
-      'type': 'method', // 组件类型，method | component
-      'belong': 'operate feedback', // 组件所属大类，operate feedback（操作反馈）
+      'name': 'Toast', // 组件名称 【*必须】
+      'chnName': '吐司', // 组件中文名 【*必须】
+      'desc': '轻提示。', // 组件描述 【*必须】
+      'type': 'method', // 组件类型，method | component 【*必须】
+      'belong': 'operate feedback', // 组件所属大类，operate feedback（操作反馈） 【*必须】
       'author': ['lin'] // 作者
     },
  */
 export default {
-  packages: [
+  packagesTypes: [ // 组件分类列表
+    {
+      typeName: '操作反馈', // 名称
+      typeEnName: 'operate feedback' // 英文
+    },
+    {
+      typeName: '视图组件', // 名称
+      typeEnName: 'view component' // 英文
+    },
+    {
+      typeName: '通用函数', // 名称
+      typeEnName: 'general function' // 英文
+    }
+  ],
+  packages: [ // 组件列表
     {
       'version': '1.0.0',
       'name': 'Toast',
-      'chnName': '吐司',
+      'chnName': '轻提示',
       'desc': '轻提示。',
       'type': 'method',
       'belong': 'operate feedback',
@@ -59,10 +78,10 @@ export default {
     {
       'version': '1.0.0',
       'name': 'PopCurtain',
-      'chnName': '弹层幕帘',
+      'chnName': '广告图弹窗',
       'desc': 'PopCurtain',
       'type': 'component',
-      'belong': 'operate feedback',
+      'belong': 'view component',
       'author': ['lin']
     },
     {
@@ -71,7 +90,16 @@ export default {
       'chnName': '预加载',
       'desc': 'PreLoad',
       'type': 'method',
-      'belong': 'operate feedback',
+      'belong': 'general function',
+      'author': ['lin']
+    },
+    {
+      'version': '1.0.0',
+      'name': 'CarouselNotice',
+      'chnName': '滚动公告',
+      'desc': '滚动公告',
+      'type': 'component',
+      'belong': 'view component',
       'author': ['lin']
     }
   ]

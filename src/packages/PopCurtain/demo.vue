@@ -10,7 +10,7 @@
           <a @click="handle2" class="router-link">内嵌slot</a>
         </li>
         <li class="demo-list-item">
-          <a @click="handle3" class="router-link">设置关闭按钮</a>
+          <a @click="handle3" class="router-link">设置关闭按钮位置</a>
         </li>
         <li class="demo-list-item">
           <a @click="handle4" class="router-link">监听点击幕帘内容事件</a>

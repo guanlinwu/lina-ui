@@ -1,6 +1,6 @@
 {
   "name": "lina-ui",
-  "version": "0.0.26",
+  "version": "0.0.28",
   "description": "移动端Vue组件库",
   "main": "dist/lina-ui.min.js",
   "scripts": {
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/guanlinwu/qm-ui.git.git"
+    "url": "git+https://github.com/guanlinwu/lina-ui.git.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/guanlinwu/qm-ui.git/issues"
+    "url": "https://github.com/guanlinwu/lina-ui.git/issues"
   },
-  "homepage": "https://github.com/guanlinwu/qm-ui.git#readme",
+  "homepage": "https://github.com/guanlinwu/lina-ui.git#readme",
   "dependencies": {
     "vue": "^2.6.8",
     "vue-router": "^3.0.6"
