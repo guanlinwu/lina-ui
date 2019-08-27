@@ -14,9 +14,12 @@ export default {
 <style lang="scss" scoped>
 .page-demo-total {
   .nav {
+    position: relative;
     display: block;
     padding: 20px 30px;
     font-size: 32px;
+    z-index: 20;
+    background: #f6f6f6;
     .back-btn {
       color: #000;
     }

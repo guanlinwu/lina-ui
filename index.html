@@ -9,8 +9,19 @@
     <meta content="" name="keywords">
     <meta content="" name="description">
     <title>UI</title>
+    <script>
+    (function () {
+      var script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/eruda'
+      script.onload = function () {
+        eruda.init()
+      }
+      document.head.appendChild(script)
+    })()
+    </script>
   </head>
   <body>
     <div id="app"></div>
   </body>
+
 </html>
