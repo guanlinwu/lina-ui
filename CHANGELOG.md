@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.30 (2019-08-27)
+
+### Bug Fixes
++ none
+
+### Features
++ 添加新组件 PullRefresh，下拉刷新
+
 ## 0.0.29 (2019-08-16)
 
 ### Bug Fixes

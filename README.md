@@ -21,10 +21,9 @@ import 'lina-ui/dist/lina-ui.min.css'
 
 Vue.use(linaUi)
 ```
-
 # 组件
 ## 类型：操作反馈
-### Toast
+## <font color=#cf3e8e>Toast</font>
 > 基本用法
 ```javascript
 export default {
@@ -56,7 +55,7 @@ linaUi.Toast({
 | option.message        |   文案	   |   String   | 无 |
 
 
-### Loading
+## <font color=#cf3e8e>Loading</font>
 > 基本用法
 ```javascript
 export default {
@@ -83,7 +82,7 @@ export default {
 | option.isHideMessage	     | 是否隐藏文案 |   boolean	  | false |
 | option.message        |   文案	   |   String   | 无 |
 
-### Dialog
+## <font color=#cf3e8e>Dialog</font>
 > 基本用法
 ```javascript
 this.$dialog({
@@ -322,7 +321,7 @@ export default {
 | option.footer.$name.text	        |   底部按钮的文本   |   String   | 无 |
 | option.footer.$name.callBack        |   底部按钮的回调事件   |   Function   | 无 |
 
-### Popup
+## <font color=#cf3e8e>Popup</font>
 > 基本用法
 
 ```html
@@ -378,7 +377,8 @@ export default {
 | closeCallBack        |    关闭蒙层的回调事件	    |  Function  | 无 |
 
 
-### ActionSheet
+## <font color=#cf3e8e>ActionSheet</font>
+
 > 基本用法
 
 ```html
@@ -498,52 +498,89 @@ export default {
 | choose     | 选择之后触发	 |   选中列表项   |
 | close	        |  关闭时触发	   |   无   |
 
-### Preload
-> 图片预加载 this.$preload.loadImgs
+## <font color=#cf3e8e>PullRefresh</font>
+
+> 基本用法
+
+```html
+<PullRefresh
+  @refresh="refresh"
+  v-bind="pullRefreshSetting"
+>
+  <div class="pull-content">
+    <div class="demo-list-box e-unfold">
+      <h4 class="type">基本用法</h4>
+      <ul class="demo-list">
+        <li class="demo-list-item">
+          <a @click="handle1" class="router-link">设置下拉过程文案（pullingText）</a>
+        </li>
+        <li class="demo-list-item">
+          <a @click="handle2" class="router-link">设置释放过程文案（loosingText）</a>
+        </li>
+        <li class="demo-list-item">
+          <a @click="handle3" class="router-link">设置加载过程文案（loadingText）</a>
+        </li>
+      </ul>
+    </div>
+    <img src="https://dummyimage.com/600x1000/000/fff" alt="">
+  </div>
+</PullRefresh>
+```
 
 ```javascript
-// 图片预加载 this.$preload.loadImgs
-async handle1 () {
-  let self = this
-  self.$loading.show()
-  /**
-   * 预加载图片
-   * @param {array | object} opts         如果opts是数组，则直接作为opts.urls处理
-   * @param {array} opts.urls             图片链接
-   * @param {function} opts.eachLoadFunc  每张图片加载完毕的回调，回调参数是percent（加载的百分数，1-100）
-   * @param {function} opts.callback      所有图片加载完毕的回调
-   * @param {function} opts.maxPercent    加载完毕后最大百分数,默认是100，需要设置的情形是，假如设置80，则先加载完成图片，百分数是80%，然后剩下20%，额外处理，例如加载视频或者其他东西
-   * @returns Promise
-   */
-  await this.$preload.loadImgs({
-    urls: [
-      'http://img.daimg.com/uploads/allimg/190716/1-1ZG6160132.jpg',
-      'http://img.daimg.com/uploads/allimg/190712/1-1ZG2164231.jpg',
-      'http://img.daimg.com/uploads/allimg/190628/1-1Z62R30555.jpg',
-      'http://qumi.inrice.top/carowner/images/zwlcr.jpg',
-      'http://qumi.inrice.top/carowner/images/zhuzhuche.jpg',
-      'http://img.daimg.com/uploads/allimg/190711/1-1ZG1002105.jpg',
-      'http://img.daimg.com/uploads/allimg/190711/1-1ZG11IZ6.jpg',
-      'http://img.daimg.com/uploads/allimg/190711/1-1ZG11H912.jpg',
-      'http://img.daimg.com/uploads/allimg/190711/1-1ZG11FH5.jpg',
-      'http://img.daimg.com/uploads/allimg/190711/1-1ZG1143T7.jpg',
-      'https://cdn.dribbble.com/assets/art-banners/twisted-511f83427b2e298f5859b4a101073a4e05f7cd89f974cd103278640390a3599a.gif',
-      'https://cdn.dribbble.com/users/2894633/screenshots/6785772/pottery_4x.jpg',
-      'https://cdn.dribbble.com/users/1227650/screenshots/6784592/accord_4x.jpg'
-    ],
-    eachLoadFunc (percent) { // 每张图片加载完毕的回调，回调参数是percent（加载的百分数，1-100）
-      console.log(percent)
-      self.$loading.setMessage(percent)
-    },
-    callback () { // 所有图片加载完毕的回调
-      self.$toast('加载完毕')
+export default {
+  name: 'demo-pull-refresh',
+  data () {
+    return {
+      count: 0,
+      pullRefreshSetting: {
+      }
     }
-  })
-  self.$loading.hide()
+  },
+  methods: {
+    refresh ({ done }) {
+      this.count++
+      this.$toast('刷新成功')
+      setTimeout(() => {
+        done() // 下拉刷新时触发，在refresh事件一定要执行done()，才能去除loading状态，用于下拉后等待请求
+      }, 1000)
+    },
+    handle1 () {
+      this.pullRefreshSetting.pullingText = '下拉下拉下拉快下拉'
+      this.$toast('设置成功')
+    },
+    handle2 () {
+      this.pullRefreshSetting.loosingText = '释放我，即可刷新刷新'
+      this.$toast('设置成功')
+    },
+    handle3 () {
+      this.pullRefreshSetting.loadingText = '加载中，请等待'
+      this.$toast('设置成功')
+    }
+  }
 }
 ```
 
-### PopCurtain
+> Prop
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| headHeight     | 顶部内容高度 |   Number  | 50	 |
+| pullingText        |    下拉过程文案	    |  String  | 下拉即可刷新... |
+| loosingText        |    释放过程文案	    |  String  | 释放即可刷新... |
+| loadingText        |    加载过程文案	    |  String  | 加载中... |
+| disabled        |    是否禁用下拉刷新		    |  Boolean  | false |
+
+> Event
+
+| 名称        | 说明   |  回调参数  |
+| --------   | -----:  | :----:  |
+| refresh     | 下拉刷新时触发，在refresh事件一定要执行done()，才能去除loading状态，用于下拉后等待请求		 |   { done: done }    |
+
+## 类型：视图组件
+
+## <font color=#cf3e8e>PopCurtain</font>
+
 > 基本用法
 
 ```html
@@ -614,7 +651,8 @@ export default {
 | dialog.closeBtnPosition        |    关闭按钮位置，'top', 'top-left', 'top-right', 'bottom', 'bottom-left', 'bottom-right'	    |  Function  | ‘bottom’ |
 
 
-### CarouselNotice
+## <font color=#cf3e8e>CarouselNotice</font>
+
 > 基本用法
 
 ```html
@@ -701,5 +739,54 @@ export default {
 | --------   | -----:  | :----:  |
 | click     | 点击每一条公告触发	 |   选中列表项   |
 | close	        |  关闭时触发	   |   无   |
+
+
+## 类型：通用函数
+
+## <font color=#cf3e8e>Preload</font>
+> 图片预加载 this.$preload.loadImgs
+
+```javascript
+// 图片预加载 this.$preload.loadImgs
+async handle1 () {
+  let self = this
+  self.$loading.show()
+  /**
+   * 预加载图片
+   * @param {array | object} opts         如果opts是数组，则直接作为opts.urls处理
+   * @param {array} opts.urls             图片链接
+   * @param {function} opts.eachLoadFunc  每张图片加载完毕的回调，回调参数是percent（加载的百分数，1-100）
+   * @param {function} opts.callback      所有图片加载完毕的回调
+   * @param {function} opts.maxPercent    加载完毕后最大百分数,默认是100，需要设置的情形是，假如设置80，则先加载完成图片，百分数是80%，然后剩下20%，额外处理，例如加载视频或者其他东西
+   * @returns Promise
+   */
+  await this.$preload.loadImgs({
+    urls: [
+      'http://img.daimg.com/uploads/allimg/190716/1-1ZG6160132.jpg',
+      'http://img.daimg.com/uploads/allimg/190712/1-1ZG2164231.jpg',
+      'http://img.daimg.com/uploads/allimg/190628/1-1Z62R30555.jpg',
+      'http://qumi.inrice.top/carowner/images/zwlcr.jpg',
+      'http://qumi.inrice.top/carowner/images/zhuzhuche.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG1002105.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG11IZ6.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG11H912.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG11FH5.jpg',
+      'http://img.daimg.com/uploads/allimg/190711/1-1ZG1143T7.jpg',
+      'https://cdn.dribbble.com/assets/art-banners/twisted-511f83427b2e298f5859b4a101073a4e05f7cd89f974cd103278640390a3599a.gif',
+      'https://cdn.dribbble.com/users/2894633/screenshots/6785772/pottery_4x.jpg',
+      'https://cdn.dribbble.com/users/1227650/screenshots/6784592/accord_4x.jpg'
+    ],
+    eachLoadFunc (percent) { // 每张图片加载完毕的回调，回调参数是percent（加载的百分数，1-100）
+      console.log(percent)
+      self.$loading.setMessage(percent)
+    },
+    callback () { // 所有图片加载完毕的回调
+      self.$toast('加载完毕')
+    }
+  })
+  self.$loading.hide()
+}
+```
+
 
 [1]: https://guanlinwu.github.io/lina-ui/dist/index.html#/index

@@ -101,6 +101,15 @@ export default {
       'type': 'component',
       'belong': 'view component',
       'author': ['lin']
+    },
+    {
+      'version': '1.0.0',
+      'name': 'PullRefresh',
+      'chnName': '下拉刷新',
+      'desc': 'PullRefresh',
+      'type': 'component',
+      'belong': 'operate feedback',
+      'author': ['lin']
     }
   ]
 }

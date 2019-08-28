@@ -40,6 +40,7 @@ let install = function (Vue, options = {}) {
   /**
    * 安装组件，便于全局直接引用在template中
    */
+  console.log(components)
   for (const componentKey in components) {
     components[componentKey] && components[componentKey].name && Vue.component(components[componentKey].name, components[componentKey])
   }
