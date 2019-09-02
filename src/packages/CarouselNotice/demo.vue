@@ -5,37 +5,37 @@
         <li class="demo-list-item e-view">
           <a href="javascript:;" class="router-link">上下跑马灯</a>
           <div class="view-content">
-            <CarouselNotice :dataList="dataList" :isNeedHorizontal="false" :isShow="true"/>
+            <lina-carousel-notice :dataList="dataList" :isNeedHorizontal="false" :isShow="true"/>
           </div>
         </li>
         <li class="demo-list-item e-view">
           <a href="javascript:;" class="router-link">先左右再上下跑马灯（默认）</a>
           <div class="view-content">
-            <CarouselNotice :dataList="dataList" :isShow="true"/>
+            <lina-carousel-notice :dataList="dataList" :isShow="true"/>
           </div>
         </li>
         <li class="demo-list-item e-view">
           <a href="javascript:;" class="router-link">显示关闭按钮</a>
           <div class="view-content">
-            <CarouselNotice :dataList="dataList" :isShowClose="true" :isShow="true" @close="close3"/>
+            <lina-carousel-notice :dataList="dataList" :isShowClose="true" :isShow="true" @close="close3"/>
           </div>
         </li>
         <li class="demo-list-item e-view">
           <a href="javascript:;" class="router-link">设置横行滚动速度</a>
           <div class="view-content">
-            <CarouselNotice :dataList="dataList" :slideSpeed="100" :isShow="true"/>
+            <lina-carousel-notice :dataList="dataList" :slideSpeed="100" :isShow="true"/>
           </div>
         </li>
         <li class="demo-list-item e-view">
           <a href="javascript:;" class="router-link">设置内容文本样式</a>
           <div class="view-content">
-            <CarouselNotice :dataList="dataList" :textStyle="textStyle" :isShow="true"/>
+            <lina-carousel-notice :dataList="dataList" :textStyle="textStyle" :isShow="true"/>
           </div>
         </li>
         <li class="demo-list-item e-view">
           <a href="javascript:;" class="router-link">设置外框样式</a>
           <div class="view-content">
-            <CarouselNotice :dataList="dataList" :boxStyle="boxStyle" :isShow="true"/>
+            <lina-carousel-notice :dataList="dataList" :boxStyle="boxStyle" :isShow="true"/>
           </div>
         </li>
       </ul>

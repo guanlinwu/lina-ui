@@ -1,6 +1,6 @@
 <template>
   <div class="page-demo-pull-refresh">
-    <PullRefresh
+    <lina-pull-refresh
       @refresh="refresh"
       v-bind="pullRefreshSetting"
     >
@@ -22,7 +22,7 @@
         </div>
         <img src="https://dummyimage.com/600x1000/000/fff" alt="">
       </div>
-    </PullRefresh>
+    </lina-pull-refresh>
   </div>
 </template>
 

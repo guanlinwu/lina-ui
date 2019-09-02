@@ -1,7 +1,7 @@
 <template>
   <transition name="f-fade">
     <div
-      class="u-pop" :class="[`e-theme-${dialog.theme}`]"
+      class="lina-dialog" :class="[`e-theme-${dialog.theme}`]"
       :id="dialog.id"
       v-show="dialog && dialog.isShow"
     >
@@ -53,6 +53,7 @@
       isUnlimitedHeight: false,
       isHideFooter: false,
       isHideClose: false,
+      preventAutoClose: false,
       preventMaskClose: false,
       footer: {
         confirm: {
@@ -68,7 +69,7 @@
 */
 
 export default {
-  name: 'Dialog',
+  name: 'lina-dialog',
   props: {
     dialog: {
       type: Object,
@@ -110,7 +111,7 @@ export default {
     handleBtnClick (footerItem, key) {
       let callBack = footerItem.callBack
       typeof callBack === 'function' && callBack()
-      this.closeDialog(key)
+      !this.dialog.preventAutoClose && this.closeDialog(key)
     }
   }
 }
@@ -119,7 +120,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 //弹窗
-.u-pop {
+.lina-dialog {
   position: fixed;
   top: 0;
   left: 0;
@@ -265,7 +266,7 @@ $blue-theme-color: #009cf8; // 蓝色主题
 
 // 蓝色主题
 .e-theme-blue {
-  .u-pop {
+  .lina-dialog {
     .pop-footer {
       > a {
         color: $blue-theme-color;

@@ -226,7 +226,7 @@ this.$dialog.$confirm({
 + 标签式demo1
 
 ```html
-<Dialog :dialog="dialog">
+<lina-dialog :dialog="dialog">
     <div slot="header">
         自定义头部
     </div>
@@ -239,7 +239,7 @@ this.$dialog.$confirm({
     <div slot="footer">
         自定义按钮的dom以及事件
     </div>
-</Dialog>
+</lina-dialog>
 ```
 ```javascript
 export default {
@@ -267,7 +267,7 @@ export default {
 
 ```html
 <!-- 活动规则 -->
-<Dialog :dialog="ruleDialog">
+<lina-dialog :dialog="ruleDialog">
     <!-- 自定义内容 -->
     <div class="rules">
     <p>1 活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则</p>
@@ -277,7 +277,7 @@ export default {
     <p>4 活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则</p>
     <p>4 活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则活动规则</p>
     </div>
-</Dialog>
+</lina-dialog>
 ```
 ```javascript
 export default {
@@ -317,6 +317,7 @@ export default {
 | option.isUnlimitedHeight	        |   内容高度超出，是否限制高度，设置滚动	   |   Boolean   | false |
 | option.isHideFooter	        |   是否隐藏底部	   |   Boolean   | false |
 | option.isHideClose	        |   是否右上角关闭按钮	   |   Boolean   | false |
+| option.preventAutoClose	        |   是否禁止点击底部按钮后关闭窗口	   |   Boolean   | false |
 | option.preventMaskClose	        |   是否禁止点击蒙层关闭窗口	   |   Boolean   | false |
 | option.theme	        |   主题	   |   String   | 默认为空，可选'gold'金色主题 |
 | option.footer	        |   底部按钮的配置	   |   Boolean   | false |
@@ -329,21 +330,21 @@ export default {
 
 ```html
 <!-- 自定义 -->
-<Popup :isShow.sync="isShow1" :isHideClose="isHideClose1" :preventMaskClose="preventMaskClose1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
+<lina-popup :isShow.sync="isShow1" :isHideClose="isHideClose1" :preventMaskClose="preventMaskClose1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
   <p style="color: #fff;">这是一个Popup，空空如也</p>
-</Popup>
+</lina-popup>
 <!-- :closeCallBack 传递回调 -->
-<Popup :isShow.sync="isShow2" :closeCallBack="handle2CloseCallBack">
+<lina-popup :isShow.sync="isShow2" :closeCallBack="handle2CloseCallBack">
     <p style="color: #fff;">这是一个Popup，关闭之前有事件</p>
-</Popup>
+</lina-popup>
 <!-- @closeCallBack 触发回调 -->
-<Popup :isShow.sync="isShow2" @closeCallBack="handle2CloseCallBack">
+<lina-popup :isShow.sync="isShow2" @closeCallBack="handle2CloseCallBack">
   <p style="color: #fff;">这是一个Popup，关闭之前有事件</p>
-</Popup>
+</lina-popup>
 <!-- preventMaskClose 禁止点击蒙层关闭popup -->
-<Popup :isShow.sync="isShow1" :preventMaskClose="preventMaskClose1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
+<lina-popup :isShow.sync="isShow1" :preventMaskClose="preventMaskClose1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
   <p style="color: #fff;">这是一个Popup，空空如也</p>
-</Popup>
+</lina-popup>
 ```
 
 ```javascript
@@ -386,13 +387,13 @@ export default {
 
 ```html
 <!-- demo1 普通用法 -->
-<ActionSheet :menu-items="demo1.menuItems" :cancelText="demo1.cancelText" :isShow.sync="demo1.isShow" @choose="chooseItem"/>
+<lina-action-sheet :menu-items="demo1.menuItems" :cancelText="demo1.cancelText" :isShow.sync="demo1.isShow" @choose="chooseItem"/>
 <!-- demo2 加上取消文本，并添加关闭回调事件 -->
-<ActionSheet :menu-items="demo2.menuItems" :cancelText="demo2.cancelText" :isShow.sync="demo2.isShow" @choose="chooseItem" @close="closeDemo2"/>
+<lina-action-sheet :menu-items="demo2.menuItems" :cancelText="demo2.cancelText" :isShow.sync="demo2.isShow" @choose="chooseItem" @close="closeDemo2"/>
 <!-- demo3 禁止点击蒙层关闭 -->
-<ActionSheet :menu-items="demo3.menuItems" :cancelText="demo3.cancelText" :isShow.sync="demo3.isShow" @choose="chooseItem" :preventMaskClose="demo3.preventMaskClose"/>
+<lina-action-sheet :menu-items="demo3.menuItems" :cancelText="demo3.cancelText" :isShow.sync="demo3.isShow" @choose="chooseItem" :preventMaskClose="demo3.preventMaskClose"/>
 <!-- demo4 高亮已选项 -->
-<ActionSheet :menu-items="demo4.menuItems" :cancelText="demo4.cancelText" :isShow.sync="demo4.isShow" @choose="chooseItemDemo4" :chooseTagValue="demo4.choose"/>
+<lina-action-sheet :menu-items="demo4.menuItems" :cancelText="demo4.cancelText" :isShow.sync="demo4.isShow" @choose="chooseItemDemo4" :chooseTagValue="demo4.choose"/>
 ```
 
 ```javascript
@@ -506,7 +507,7 @@ export default {
 > 基本用法
 
 ```html
-<PullRefresh
+<lina-pull-refresh
   @refresh="refresh"
   v-bind="pullRefreshSetting"
 >
@@ -527,7 +528,7 @@ export default {
     </div>
     <img src="https://dummyimage.com/600x1000/000/fff" alt="">
   </div>
-</PullRefresh>
+</lina-pull-refresh>
 ```
 
 ```javascript
@@ -588,15 +589,15 @@ export default {
 
 ```html
 <!-- 普通用法 -->
-<PopCurtain :dialog.sync="dialog1"/>
+<lina-pop-curtain :dialog.sync="dialog1"/>
 <!-- 内嵌slot -->
-<PopCurtain :dialog.sync="dialog2">
+<lina-pop-curtain :dialog.sync="dialog2">
   <img style="width: 300px;" src="https://dummyimage.com/600x400/ff45ff/ffffff" alt="">
-</PopCurtain>
+</lina-pop-curtain>
 <!-- 设置关闭按钮 -->
-<PopCurtain :dialog.sync="dialog3" />
+<lina-pop-curtain :dialog.sync="dialog3" />
 <!-- 监听点击幕帘内容事件 -->
-<PopCurtain :dialog.sync="dialog4" @clickCurtain="handleClickDialog" />
+<lina-pop-curtain :dialog.sync="dialog4" @clickCurtain="handleClickDialog" />
 ```
 
 ```javascript
@@ -660,17 +661,17 @@ export default {
 
 ```html
 <!-- 上下跑马灯 -->
-<CarouselNotice :dataList="dataList" :isNeedHorizontal="false" :isShow="true"/>
+<lina-carousel-notice :dataList="dataList" :isNeedHorizontal="false" :isShow="true"/>
 <!-- 先左右再上下跑马灯（默认） -->
-<CarouselNotice :dataList="dataList" :isShow="true"/>
+<lina-carousel-notice :dataList="dataList" :isShow="true"/>
 <!-- 显示关闭按钮 -->
-<CarouselNotice :dataList="dataList" :isShowClose="true" :isShow="true" @close="close3"/>
+<lina-carousel-notice :dataList="dataList" :isShowClose="true" :isShow="true" @close="close3"/>
 <!-- 设置横行滚动速度 -->
-<CarouselNotice :dataList="dataList" :slideSpeed="100" :isShow="true"/>
+<lina-carousel-notice :dataList="dataList" :slideSpeed="100" :isShow="true"/>
 <!-- 设置内容文本样式 -->
-<CarouselNotice :dataList="dataList" :textStyle="textStyle" :isShow="true"/>
+<lina-carousel-notice :dataList="dataList" :textStyle="textStyle" :isShow="true"/>
 <!-- 设置外框样式 -->
-<CarouselNotice :dataList="dataList" :boxStyle="boxStyle" :isShow="true"/>
+<lina-carousel-notice :dataList="dataList" :boxStyle="boxStyle" :isShow="true"/>
 ```
 
 ```javascript

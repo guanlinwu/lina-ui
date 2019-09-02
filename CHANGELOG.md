@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.0.32 (2019-09-02)
+
+### Features
++ 命名空间添加
+  + 样式前缀植入lina-
+  + 挂载在dom上的vue组件前缀植入lina-，被修改名称的组件有：
+    - Dialog => lina-dialog
+    - Popup => lina-popup
+    - ActionSheet => lina-action-sheet
+    - PullRefresh => lina-pull-refresh
+    - PopCurtain => lina-pop-curtain
+    - CarouselNotice => lina-carousel-notice
+    - demo如下:
+    ```javascript
+    <Dialog /> // 摒弃
+    <lina-dialog /> // 新写法
+    ```
+
+
 ## 0.0.31 (2019-09-02)
 
 ### Bug Fixes

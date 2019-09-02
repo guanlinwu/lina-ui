@@ -20,15 +20,15 @@
         </li>
       </ul>
     </div>
-    <Popup :isShow.sync="isShow1" :isHideClose="isHideClose1" :preventMaskClose="preventMaskClose1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
+    <lina-popup :isShow.sync="isShow1" :isHideClose="isHideClose1" :preventMaskClose="preventMaskClose1" :closeCallBack="() => {this.isShow1 = !this.isShow1}">
       <p style="color: #fff;">这是一个Popup，空空如也</p>
-    </Popup>
-    <Popup :isShow.sync="isShow2" :closeCallBack="handle2CloseCallBack">
+    </lina-popup>
+    <lina-popup :isShow.sync="isShow2" :closeCallBack="handle2CloseCallBack">
       <p style="color: #fff;">这是一个Popup，关闭之前有事件</p>
-    </Popup>
-    <Popup :isShow.sync="isShow3" @closeCallBack="handle2CloseCallBack">
+    </lina-popup>
+    <lina-popup :isShow.sync="isShow3" @closeCallBack="handle2CloseCallBack">
       <p style="color: #fff;">这是一个Popup，关闭之前有事件</p>
-    </Popup>
+    </lina-popup>
   </div>
 </template>
 

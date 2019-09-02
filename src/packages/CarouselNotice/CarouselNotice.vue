@@ -1,7 +1,7 @@
 // 旧版本轮播头条 没用到transition
 <template>
   <transition name="f-fade">
-    <div class="u-app-carousel-text">
+    <div class="lina-carousel-text">
       <!-- 组件内容 -->
       <section class="u-widget-inner">
         <!-- {{dataTemp}} -->
@@ -39,7 +39,7 @@
 
 <script>
 export default {
-  name: 'CarouselNotice',
+  name: 'lina-carousel-notice',
   components: {
   },
   data () {
@@ -228,7 +228,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.u-app-carousel-text {
+.lina-carousel-text {
   position: relative;
 
   .u-widget-inner {

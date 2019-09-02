@@ -1,6 +1,6 @@
 <template>
   <transition name='f-fade'>
-    <section class="u-loading" v-show='isVisible'>
+    <section class="lina-loading" v-show='isVisible'>
       <div class="loading-inner">
         <div class="icon-loading"></div>
         <div v-if="!isHideMessage" class="loading-toast" v-html="message || defaultMessage">
@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'Loading',
+  name: 'lina-loading',
   data () {
     return {
       time: 0, // 调用次数
@@ -27,7 +27,7 @@ export default {
 
 <style lang="scss" scoped>
 // loading
-.u-loading {
+.lina-loading {
   position: fixed;
   top: 50%;
   left: 50%;

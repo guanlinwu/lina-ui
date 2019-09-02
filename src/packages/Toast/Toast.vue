@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <section v-show="isVisible" :class="position" class="u-toast">
+    <section v-show="isVisible" :class="[`e-${position}`]" class="lina-toast">
       <div class="message">
         <div class="message-inner" v-html="message"></div>
       </div>
@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: 'Toast',
+  name: 'lina-toast',
   data () {
     return {
       isVisible: false,
@@ -26,7 +26,7 @@ export default {
 $toast-text-color: #fff; //文本颜色
 $toast-theme-color: rgba(79, 79, 79, 0.9); //背景和阴影颜色
 
-.u-toast {
+.lina-toast {
   position: fixed;
   left: 50%;
   top: 45%;
@@ -62,13 +62,13 @@ $toast-theme-color: rgba(79, 79, 79, 0.9); //背景和阴影颜色
     }
   }
 }
-.u-toast.middle {
+.lina-toast.e-middle {
   top: 45%;
 }
-.u-toast.top {
+.lina-toast.e-top {
   top: 10%;
 }
-.u-toast.bottom {
+.lina-toast.e-bottom {
   top: 90%;
 }
 .fade-enter-active,

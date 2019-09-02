@@ -18,15 +18,15 @@
       </ul>
     </div>
     <!-- 普通用法 -->
-    <PopCurtain :dialog.sync="dialog1"/>
+    <lina-pop-curtain :dialog.sync="dialog1"/>
     <!-- 内嵌slot -->
-    <PopCurtain :dialog.sync="dialog2">
+    <lina-pop-curtain :dialog.sync="dialog2">
       <img style="width: 300px;" src="https://dummyimage.com/600x400/ff45ff/ffffff" alt="">
-    </PopCurtain>
+    </lina-pop-curtain>
     <!-- 设置关闭按钮 -->
-    <PopCurtain :dialog.sync="dialog3" />
+    <lina-pop-curtain :dialog.sync="dialog3" />
     <!-- 监听点击幕帘内容事件 -->
-    <PopCurtain :dialog.sync="dialog4" @clickCurtain="handleClickDialog" />
+    <lina-pop-curtain :dialog.sync="dialog4" @clickCurtain="handleClickDialog" />
   </div>
 </template>
 

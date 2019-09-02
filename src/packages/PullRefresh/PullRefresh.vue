@@ -1,5 +1,5 @@
 <template>
-  <div class="u-pull-refresh">
+  <div class="lina-pull-refresh">
     <div
       class="inner"
       @touchstart="onTouchStart"
@@ -19,7 +19,7 @@
 <script>
 import { TouchMixin } from '../../mixins/touch'
 export default {
-  name: 'PullRefresh',
+  name: 'lina-pull-refresh',
   props: {
     // boxStyle: { // 外框内容样式
     //   type: Object
@@ -197,7 +197,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scope>
 //弹窗
-.u-pull-refresh {
+.lina-pull-refresh {
   position: relative;
   height: 100%;
 

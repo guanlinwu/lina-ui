@@ -1,6 +1,6 @@
 <template>
   <transition name='f-fade'>
-    <div class="u-popup" v-if="selfShow">
+    <div class="lina-popup" v-if="selfShow">
       <div class="popup-mask" @click.self.stop="!preventMaskClose && close()" @touchmove.prevent></div>
       <div class="popup-container">
         <slot></slot>
@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: 'Popup',
+  name: 'lina-popup',
   data () {
     return {
     }
@@ -61,7 +61,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.u-popup{
+.lina-popup{
   position: fixed;
   top: 0;
   right: 0;

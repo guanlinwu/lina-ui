@@ -1,6 +1,6 @@
 <template>
   <transition name='f-fade'>
-    <div class="u-pop-curtain" v-show="dialog && dialog.isShow">
+    <div class="lina-pop-curtain" v-show="dialog && dialog.isShow">
       <div class="pop-content">
         <div class="pop-content-inner">
           <slot>
@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'PopCurtain',
+  name: 'lina-pop-curtain',
   props: {
     dialog: {
       type: Object,
@@ -43,7 +43,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scope>
 //弹层幕帘
-.u-pop-curtain {
+.lina-pop-curtain {
   position: fixed;
   top: 0;
   left: 0;
