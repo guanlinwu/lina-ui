@@ -17,7 +17,7 @@ packagesList.map(item => {
     return
   }
   if (/component/.test(item.type)) {
-    console.log(pkg.component.name)
+    // console.log(pkg.component.name)
     components[pkg.component.name] = pkg.component
   }
   if (/method/.test(item.type)) {
@@ -55,8 +55,12 @@ typeof window !== 'undefined' && window.Vue && install(window.Vue)
 export default {
   version,
   install,
-  ...components,
-  methods: {
-    ...methods
-  }
+  // ...components,
+  components: {
+    ...components
+  },
+  // methods: {
+  //   ...methods
+  // }
+  ...methods
 }

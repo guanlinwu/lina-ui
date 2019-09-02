@@ -178,7 +178,7 @@
 /* 17 */
 /***/ (function(module) {
 
-module.exports = {"a":"0.0.30"};
+module.exports = {"a":"0.0.31"};
 
 /***/ }),
 /* 18 */,
@@ -1033,6 +1033,7 @@ Dialogvue_type_template_id_96b01234_render._withStripped = true
       var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
       this.dialog.isShow = false;
       this.$emit('update:dialog', this.dialog);
+      this.$emit('close', key);
       typeof this.removeDomCallBack === 'function' && this.removeDomCallBack();
       typeof this.promiseCallBack === 'function' && this.promiseCallBack(key); // 返回promise 用于confirm
     },
@@ -2745,7 +2746,6 @@ PullRefresh_component.options.__file = "src/packages/PullRefresh/PullRefresh.vue
 /* harmony default export */ var PullRefresh = (PullRefresh_component.exports);
 // CONCATENATED MODULE: ./src/packages/PullRefresh/index.js
 
-console.log(PullRefresh);
 
 PullRefresh.install = function (Vue) {
   Vue.component(PullRefresh.name, PullRefresh);
@@ -2790,7 +2790,7 @@ packagesList.map(function (item) {
   }
 
   if (/component/.test(item.type)) {
-    console.log(pkg.component.name);
+    // console.log(pkg.component.name)
     components[pkg.component.name] = pkg.component;
   }
 
@@ -2830,10 +2830,10 @@ var src_install = function install(Vue) {
 typeof window !== 'undefined' && window.Vue && src_install(window.Vue);
 /* harmony default export */ var src = (objectSpread_default()({
   version: package_0["a" /* version */],
-  install: src_install
-}, components, {
-  methods: objectSpread_default()({}, methods)
-}));
+  install: src_install,
+  // ...components,
+  components: objectSpread_default()({}, components)
+}, methods));
 // CONCATENATED MODULE: ./src/main.js
 
 

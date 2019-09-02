@@ -100,6 +100,7 @@ export default {
     closeDialog (key = '') {
       this.dialog.isShow = false
       this.$emit('update:dialog', this.dialog)
+      this.$emit('close', key)
       typeof this.removeDomCallBack === 'function' && this.removeDomCallBack()
       typeof this.promiseCallBack === 'function' && this.promiseCallBack(key) // 返回promise 用于confirm
     },

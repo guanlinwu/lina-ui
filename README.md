@@ -13,6 +13,9 @@ yarn add lina-ui
 # 更新日志
 [CHANGELOG](https://github.com/guanlinwu/lina-ui/blob/master/CHANGELOG.md)
 
+# issues
+[issues](https://github.com/guanlinwu/lina-ui/issues)
+
 # 引入
 ```javascript
 /** 引入 */

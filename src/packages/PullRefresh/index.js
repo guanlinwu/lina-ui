@@ -1,5 +1,4 @@
 import PullRefresh from './PullRefresh'
-console.log(PullRefresh)
 PullRefresh.install = function (Vue) {
   Vue.component(PullRefresh.name, PullRefresh)
 }

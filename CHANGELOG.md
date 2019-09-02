@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.0.31 (2019-09-02)
+
+### Bug Fixes
++ 修复Toast的引用问题
+```javascript
+// 修复以下方式引用失败的bug
+import linaUi from 'lina-ui'
+const Toast = linaUi.Toast
+```
+
 ## 0.0.30 (2019-08-27)
 
 ### Bug Fixes
