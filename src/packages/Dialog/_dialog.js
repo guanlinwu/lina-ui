@@ -38,7 +38,7 @@ let Dialog = (options = {}) => {
       dialog: {
         ...defaultData,
         ...options,
-        isShow: true
+        isShow: false
       }
     }
   }).$mount(document.createElement('div'))
@@ -48,14 +48,13 @@ let Dialog = (options = {}) => {
   options.id !== 'dialog-default-id' && (instance.removeDomCallBack = () => {
     instance.$el.addEventListener('transitionend', removeDom)
   })
-
   let $dialogDom = document.querySelector('#' + options.id)
   if (options.id && $dialogDom) {
     $dialogDom.parentNode.replaceChild(instance.$el, $dialogDom)
   } else {
     document.body.appendChild(instance.$el)
   }
-
+  instance.dialog.isShow = true
   return instance
 }
 /**
