@@ -16,7 +16,7 @@ export default {
   name: 'lina-picker-slot',
   data () {
     return {
-      sIndex: 0,
+      sIndex: '',
       $time: null
     }
   },
