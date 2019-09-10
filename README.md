@@ -869,9 +869,10 @@ export default {
 | lineHeight        |    line-height	    |  String  | 34px |
 | fontSize        |    font-size	    |  String  | 16px |
 
->> slots
+> Prop -> slots
 
 slots数组对象得情况下
+
 | 名称        | 说明   |  类型  | 默认值 |
 | --------   | -----:  | :----:  | :----:  |
 | values     | slot 的值对象数组或数组数组 |   Array  | - |
