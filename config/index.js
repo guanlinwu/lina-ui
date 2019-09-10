@@ -22,7 +22,7 @@ module.exports = {
   },
   dev: {
     port: 8089,
-    host: '0.0.0.0',
+    host: 'localhost',
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
