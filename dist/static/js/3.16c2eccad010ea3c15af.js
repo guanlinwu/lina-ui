@@ -566,7 +566,7 @@ render._withStripped = true
 // CONCATENATED MODULE: ./src/packages/PreLoad/demo.vue?vue&type=template&id=c4474efc&scoped=true&
 
 // EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(1);
+var regenerator = __webpack_require__(2);
 var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
 
 // EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/helpers/asyncToGenerator.js

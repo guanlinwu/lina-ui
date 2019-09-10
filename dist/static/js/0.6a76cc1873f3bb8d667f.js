@@ -101,13 +101,6 @@ function normalizeComponent (
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(22);
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11125,6 +11118,13 @@ Vue.compile = compileToFunctions;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(17), __webpack_require__(24).setImmediate))
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(22);
+
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
@@ -12780,7 +12780,7 @@ __webpack_require__.d(packages_namespaceObject, "PullRefresh", function() { retu
 __webpack_require__.d(packages_namespaceObject, "Picker", function() { return packages_Picker; });
 
 // EXTERNAL MODULE: ./node_modules/_vue@2.6.10@vue/dist/vue.esm.js
-var vue_esm = __webpack_require__(2);
+var vue_esm = __webpack_require__(1);
 
 // CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=7ba5bd90&
 var Appvue_type_template_id_7ba5bd90_render = function() {
@@ -12801,7 +12801,7 @@ Appvue_type_template_id_7ba5bd90_render._withStripped = true
 // CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=7ba5bd90&
 
 // EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(1);
+var regenerator = __webpack_require__(2);
 var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
 
 // EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/helpers/asyncToGenerator.js
@@ -18251,7 +18251,8 @@ function () {
     key: "getSite",
     value: function getSite(event) {
       return isMove ? event.changedTouches[0] || event.touches[0] : event;
-    }
+    } // 重置
+
   }, {
     key: "resetTouchStatus",
     value: function resetTouchStatus() {
@@ -18264,19 +18265,45 @@ function () {
 
 
 // CONCATENATED MODULE: ./src/packages/Picker/src/translate.js
+/**
+ * 根据移动距离修改translateY
+ * @param {HTMLElement} element dom
+ * @param {Number} offsetY 手指每次滑动的距离
+ * @returns {Number} element的translateY
+ */
 function upTranslate(element, offsetY) {
   var y = getY(element) + (offsetY > 0 ? Math.ceil(offsetY) : Math.floor(offsetY));
   setY(element, y);
   return y;
 }
+/**
+ * 获取translateY
+ * @param {HTMLElement} element dom
+ * @returns {Number}
+ */
+
 
 function getY(element) {
   return Number(element.style.getPropertyValue('transform').replace(/[^-\d]/g, ''));
 }
+/**
+ * 修改translateY
+ * @param {HTMLElement} element dom
+ * @param {Number} y 距离
+ */
+
 
 function setY(element, y) {
   element.style.setProperty('transform', "translateY(".concat(y, "px)"));
 }
+/**
+ * ease-out
+ * @param {Number} target 目标距离
+ * @param {Number} current 当前距离
+ * @param {Number} part 系数
+ * @returns {Number} 前进距离
+ */
+
 
 function easeOut(target, current, part) {
   var step = (target - current) / part;
@@ -18294,17 +18321,21 @@ function easeOut(target, current, part) {
 var SHOWNUM = 7;
 var OFFSETY = 3;
 var SHOWNUM_HALF = (SHOWNUM - 1) / 2;
+var MAX_STEP = 800;
+var MIN_STEP = -800;
 /* harmony default export */ var macro = ({
   SHOWNUM: SHOWNUM,
   // 展示7列
   OFFSETY: OFFSETY,
   // 拖拽差默认最小参数
-  SHOWNUM_HALF: SHOWNUM_HALF // 展示中间
+  SHOWNUM_HALF: SHOWNUM_HALF,
+  // 展示中间
+  MAX_STEP: MAX_STEP,
+  // 正最大步数
+  MIN_STEP: MIN_STEP // 负最大步数
 
 });
 // CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Picker/PickerSlot.vue?vue&type=script&lang=js&
-
-
 
 
 
@@ -18387,18 +18418,17 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
     // })
   },
   methods: {
+    // 注册Scroll
     onScrollAnimation: function onScrollAnimation() {
       var _this = this;
 
       var element = this.element;
       var drag = new drag_Drag(element, {
         start: function start(event) {
-          cancelAnimationFrame(_this.$time); // console.log('start', drag.startY)
+          cancelAnimationFrame(_this.$time);
         },
         move: function move(event) {
-          // console.log(drag.offsetY)
-          // console.log('move', drag.startY, drag.deltaY, drag.offsetY, this.getPath(drag.offsetY, element, false))
-          translate.setY(element, _this.getPath(drag.offsetY, false));
+          _this.runBoundary(drag.offsetY);
         },
         end: function end(event) {
           if (drag.offsetY !== 0) {
@@ -18407,15 +18437,20 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
             var path = _this.whole(translate.getY(element));
 
             _this.requestAnimationFrame(_this.boundary(path));
-          } // console.log('end', drag.startY, drag.deltaY, drag.offsetY)
-
+          }
         }
       });
     },
+    // 设置默认选择位置
     initY: function initY() {
       var y = -this.datas.defaultIndex * parseInt(this.lineHeight) + this.maxY;
       this.element.style.setProperty('transform', "translateY(".concat(y, "px)"));
     },
+
+    /**
+     * 判断是长滚动，还是短滚动
+     * @param {Number} offsetY 手指每次滑动的距离
+     */
     exercise: function exercise(offsetY) {
       cancelAnimationFrame(this.$time);
 
@@ -18425,48 +18460,37 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
         this.backAnimation(offsetY);
       }
     },
+
+    /**
+     * 长滚动
+     * @param {Number} offsetY 手指每次滑动的距离
+     */
     longAnimation: function longAnimation(offsetY) {
-      var path = this.getPath(Math.pow(offsetY, 3));
+      var path = this.whole(Math.abs(offsetY) * offsetY + translate.getY(this.element));
       this.requestAnimationFrame(path, offsetY);
     },
-    backAnimation: function () {
-      var _backAnimation = asyncToGenerator_default()(
-      /*#__PURE__*/
-      regenerator_default.a.mark(function _callee(offsetY) {
-        var lineHeight, path;
-        return regenerator_default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                lineHeight = parseInt(this.lineHeight);
 
-                if (!(offsetY % lineHeight === 0)) {
-                  _context.next = 3;
-                  break;
-                }
+    /**
+     * 短滚动
+     * @param {Number} offsetY 手指每次滑动的距离
+     */
+    backAnimation: function backAnimation(offsetY) {
+      var lineHeight = parseInt(this.lineHeight);
 
-                return _context.abrupt("return");
-
-              case 3:
-                path = this.getPath(offsetY); // console.log('backAnimation', offsetY, path)
-
-                _context.next = 6;
-                return this.requestAnimationFrame(path, offsetY);
-
-              case 6:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function backAnimation(_x) {
-        return _backAnimation.apply(this, arguments);
+      if (offsetY % lineHeight === 0) {
+        return;
       }
 
-      return backAnimation;
-    }(),
+      var path = this.whole(offsetY + translate.getY(this.element));
+      this.requestAnimationFrame(path, offsetY);
+    },
+
+    /**
+     * 滚动
+     * @param {Number} path 路程
+     * @param {Number} [offsetY = macro.OFFSETY] 手指每次滑动的距离
+     * @returns {Promise}
+     */
     requestAnimationFrame: function requestAnimationFrame(path) {
       var _this2 = this;
 
@@ -18475,6 +18499,13 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
         _this2.running(path, offsetY, resolve);
       });
     },
+
+    /**
+     * 滚动逻辑
+     * @param {Number} path 路程
+     * @param {Number} offsetY 手指每次滑动的距离
+     * @param {Function} resolve Promise的resolve
+     */
     running: function running(path, offsetY, resolve) {
       var _this3 = this;
 
@@ -18489,13 +18520,43 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
           return;
         }
 
-        var step = translate.easeOut(path, currentY, coefficient); // console.log('currentY', currentY, 'coefficient', coefficient, 'step', step)
+        var step = translate.easeOut(path, currentY, coefficient);
 
-        translate.upTranslate(_this3.element, step);
+        var b = _this3.runBoundary(step);
+
+        if (b !== false) {
+          path = b;
+        }
 
         _this3.running(path, offsetY, resolve);
       });
     },
+
+    /**
+     * 滚动的边界
+     * @param {Number} step 速度
+     * @param {Number|Boolean} 判断是否不等于false，为真则代替path
+     */
+    runBoundary: function runBoundary(step) {
+      var y = translate.getY(this.element);
+      step = this.getBoundaryStep(step);
+      var path = step + y;
+      var b = this.elasticBoundary(path);
+
+      if (b !== false) {
+        translate.setY(this.element, b);
+      } else {
+        translate.upTranslate(this.element, step);
+      }
+
+      return b;
+    },
+
+    /**
+     * 用来监控滚动结束，判断是否需要回弹
+     * @param {Number} currentY 当前路程
+     * @param {Function} resolve Promise的resolve
+    */
     adjustment: function adjustment(currentY, resolve) {
       cancelAnimationFrame(this.$time);
 
@@ -18507,28 +18568,38 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
         resolve(currentY);
       }
     },
-    getPath: function getPath(offsetY) {
-      var whole = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-      var lineHeight = parseInt(this.lineHeight) / 2;
-      var path = parseInt(translate.getY(this.element) + offsetY);
-      var maxY = this.maxY + lineHeight;
-      var minY = this.minY - lineHeight;
 
-      if (path > maxY) {
-        path = maxY;
-      } else if (path < minY) {
-        path = minY;
-      } else if (whole && (path % lineHeight !== 0 || lineHeight % path !== 0)) {
-        path = this.whole(path);
+    /**
+     * 速度边界
+     * @param {Number} step 速度
+     * @returns {Number} 速度
+     */
+    getBoundaryStep: function getBoundaryStep(step) {
+      if (step > macro.MAX_STEP) {
+        step = macro.MAX_STEP;
+      } else if (step < macro.MIN_STEP) {
+        step = macro.MIN_STEP;
       }
 
-      return path;
+      return step;
     },
+
+    /**
+     * 滚动路程调整
+     * @param {Number} path 路程
+     * @returns {Number} 路程
+     */
     whole: function whole(path) {
       var lineHeight = parseInt(this.lineHeight);
       var result = path / lineHeight;
       return Math.round(result) * lineHeight;
     },
+
+    /**
+     * 边界路程
+     * @param {Number} path 路程
+     * @returns {Number} 路程
+     */
     boundary: function boundary(path) {
       if (path > this.maxY) {
         path = this.maxY;
@@ -18538,6 +18609,30 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
 
       return path;
     },
+
+    /**
+     * 弹性边界路程
+     * @param {Number} path 路程
+     * @param {Number|Boolean} 判断是否不等于false，为真则代替path
+     */
+    elasticBoundary: function elasticBoundary(path) {
+      var lineHeight = parseInt(this.lineHeight) / 2;
+      var maxY = this.maxY + lineHeight;
+      var minY = this.minY - lineHeight;
+      var b = false;
+
+      if (path > maxY) {
+        b = maxY;
+      } else if (path < minY) {
+        b = minY;
+      }
+
+      return b;
+    },
+
+    /**
+     * 获取index
+     */
     getIndex: function getIndex() {
       var y = translate.getY(this.element);
       var lineHeight = parseInt(this.lineHeight);
@@ -18641,9 +18736,7 @@ PickerSlot_component.options.__file = "src/packages/Picker/PickerSlot.vue"
       immediate: true
     }
   },
-  filters: {},
   components: defineProperty_default()({}, PickerSlot.name, PickerSlot),
-  mounted: function mounted() {},
   model: {
     prop: 'value',
     event: 'change'
@@ -18658,6 +18751,7 @@ PickerSlot_component.options.__file = "src/packages/Picker/PickerSlot.vue"
       this.$emit(event, this.values);
       this.$emit('update:value', this.values);
     },
+    // 默认values
     getDefaultValue: function getDefaultValue() {
       var pickerSlot = this.$refs.pickerSlot;
       var values = this.values;
