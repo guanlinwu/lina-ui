@@ -79,17 +79,15 @@ export default {
     // })
   },
   methods: {
+    // 注册Scroll
     onScrollAnimation () {
       const element = this.element
       const drag = new Drag(element, {
         start: event => {
           cancelAnimationFrame(this.$time)
-          // console.log('start', drag.startY)
         },
         move: event => {
-          // console.log(drag.offsetY)
-          // console.log('move', drag.startY, drag.deltaY, drag.offsetY, this.getPath(drag.offsetY, element, false))
-          translate.setY(element, this.getPath(drag.offsetY, false))
+          this.runBoundary(drag.offsetY)
         },
         end: event => {
           if (drag.offsetY !== 0) {
@@ -98,14 +96,18 @@ export default {
             let path = this.whole(translate.getY(element))
             this.requestAnimationFrame(this.boundary(path))
           }
-          // console.log('end', drag.startY, drag.deltaY, drag.offsetY)
         }
       })
     },
+    // 设置默认选择位置
     initY () {
       let y = -this.datas.defaultIndex * parseInt(this.lineHeight) + this.maxY
       this.element.style.setProperty('transform', `translateY(${y}px)`)
     },
+    /**
+     * 判断是长滚动，还是短滚动
+     * @param {Number} offsetY 手指每次滑动的距离
+     */
     exercise (offsetY) {
       cancelAnimationFrame(this.$time)
       if (Math.abs(offsetY) > 3) {
@@ -114,25 +116,43 @@ export default {
         this.backAnimation(offsetY)
       }
     },
+    /**
+     * 长滚动
+     * @param {Number} offsetY 手指每次滑动的距离
+     */
     longAnimation (offsetY) {
-      let path = this.getPath(Math.pow(offsetY, 3))
+      let path = this.whole(Math.abs(offsetY) * offsetY + translate.getY(this.element))
       this.requestAnimationFrame(path, offsetY)
     },
-    async backAnimation (offsetY) {
+    /**
+     * 短滚动
+     * @param {Number} offsetY 手指每次滑动的距离
+     */
+    backAnimation (offsetY) {
       let lineHeight = parseInt(this.lineHeight)
       if (offsetY % lineHeight === 0) {
         return
       }
-      let path = this.getPath(offsetY)
-      // console.log('backAnimation', offsetY, path)
-      await this.requestAnimationFrame(path, offsetY)
-      // this.reserveIndex(element)
+      let path = this.whole(offsetY + translate.getY(this.element))
+      this.requestAnimationFrame(path, offsetY)
     },
+    /**
+     * 滚动
+     * @param {Number} path 路程
+     * @param {Number} [offsetY = macro.OFFSETY] 手指每次滑动的距离
+     * @returns {Promise}
+     */
     requestAnimationFrame (path, offsetY = macro.OFFSETY) {
       return new Promise(resolve => {
         this.running(path, offsetY, resolve)
       })
     },
+    /**
+     * 滚动逻辑
+     * @param {Number} path 路程
+     * @param {Number} offsetY 手指每次滑动的距离
+     * @param {Function} resolve Promise的resolve
+     */
     running (path, offsetY, resolve) {
       offsetY = Math.abs(offsetY)
       let coefficient = offsetY > 2 ? offsetY : 3
@@ -143,11 +163,35 @@ export default {
           return
         }
         let step = translate.easeOut(path, currentY, coefficient)
-        // console.log('currentY', currentY, 'coefficient', coefficient, 'step', step)
-        translate.upTranslate(this.element, step)
+        let b = this.runBoundary(step)
+        if (b !== false) {
+          path = b
+        }
         this.running(path, offsetY, resolve)
       })
     },
+    /**
+     * 滚动的边界
+     * @param {Number} step 速度
+     * @param {Number|Boolean} 判断是否不等于false，为真则代替path
+     */
+    runBoundary (step) {
+      let y = translate.getY(this.element)
+      step = this.getBoundaryStep(step)
+      let path = step + y
+      let b = this.elasticBoundary(path)
+      if (b !== false) {
+        translate.setY(this.element, b)
+      } else {
+        translate.upTranslate(this.element, step)
+      }
+      return b
+    },
+    /**
+     * 用来监控滚动结束，判断是否需要回弹
+     * @param {Number} currentY 当前路程
+     * @param {Function} resolve Promise的resolve
+    */
     adjustment (currentY, resolve) {
       cancelAnimationFrame(this.$time)
       if (currentY > this.maxY || currentY < this.minY) {
@@ -158,25 +202,34 @@ export default {
         resolve(currentY)
       }
     },
-    getPath (offsetY, whole = true) {
-      let lineHeight = parseInt(this.lineHeight) / 2
-      let path = parseInt(translate.getY(this.element) + offsetY)
-      let maxY = this.maxY + lineHeight
-      let minY = this.minY - lineHeight
-      if (path > maxY) {
-        path = maxY
-      } else if (path < minY) {
-        path = minY
-      } else if (whole && (path % lineHeight !== 0 || lineHeight % path !== 0)) {
-        path = this.whole(path)
+    /**
+     * 速度边界
+     * @param {Number} step 速度
+     * @returns {Number} 速度
+     */
+    getBoundaryStep (step) {
+      if (step > macro.MAX_STEP) {
+        step = macro.MAX_STEP
+      } else if (step < macro.MIN_STEP) {
+        step = macro.MIN_STEP
       }
-      return path
+      return step
     },
+    /**
+     * 滚动路程调整
+     * @param {Number} path 路程
+     * @returns {Number} 路程
+     */
     whole (path) {
       let lineHeight = parseInt(this.lineHeight)
       let result = path / lineHeight
       return Math.round(result) * lineHeight
     },
+    /**
+     * 边界路程
+     * @param {Number} path 路程
+     * @returns {Number} 路程
+     */
     boundary (path) {
       if (path > this.maxY) {
         path = this.maxY
@@ -185,6 +238,26 @@ export default {
       }
       return path
     },
+    /**
+     * 弹性边界路程
+     * @param {Number} path 路程
+     * @param {Number|Boolean} 判断是否不等于false，为真则代替path
+     */
+    elasticBoundary (path) {
+      let lineHeight = parseInt(this.lineHeight) / 2
+      let maxY = this.maxY + lineHeight
+      let minY = this.minY - lineHeight
+      let b = false
+      if (path > maxY) {
+        b = maxY
+      } else if (path < minY) {
+        b = minY
+      }
+      return b
+    },
+    /**
+     * 获取index
+     */
     getIndex () {
       let y = translate.getY(this.element)
       let lineHeight = parseInt(this.lineHeight)
