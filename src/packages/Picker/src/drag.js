@@ -74,6 +74,7 @@ export default class Drag {
   getSite (event) {
     return isMove ? event.changedTouches[0] || event.touches[0] : event
   }
+  // 重置
   resetTouchStatus () {
     this.offsetY = this.offsetX = this.deltaY = this.deltaX = 0
   }
