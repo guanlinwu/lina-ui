@@ -62,13 +62,8 @@ export default {
       immediate: true
     }
   },
-  filters: {
-
-  },
   components: {
     [PickerSlot.name]: PickerSlot
-  },
-  mounted () {
   },
   model: {
     prop: 'value',
@@ -84,6 +79,7 @@ export default {
       this.$emit(event, this.values)
       this.$emit('update:value', this.values)
     },
+    // 默认values
     getDefaultValue () {
       const pickerSlot = this.$refs.pickerSlot
       const values = this.values
