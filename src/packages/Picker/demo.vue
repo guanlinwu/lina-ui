@@ -144,6 +144,7 @@ export default {
       }
       .text-p {
         padding-bottom: 20px;
+        font-size: 24px;
         ul {
           li {
             margin-bottom: 15px;

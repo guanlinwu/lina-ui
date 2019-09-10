@@ -1,7 +1,11 @@
 <template>
-  <div class="u-picker" @touchmove.prevent>
-    <div class="u-picker-container" :style="{height}">
-      <div class="u-picker-box" :style="{fontSize}">
+  <div class="lina-picker" @touchmove.prevent>
+    <div class="lina-header" :style="{lineHeight, fontSize}" v-if="head">
+      <div @click="handleCance">{{cancelText}}</div>
+      <div @click="handleConfirm">{{confirmText}}</div>
+    </div>
+    <div class="lina-picker-container" :style="{height}">
+      <div class="lina-picker-box" :style="{fontSize}">
         <lina-picker-slot
         v-for="(item, index) in slots"
         ref="pickerSlot"
@@ -12,8 +16,8 @@
         :maxY="maxY"
         @change="handleChange"></lina-picker-slot>
       </div>
-      <div class="u-checked-text" :style="{'height': lineHeight}"></div>
-      <div class="u-mask" :style="{backgroundSize: `100% ${backgroundSizeY}`}"></div>
+      <div class="lina-checked-text" :style="{'height': lineHeight}"></div>
+      <div class="lina-mask" :style="{backgroundSize: `100% ${backgroundSizeY}`}"></div>
     </div>
   </div>
 </template>
@@ -33,6 +37,15 @@ export default {
     fontSize: {
       type: String,
       default: '16px'
+    },
+    head: Boolean,
+    cancelText: {
+      type: String,
+      default: '取消'
+    },
+    confirmText: {
+      type: String,
+      default: '确认'
     }
   },
   data () {
@@ -60,6 +73,12 @@ export default {
         })
       },
       immediate: true
+    },
+    'slots.length': {
+      handler () {
+        // this.getDefaultValue()
+      },
+      immediate: true
     }
   },
   components: {
@@ -72,20 +91,26 @@ export default {
   methods: {
     handleChange (value, i) {
       this.$set(this.values, i, value)
-      this.changeValue('change')
-    },
-    changeValue (event, value) {
       this.getDefaultValue()
-      this.$emit(event, this.values)
+      this.$emit('change', this.values)
       this.$emit('update:value', this.values)
+    },
+    handleConfirm () {
+      this.getDefaultValue()
+      this.$emit('confirm', this.values)
+    },
+    handleCance () {
+      this.$emit('cance')
     },
     // 默认values
     getDefaultValue () {
       const pickerSlot = this.$refs.pickerSlot
-      const values = this.values
-      for (let i = 0; i < values.length; i++) {
-        if (values[i] === undefined) {
-          this.$set(values, i, pickerSlot[i].defaultValue)
+      if (pickerSlot) {
+        const values = this.values
+        for (let i = 0; i < values.length; i++) {
+          if (values[i] === undefined) {
+            this.$set(values, i, pickerSlot[i].defaultValue)
+          }
         }
       }
     }
@@ -95,17 +120,33 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scope>
-//弹窗
-.u-picker {
-  .u-picker-container {
+.lina-picker {
+  .lina-header {
+    // @include border-width-1px($border-color: #e8e8e8, $border-width-bottom: 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    border-bottom: 1px #e8e8e8 solid;
+    div {
+      color: #26a2ff;
+      flex: 1;
+      text-align: center;
+      &:first-child {
+        border-right: 1px #e8e8e8 solid;
+        // @include border-width-1px($border-color: #e8e8e8, $border-width-right: 1);
+      }
+    }
+  }
+  .lina-picker-container {
     background: #fff;
     position: relative;
-    .u-picker-box {
+    .lina-picker-box {
       height: 100%;
       display: flex;
       justify-content: space-around;
     }
-    .u-checked-text {
+    .lina-checked-text {
       pointer-events: none;
       position: absolute;
       width: 100%;
@@ -115,23 +156,8 @@ export default {
       background-position: top,bottom;
       background-size: 100% 1PX;
       background-repeat: no-repeat;
-      // &::before {
-      //   box-sizing: border-box;
-      //   content: " ";
-      //   position: absolute;
-      //   left: 0;
-      //   top: 0;
-      //   width: 200%;
-      //   border: {
-      //     top: 1PX solid #999;
-      //     bottom: 1PX solid #999;
-      //   }
-      //   height: 200%;
-      //   transform-origin: left top;
-      //   transform: scale(0.5);
-      // }
     }
-    .u-mask {
+    .lina-mask {
       position: absolute;
       background-image: linear-gradient(180deg,hsla(0,0%,100%,.95),hsla(0,0%,100%,.6)),linear-gradient(0deg,hsla(0,0%,100%,.95),hsla(0,0%,100%,.6));
       background-position: top,bottom;
