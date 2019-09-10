@@ -745,7 +745,7 @@ export default {
 | close	        |  关闭时触发	   |   无   |
 
 
-## <font color=#cf3e8e>CarouselNotice</font>
+## <font color=#cf3e8e>Picker</font>
 
 > 基本用法
 ```html
