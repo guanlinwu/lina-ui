@@ -110,6 +110,15 @@ export default {
       'type': 'component',
       'belong': 'operate feedback',
       'author': ['lin']
+    },
+    {
+      'version': '1.0.0',
+      'name': 'Picker',
+      'chnName': '选择器',
+      'desc': 'Picker',
+      'type': 'component',
+      'belong': 'view component',
+      'author': ['mwc']
     }
   ]
 }

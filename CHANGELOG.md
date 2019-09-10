@@ -1,5 +1,8 @@
 # Changelog
 
+### Features
++ 添加新组件 Picker，选择器
+
 ## 0.0.32 (2019-09-02)
 
 ### Features
