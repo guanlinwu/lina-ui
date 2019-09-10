@@ -32,7 +32,6 @@
 </template>
 
 <script>
-import { setTimeout } from 'timers'
 export default {
   name: 'demo-pull-refresh',
   data () {
@@ -96,8 +95,7 @@ export default {
       ],
       value2: [],
       slots3: [],
-      value3: [],
-      defaultIndexs3: []
+      value3: []
     }
   },
   created () {
@@ -115,7 +113,6 @@ export default {
     },
     addSlots3 () {
       this.$set(this.slots3, 0, [])
-      this.defaultIndexs3.push(parseInt(Math.random() * 100))
       for (let i = 0; i < 1000; i++) {
         this.slots3[0].push(i)
       }
@@ -127,7 +124,6 @@ export default {
       }, 500)
       setTimeout(() => {
         this.$set(this.slots3, 2, [])
-        this.defaultIndexs3.push(parseInt(Math.random() * 20))
         for (let i = 100; i > 0; i--) {
           this.slots3[2].push(i)
         }

@@ -745,6 +745,145 @@ export default {
 | close	        |  关闭时触发	   |   无   |
 
 
+## <font color=#cf3e8e>CarouselNotice</font>
+
+> 基本用法
+```html
+<!-- @change通讯 -->
+<lina-picker :slots="slots1" @change="handleChange1"></lina-picker>
+<!-- sync通讯 -->
+<lina-picker :slots="slots2" :value.sync="value2"></lina-picker>
+<!-- v-model通讯 -->
+<lina-picker :slots="slots3" v-model="value3"></lina-picker>
+```
+
+```javascript
+export default {
+  name: 'demo-pull-refresh',
+  data () {
+    return {
+      slots1: [
+        []
+      ],
+      value1: [],
+      slots2: [
+        {
+          defaultIndex: 2, // 默认选中
+          values: [
+            {
+              name: '猪妹',
+              value: 1
+            },
+            {
+              name: '火影忍者',
+              value: 2
+            },
+            {
+              name: '小明',
+              value: 3
+            },
+            {
+              name: '大厦',
+              value: 4
+            },
+            {
+              name: '大哥大',
+              value: 5
+            },
+            {
+              name: '我是谁',
+              value: 6
+            },
+            {
+              name: '阿打算',
+              value: 7
+            },
+            {
+              name: '阿达',
+              value: 8
+            }
+          ]
+        },
+        [
+          '阿萨德',
+          '阿萨德12',
+          '阿斯蒂芬',
+          'v',
+          '啊实打实的',
+          '阿达',
+          '阿斯顿发斯蒂芬',
+          '12我去安慰',
+          '阿三哥发',
+          'SADFSF',
+          '阿发',
+          '大厦访问'
+        ]
+      ],
+      value2: [],
+      slots3: [],
+      value3: []
+    }
+  },
+  created () {
+    this.addSlots1()
+    this.addSlots3()
+  },
+  methods: {
+    addSlots1 () {
+      for (let i = 0; i < 1000; i++) {
+        this.slots1[0].push(i)
+      }
+    },
+    handleChange1 (value) {
+      this.value1 = value
+    },
+    // 异步添加
+    addSlots3 () {
+      this.$set(this.slots3, 0, [])
+      for (let i = 0; i < 1000; i++) {
+        this.slots3[0].push(i)
+      }
+      setTimeout(() => {
+        this.$set(this.slots3, 1, [])
+        for (let i = 0; i > -100; i--) {
+          this.slots3[1].push(i)
+        }
+      }, 500)
+      setTimeout(() => {
+        this.$set(this.slots3, 2, [])
+        for (let i = 100; i > 0; i--) {
+          this.slots3[2].push(i)
+        }
+      }, 1000)
+    }
+  }
+}
+```
+
+> Prop
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| slots     | slot 对象数组或数组数组 |   Array  | - |
+| value        |    用来绑定sync或v-model	    |  Array  | - |
+| lineHeight        |    line-height	    |  String  | 34px |
+| fontSize        |    font-size	    |  String  | 16px |
+
+>> slots
+
+slots数组对象得情况下
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| values     | slot 的值对象数组或数组数组 |   Array  | - |
+| defaultIndex        |    默认选中	    |  Number  | 0 |
+| content        |    values是对象数组时，作为内容展示的key	    |  String  | name |
+
+> Event
+
+| 名称        | 说明   |  回调函数  |
+| --------   | -----:  | :----:  |
+| change     |  滚动停止的时候，并且值发生变化 | values(数组) |
+
 ## 类型：通用函数
 
 ## <font color=#cf3e8e>Preload</font>
