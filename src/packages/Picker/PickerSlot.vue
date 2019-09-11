@@ -31,9 +31,6 @@ export default {
     minY () {
       return -parseInt(this.lineHeight) * (this.datas.values.length - 1 - macro.SHOWNUM_HALF)
     },
-    length () {
-      return parseInt(this.lineHeight) * (this.datas.values.length - 1)
-    },
     element () {
       return this.$refs.pickerSlot
     },

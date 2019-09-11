@@ -58,7 +58,7 @@ export default class Drag {
     Object.keys(eventFn).forEach(key => {
       element.addEventListener(eventName[key], eventFn[key])
     })
-    if (this.isMove) {
+    if (isMove) {
       element.addEventListener('touchcancel', eventFn.end)
     }
   }
