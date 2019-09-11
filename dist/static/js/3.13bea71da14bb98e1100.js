@@ -1233,6 +1233,23 @@ var render = function() {
         ])
       ],
       1
+    ),
+    _vm._v(" "),
+    _c(
+      "section",
+      [
+        _c("lina-picker", {
+          attrs: { slots: _vm.slots3, head: true },
+          on: { confirm: _vm.handleConfirm, cance: _vm.handleCance }
+        }),
+        _vm._v(" "),
+        _c("div", { staticClass: "content" }, [
+          _c("h4", [_vm._v("value4: " + _vm._s(_vm.value4))]),
+          _vm._v(" "),
+          _vm._m(2)
+        ])
+      ],
+      1
     )
   ])
 }
@@ -1254,6 +1271,14 @@ var staticRenderFns = [
     return _c("div", { staticClass: "text-p" }, [
       _c("ul", [_c("li", [_vm._v("定时器异步载入数据")])])
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "text-p" }, [
+      _c("ul", [_c("li", [_vm._v("confirm和handleCance事件")])])
+    ])
   }
 ]
 render._withStripped = true
@@ -1262,6 +1287,17 @@ render._withStripped = true
 // CONCATENATED MODULE: ./src/packages/Picker/demo.vue?vue&type=template&id=b007ca4a&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Picker/demo.vue?vue&type=script&lang=js&
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1331,7 +1367,8 @@ render._withStripped = true
       }, ['阿萨德', '阿萨德12', '阿斯蒂芬', 'v', '啊实打实的', '阿达', '阿斯顿发斯蒂芬', '12我去安慰', '阿三哥发', 'SADFSF', '阿发', '大厦访问']],
       value2: [],
       slots3: [],
-      value3: []
+      value3: [],
+      value4: []
     };
   },
   created: function created() {
@@ -1357,10 +1394,13 @@ render._withStripped = true
       }
 
       setTimeout(function () {
-        _this.$set(_this.slots3, 1, []);
+        _this.$set(_this.slots3, 1, {
+          defaultIndex: 3,
+          values: []
+        });
 
         for (var _i = 0; _i > -100; _i--) {
-          _this.slots3[1].push(_i);
+          _this.slots3[1].values.push(_i);
         }
       }, 500);
       setTimeout(function () {
@@ -1370,6 +1410,12 @@ render._withStripped = true
           _this.slots3[2].push(_i2);
         }
       }, 1000);
+    },
+    handleConfirm: function handleConfirm(value) {
+      this.value4 = value;
+    },
+    handleCance: function handleCance() {
+      alert('取消');
     }
   }
 });

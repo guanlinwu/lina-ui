@@ -18043,7 +18043,7 @@ var Pickervue_type_template_id_4fd33c26_render = function() {
   return _c(
     "div",
     {
-      staticClass: "u-picker",
+      staticClass: "lina-picker",
       on: {
         touchmove: function($event) {
           $event.preventDefault()
@@ -18051,13 +18051,45 @@ var Pickervue_type_template_id_4fd33c26_render = function() {
       }
     },
     [
+      _vm.head
+        ? _c(
+            "div",
+            {
+              staticClass: "lina-header",
+              style: { lineHeight: _vm.lineHeight, fontSize: _vm.fontSize }
+            },
+            [
+              _c(
+                "div",
+                {
+                  style: { color: _vm.cancelColor },
+                  on: { click: _vm.handleCance }
+                },
+                [_vm._v(_vm._s(_vm.cancelText))]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  style: { color: _vm.confirmColor },
+                  on: { click: _vm.handleConfirm }
+                },
+                [_vm._v(_vm._s(_vm.confirmText))]
+              )
+            ]
+          )
+        : _vm._e(),
+      _vm._v(" "),
       _c(
         "div",
-        { staticClass: "u-picker-container", style: { height: _vm.height } },
+        { staticClass: "lina-picker-container", style: { height: _vm.height } },
         [
           _c(
             "div",
-            { staticClass: "u-picker-box", style: { fontSize: _vm.fontSize } },
+            {
+              staticClass: "lina-picker-box",
+              style: { fontSize: _vm.fontSize }
+            },
             _vm._l(_vm.slots, function(item, index) {
               return _c("lina-picker-slot", {
                 key: index,
@@ -18076,12 +18108,12 @@ var Pickervue_type_template_id_4fd33c26_render = function() {
           ),
           _vm._v(" "),
           _c("div", {
-            staticClass: "u-checked-text",
+            staticClass: "lina-checked-text",
             style: { height: _vm.lineHeight }
           }),
           _vm._v(" "),
           _c("div", {
-            staticClass: "u-mask",
+            staticClass: "lina-mask",
             style: { backgroundSize: "100% " + _vm.backgroundSizeY }
           })
         ]
@@ -18230,7 +18262,7 @@ function () {
         element.addEventListener(eventName[key], eventFn[key]);
       });
 
-      if (this.isMove) {
+      if (isMove) {
         element.addEventListener('touchcancel', eventFn.end);
       }
     }
@@ -18374,9 +18406,6 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
   computed: {
     minY: function minY() {
       return -parseInt(this.lineHeight) * (this.datas.values.length - 1 - macro.SHOWNUM_HALF);
-    },
-    length: function length() {
-      return parseInt(this.lineHeight) * (this.datas.values.length - 1);
     },
     element: function element() {
       return this.$refs.pickerSlot;
@@ -18691,6 +18720,10 @@ PickerSlot_component.options.__file = "src/packages/Picker/PickerSlot.vue"
 //
 //
 //
+//
+//
+//
+//
 
 
 /* harmony default export */ var Pickervue_type_script_lang_js_ = ({
@@ -18705,7 +18738,18 @@ PickerSlot_component.options.__file = "src/packages/Picker/PickerSlot.vue"
     fontSize: {
       type: String,
       default: '16px'
-    }
+    },
+    head: Boolean,
+    cancelText: {
+      type: String,
+      default: '取消'
+    },
+    confirmText: {
+      type: String,
+      default: '确认'
+    },
+    cancelColor: String,
+    confirmColor: String
   },
   data: function data() {
     return {
@@ -18741,24 +18785,39 @@ PickerSlot_component.options.__file = "src/packages/Picker/PickerSlot.vue"
     prop: 'value',
     event: 'change'
   },
+  created: function created() {
+    console.log(this.$attrs);
+  },
+  mounted: function mounted() {
+    this.$watch('slots.length', this.getDefaultValue, {
+      immediate: true
+    });
+  },
   methods: {
     handleChange: function handleChange(value, i) {
-      this.$set(this.values, i, value);
-      this.changeValue('change');
-    },
-    changeValue: function changeValue(event, value) {
-      this.getDefaultValue();
-      this.$emit(event, this.values);
+      this.$set(this.values, i, value); // this.getDefaultValue()
+
+      this.$emit('change', this.values);
       this.$emit('update:value', this.values);
+    },
+    handleConfirm: function handleConfirm() {
+      // this.getDefaultValue()
+      this.$emit('confirm', this.values.concat());
+    },
+    handleCance: function handleCance() {
+      this.$emit('cance');
     },
     // 默认values
     getDefaultValue: function getDefaultValue() {
       var pickerSlot = this.$refs.pickerSlot;
-      var values = this.values;
 
-      for (var i = 0; i < values.length; i++) {
-        if (values[i] === undefined) {
-          this.$set(values, i, pickerSlot[i].defaultValue);
+      if (pickerSlot) {
+        var values = this.values;
+
+        for (var i = 0; i < values.length; i++) {
+          if (values[i] === undefined) {
+            this.$set(values, i, pickerSlot[i].defaultValue);
+          }
         }
       }
     }
