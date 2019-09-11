@@ -755,6 +755,8 @@ export default {
 <lina-picker :slots="slots2" :value.sync="value2"></lina-picker>
 <!-- v-model通讯 -->
 <lina-picker :slots="slots3" v-model="value3"></lina-picker>
+<!-- 带按钮 -->
+<lina-picker :slots="slots3" :head="true" @confirm="handleConfirm" @cance="handleCance"></lina-picker>
 ```
 
 ```javascript
@@ -821,7 +823,8 @@ export default {
       ],
       value2: [],
       slots3: [],
-      value3: []
+      value3: [],
+      value4: []
     }
   },
   created () {
@@ -855,6 +858,12 @@ export default {
           this.slots3[2].push(i)
         }
       }, 1000)
+    },
+    handleConfirm (value) {
+      this.value4 = value
+    },
+    handleCance () {
+      alert('取消')
     }
   }
 }
@@ -868,6 +877,11 @@ export default {
 | value        |    用来绑定sync或v-model	    |  Array  | - |
 | lineHeight        |    line-height	    |  String  | 34px |
 | fontSize        |    font-size	    |  String  | 16px |
+| head      |  是否出现头部按钮  | Boolean | false |
+| cancelText | 取消按钮的文本 | String | 取消 |
+| confirmText | 确认按钮的文本 | String | 确认 |
+| cancelColor | 取消按钮的文本颜色 | String | - |
+| confirmColor | 确认按钮的文本颜色 | String | - |
 
 > Prop -> slots
 
@@ -884,6 +898,8 @@ slots数组对象得情况下
 | 名称        | 说明   |  回调函数  |
 | --------   | -----:  | :----:  |
 | change     |  滚动停止的时候，并且值发生变化 | values(数组) |
+| confirm     |  确认 | values(数组) |
+| change     |  取消 | - |
 
 ## 类型：通用函数
 
