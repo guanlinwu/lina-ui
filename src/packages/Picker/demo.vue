@@ -44,7 +44,7 @@
 
 <script>
 export default {
-  name: 'demo-pull-refresh',
+  name: 'demo-picker',
   data () {
     return {
       slots1: [

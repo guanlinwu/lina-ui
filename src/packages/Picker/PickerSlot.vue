@@ -1,10 +1,10 @@
 <template>
   <div class="u-picker-slot">
-    <div class="u-picker-slot-container" ref="pickerSlot">
-      <div class="u-ps-box" v-for="(item, index) in datas.values" :key="index" :style="{lineHeight}">
+    <ul class="u-picker-slot-container" ref="pickerSlot">
+      <li class="u-ps-box" v-for="(item, index) in datas.values" :key="index" :style="{lineHeight}">
         {{item | getValue(datas)}}
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </template>
 

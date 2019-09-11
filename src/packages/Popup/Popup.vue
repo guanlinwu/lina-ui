@@ -44,6 +44,7 @@ export default {
         return this.isShow
       },
       set (val) {
+        this.$emit('isShow', val)
         this.$emit('update:isShow', val)
       }
     }

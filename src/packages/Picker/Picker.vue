@@ -95,12 +95,10 @@ export default {
   methods: {
     handleChange (value, i) {
       this.$set(this.values, i, value)
-      // this.getDefaultValue()
       this.$emit('change', this.values)
       this.$emit('update:value', this.values)
     },
     handleConfirm () {
-      // this.getDefaultValue()
       this.$emit('confirm', this.values.concat())
     },
     handleCance () {
