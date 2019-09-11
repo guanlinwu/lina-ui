@@ -28,6 +28,17 @@
         </div>
       </div>
     </section>
+    <section>
+      <lina-picker :slots="slots3" :head="true" @confirm="handleConfirm" @cance="handleCance"></lina-picker>
+      <div class="content">
+        <h4>value4: {{value4}}</h4>
+        <div class="text-p">
+          <ul>
+            <li>confirm和handleCance事件</li>
+          </ul>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -95,7 +106,8 @@ export default {
       ],
       value2: [],
       slots3: [],
-      value3: []
+      value3: [],
+      value4: []
     }
   },
   created () {
@@ -117,9 +129,12 @@ export default {
         this.slots3[0].push(i)
       }
       setTimeout(() => {
-        this.$set(this.slots3, 1, [])
+        this.$set(this.slots3, 1, {
+          defaultIndex: 3,
+          values: []
+        })
         for (let i = 0; i > -100; i--) {
-          this.slots3[1].push(i)
+          this.slots3[1].values.push(i)
         }
       }, 500)
       setTimeout(() => {
@@ -128,6 +143,12 @@ export default {
           this.slots3[2].push(i)
         }
       }, 1000)
+    },
+    handleConfirm (value) {
+      this.value4 = value
+    },
+    handleCance () {
+      alert('取消')
     }
   }
 }

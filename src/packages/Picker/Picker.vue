@@ -1,8 +1,8 @@
 <template>
   <div class="lina-picker" @touchmove.prevent>
     <div class="lina-header" :style="{lineHeight, fontSize}" v-if="head">
-      <div @click="handleCance">{{cancelText}}</div>
-      <div @click="handleConfirm">{{confirmText}}</div>
+      <div @click="handleCance" :style="{color: cancelColor}">{{cancelText}}</div>
+      <div @click="handleConfirm" :style="{color: confirmColor}">{{confirmText}}</div>
     </div>
     <div class="lina-picker-container" :style="{height}">
       <div class="lina-picker-box" :style="{fontSize}">
@@ -46,7 +46,9 @@ export default {
     confirmText: {
       type: String,
       default: '确认'
-    }
+    },
+    cancelColor: String,
+    confirmColor: String
   },
   data () {
     return {
@@ -73,12 +75,6 @@ export default {
         })
       },
       immediate: true
-    },
-    'slots.length': {
-      handler () {
-        // this.getDefaultValue()
-      },
-      immediate: true
     }
   },
   components: {
@@ -88,16 +84,24 @@ export default {
     prop: 'value',
     event: 'change'
   },
+  created () {
+    console.log(this.$attrs)
+  },
+  mounted () {
+    this.$watch('slots.length', this.getDefaultValue, {
+      immediate: true
+    })
+  },
   methods: {
     handleChange (value, i) {
       this.$set(this.values, i, value)
-      this.getDefaultValue()
+      // this.getDefaultValue()
       this.$emit('change', this.values)
       this.$emit('update:value', this.values)
     },
     handleConfirm () {
-      this.getDefaultValue()
-      this.$emit('confirm', this.values)
+      // this.getDefaultValue()
+      this.$emit('confirm', this.values.concat())
     },
     handleCance () {
       this.$emit('cance')
