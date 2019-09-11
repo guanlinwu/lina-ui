@@ -70,10 +70,9 @@ export default {
   created () {},
   mounted () {
     this.onScrollAnimation()
-    this.initY()
-    // this.$watch('defaultIndex', this.initY, {
-    //   immediate: true
-    // })
+    this.$watch('datas.values.length', this.initY, {
+      immediate: true
+    })
   },
   methods: {
     // 注册Scroll
@@ -98,8 +97,13 @@ export default {
     },
     // 设置默认选择位置
     initY () {
-      let y = -this.datas.defaultIndex * parseInt(this.lineHeight) + this.maxY
-      this.element.style.setProperty('transform', `translateY(${y}px)`)
+      if (this.datas.defaultIndex < this.datas.values.length) {
+        let y = -this.datas.defaultIndex * parseInt(this.lineHeight) + this.maxY
+        // this.element.style.setProperty('transform', `translateY(${y}px)`)
+        this.requestAnimationFrame(y)
+      } else {
+        this.requestAnimationFrame(this.maxY)
+      }
     },
     /**
      * 判断是长滚动，还是短滚动
@@ -117,21 +121,23 @@ export default {
      * 长滚动
      * @param {Number} offsetY 手指每次滑动的距离
      */
-    longAnimation (offsetY) {
+    async longAnimation (offsetY) {
       let path = this.whole(Math.abs(offsetY) * offsetY + translate.getY(this.element))
-      this.requestAnimationFrame(path, offsetY)
+      await this.requestAnimationFrame(path, offsetY)
+      this.getIndex()
     },
     /**
      * 短滚动
      * @param {Number} offsetY 手指每次滑动的距离
      */
-    backAnimation (offsetY) {
+    async backAnimation (offsetY) {
       let lineHeight = parseInt(this.lineHeight)
       if (offsetY % lineHeight === 0) {
         return
       }
       let path = this.whole(offsetY + translate.getY(this.element))
-      this.requestAnimationFrame(path, offsetY)
+      await this.requestAnimationFrame(path, offsetY)
+      this.getIndex()
     },
     /**
      * 滚动
@@ -195,7 +201,6 @@ export default {
         let path = translate.getY(this.element) > 0 ? this.maxY : this.minY
         this.running(path, macro.OFFSETY, resolve)
       } else {
-        this.getIndex()
         resolve(currentY)
       }
     },

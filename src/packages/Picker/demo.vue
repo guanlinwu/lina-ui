@@ -53,7 +53,7 @@ export default {
       value1: [],
       slots2: [
         {
-          defaultIndex: 2,
+          defaultIndex: 6,
           values: [
             {
               name: '猪妹',
