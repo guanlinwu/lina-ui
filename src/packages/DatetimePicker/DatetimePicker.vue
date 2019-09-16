@@ -3,7 +3,7 @@
   @change="handleChange"
   @confirm="handleConfirm"
   @cance="handleCance"
-  :slots="datas"
+  :slots="slots"
   :lineHeight="lineHeight"
   :fontSize="fontSize"
   :head="head"
@@ -16,11 +16,11 @@
 
 <script>
 import createDate from './createDate'
-console.log(createDate)
 export default {
   name: 'lina-datetime-picker',
   data () {
     return {
+      datas: [],
       slots: []
     }
   },
@@ -29,7 +29,7 @@ export default {
       type: String,
       default: 'datetime' // 'datetime', 'date', 'time'
     },
-    defaultIndex: Date,
+    defaultIndex: Date, // 当前时间
     minDate: {
       type: Date,
       default () {
@@ -102,8 +102,22 @@ export default {
     cancelColor: String,
     confirmColor: String
   },
-  computed: {
-    datas () {
+  watch: {
+    type: {
+      handler () {
+        this.slots = this.getDateSlots()
+      },
+      immediate: true
+    }
+  },
+  created () {},
+  mounted () {},
+  model: {
+    prop: 'value',
+    event: 'change'
+  },
+  methods: {
+    getDateSlots () {
       let {
         type,
         defaultIndex,
@@ -133,20 +147,14 @@ export default {
         hourFormat,
         minuteFormat
       })
-    }
-  },
-  components: {},
-  created () {},
-  mounted () {},
-  beforeDestroy () {},
-  destroyed () {},
-  model: {
-    prop: 'value',
-    event: 'change'
-  },
-  methods: {
+    },
+    getslots () {
+
+    },
     handleChange (values) {
+      this.controlTime(values)
       this.filterValue(values)
+      this.getslots()
       this.$emit('change', values)
       this.$emit('update:value', values)
     },
@@ -156,6 +164,11 @@ export default {
     },
     handleCance () {
       this.$emit('cance')
+    },
+    controlTime (values) {
+      if (this.type === 'datetime' || this.type === 'date') {
+
+      }
     },
     filterValue (values) {
       if (typeof values[0] === 'object') {

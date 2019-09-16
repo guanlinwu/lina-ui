@@ -1,7 +1,17 @@
 <template>
   <div class="dom-date-time">
     <section>
-      <lina-datetime-picker @confirm="handleConfirm1" @cance="handleCance1"></lina-datetime-picker>
+      <lina-datetime-picker
+      @confirm="handleConfirm1"
+      @cance="handleCance1"
+      :minDate="new Date()"
+      :maxDate="new Date(`${new Date().getFullYear() + 7}/12/31`)"
+      yearFormat="{value}年"
+      monthFormat="{value}月"
+      dateFormat="{value}日"
+      hourFormat="{value}时"
+      minuteFormat="{value}分">
+      </lina-datetime-picker>
       <div class="content">
         <h4>value1: {{value1}}</h4>
         <div class="text-p">
@@ -12,7 +22,12 @@
       </div>
     </section>
     <section>
-      <lina-datetime-picker type="date"></lina-datetime-picker>
+      <lina-datetime-picker
+      @confirm="handleConfirm2"
+      type="date"
+      :minDate="new Date()"
+      :maxDate="new Date(`${new Date().getFullYear() + 7}/12/31`)">
+      </lina-datetime-picker>
       <div class="content">
         <h4>value2: {{value2}}</h4>
         <div class="text-p">
@@ -23,7 +38,8 @@
       </div>
     </section>
     <section>
-      <lina-datetime-picker type="time"></lina-datetime-picker>
+      <lina-datetime-picker
+      type="time"></lina-datetime-picker>
       <div class="content">
         <h4>value3: {{value3}}</h4>
         <div class="text-p">
@@ -56,6 +72,9 @@ export default {
   methods: {
     handleConfirm1 (values) {
       this.value1 = values
+    },
+    handleConfirm2 (values) {
+      this.value2 = values
     },
     handleCance1 () {
       alert('取消')

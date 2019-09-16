@@ -17,6 +17,7 @@ export default {
   data () {
     return {
       sIndex: '',
+      sValue: '',
       $time: null
     }
   },
@@ -57,7 +58,8 @@ export default {
   },
   watch: {
     sIndex () {
-      this.$emit('change', this.datas.values[this.sIndex], this.slotIndex)
+      this.sValue = this.datas.values[this.sIndex]
+      this.$emit('change', this.sValue, this.slotIndex)
     }
   },
   filters: {

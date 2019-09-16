@@ -84,9 +84,6 @@ export default {
     prop: 'value',
     event: 'change'
   },
-  created () {
-    console.log(this.$attrs)
-  },
   mounted () {
     this.$watch('slots.length', this.getDefaultValue, {
       immediate: true
@@ -95,8 +92,8 @@ export default {
   methods: {
     handleChange (value, i) {
       this.$set(this.values, i, value)
-      this.$emit('change', this.values)
-      this.$emit('update:value', this.values)
+      this.$emit('change', this.values.concat())
+      this.$emit('update:value', this.values.concat())
     },
     handleConfirm () {
       this.$emit('confirm', this.values.concat())
