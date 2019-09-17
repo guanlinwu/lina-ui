@@ -1,9 +1,10 @@
 <template>
   <lina-picker
+  ref="picker"
   @change="handleChange"
   @confirm="handleConfirm"
   @cance="handleCance"
-  :slots="slots"
+  :slots="time.data"
   :lineHeight="lineHeight"
   :fontSize="fontSize"
   :head="head"
@@ -15,15 +16,9 @@
 </template>
 
 <script>
-import createDate from './createDate'
+import Time from './time'
 export default {
   name: 'lina-datetime-picker',
-  data () {
-    return {
-      datas: [],
-      slots: []
-    }
-  },
   props: {
     type: {
       type: String,
@@ -102,24 +97,20 @@ export default {
     cancelColor: String,
     confirmColor: String
   },
-  watch: {
-    type: {
-      handler () {
-        this.slots = this.getDateSlots()
-      },
-      immediate: true
+  data () {
+    return {
+      time: {}
     }
   },
-  created () {},
-  mounted () {},
-  model: {
-    prop: 'value',
-    event: 'change'
-  },
-  methods: {
-    getDateSlots () {
+  computed: {
+    values () {
+      return this.time.values
+    },
+    isYear () {
+      return typeof this.values[0] === 'object'
+    },
+    options () {
       let {
-        type,
         defaultIndex,
         minDate,
         maxDate,
@@ -133,7 +124,7 @@ export default {
         hourFormat,
         minuteFormat
       } = this
-      return createDate[type]({
+      return {
         defaultIndex,
         minDate,
         maxDate,
@@ -146,34 +137,45 @@ export default {
         dateFormat,
         hourFormat,
         minuteFormat
+      }
+    }
+  },
+  mounted () {
+    this.$watch('type', this.getDateSlots, {
+      immediate: true
+    })
+  },
+  model: {
+    prop: 'value',
+    event: 'change'
+  },
+  methods: {
+    getDateSlots (type) {
+      if (!(this.time instanceof Time)) {
+        this.time = new Time(type, this.options)
+      } else {
+        this.time.type = type
+      }
+      this.$nextTick(() => {
+        this.time.values = this.$refs.picker.values
       })
     },
-    getslots () {
-
-    },
     handleChange (values) {
-      this.controlTime(values)
-      this.filterValue(values)
-      this.getslots()
+      this.time.values = values
+      values = this.filterValue(values)
       this.$emit('change', values)
       this.$emit('update:value', values)
     },
     handleConfirm (values) {
-      this.filterValue(values)
+      values = this.filterValue(values)
       this.$emit('confirm', values)
     },
     handleCance () {
       this.$emit('cance')
     },
-    controlTime (values) {
-      if (this.type === 'datetime' || this.type === 'date') {
-
-      }
-    },
     filterValue (values) {
-      if (typeof values[0] === 'object') {
-        values[0] = values[0].name
-      }
+      values = JSON.parse(JSON.stringify(values))
+      return values.map(obj => obj.name)
     }
   }
 }

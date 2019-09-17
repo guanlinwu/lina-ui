@@ -4,6 +4,7 @@
       <lina-datetime-picker
       @confirm="handleConfirm1"
       @cance="handleCance1"
+      :defaultIndex="new Date(`${new Date().getFullYear()}/9/20`)"
       :minDate="new Date()"
       :maxDate="new Date(`${new Date().getFullYear() + 7}/12/31`)"
       yearFormat="{value}年"
@@ -21,7 +22,7 @@
         </div>
       </div>
     </section>
-    <section>
+    <!-- <section>
       <lina-datetime-picker
       @confirm="handleConfirm2"
       type="date"
@@ -48,7 +49,7 @@
           </ul>
         </div>
       </div>
-    </section>
+    </section> -->
   </div>
 </template>
 

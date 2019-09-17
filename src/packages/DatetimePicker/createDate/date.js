@@ -27,18 +27,12 @@ export default function (options) {
     }
     if (i === maxYear) {
       obj.$maxMonth = options.monthFormat.replace(/({value})/g, maxMonth.toString().padStart(2, 0))
-      obj.$minDate = options.dateFormat.replace(/({value})/g, maxDate.toString().padStart(2, 0))
+      obj.$maxDate = options.dateFormat.replace(/({value})/g, maxDate.toString().padStart(2, 0))
     }
     for (let j = 1; j <= 12; j++) {
       obj.$moth.push(getMonth(i, j))
     }
     arr[0].values.push(obj)
-  }
-  for (let i = 1; i <= 12; i++) {
-    arr[1].values.push(options.monthFormat.replace(/({value})/g, i.toString().padStart(2, 0)))
-  }
-  for (let i = 1; i <= 31; i++) {
-    arr[2].values.push(options.dateFormat.replace(/({value})/g, i.toString().padStart(2, 0)))
   }
   return arr
 }

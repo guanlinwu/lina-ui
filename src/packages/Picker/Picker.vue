@@ -70,9 +70,11 @@ export default {
   watch: {
     slots: {
       handler (slots) {
-        slots.forEach((arr, index) => {
-          this.$set(this.values, index)
-        })
+        if (Array.isArray(slots)) {
+          slots.forEach((arr, index) => {
+            this.$set(this.values, index)
+          })
+        }
       },
       immediate: true
     }

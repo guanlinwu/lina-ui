@@ -49,9 +49,14 @@ export default {
           values: this.goods
         }
       } else {
+        let obj = {}
+        if (this.goods.defaultIndex === -1) {
+          obj.defaultIndex = 0
+        }
         return {
           ...data,
-          ...this.goods
+          ...this.goods,
+          ...obj
         }
       }
     }
@@ -60,6 +65,9 @@ export default {
     sIndex () {
       this.sValue = this.datas.values[this.sIndex]
       this.$emit('change', this.sValue, this.slotIndex)
+    },
+    $time (time) {
+      console.log(time)
     }
   },
   filters: {
@@ -67,9 +75,6 @@ export default {
       return typeof item === 'object' ? item[datas.content] : item
     }
   },
-  components: {
-  },
-  created () {},
   mounted () {
     this.onScrollAnimation()
     this.$watch('datas.values.length', this.initY, {
@@ -99,6 +104,7 @@ export default {
     },
     // 设置默认选择位置
     initY () {
+      cancelAnimationFrame(this.$time)
       if (this.datas.defaultIndex < this.datas.values.length) {
         let y = -this.datas.defaultIndex * parseInt(this.lineHeight) + this.maxY
         // this.element.style.setProperty('transform', `translateY(${y}px)`)
