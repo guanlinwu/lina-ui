@@ -65,9 +65,6 @@ export default {
     sIndex () {
       this.sValue = this.datas.values[this.sIndex]
       this.$emit('change', this.sValue, this.slotIndex)
-    },
-    $time (time) {
-      console.log(time)
     }
   },
   filters: {
@@ -77,9 +74,10 @@ export default {
   },
   mounted () {
     this.onScrollAnimation()
-    this.$watch('datas.values.length', this.initY, {
-      immediate: true
-    })
+    this.initY()
+    // this.$watch('datas.values.length', this.initY, {
+    //   immediate: true
+    // })
   },
   methods: {
     // 注册Scroll
@@ -92,25 +90,24 @@ export default {
         move: event => {
           this.runBoundary(drag.offsetY)
         },
-        end: event => {
+        end: async event => {
           if (drag.offsetY !== 0) {
             this.exercise(drag.offsetY)
           } else {
             let path = this.whole(translate.getY(element))
-            this.requestAnimationFrame(this.boundary(path))
+            await this.requestAnimationFrame(this.boundary(path))
+            this.getIndex()
           }
         }
       })
     },
     // 设置默认选择位置
-    initY () {
-      cancelAnimationFrame(this.$time)
-      if (this.datas.defaultIndex < this.datas.values.length) {
-        let y = -this.datas.defaultIndex * parseInt(this.lineHeight) + this.maxY
-        // this.element.style.setProperty('transform', `translateY(${y}px)`)
-        this.requestAnimationFrame(y)
+    async initY (defaultIndex = this.datas.defaultIndex) {
+      if (defaultIndex < this.datas.values.length && defaultIndex !== -1) {
+        let y = -defaultIndex * parseInt(this.lineHeight) + this.maxY
+        await this.requestAnimationFrame(y)
       } else {
-        this.requestAnimationFrame(this.maxY)
+        await this.requestAnimationFrame(this.maxY)
       }
     },
     /**
@@ -118,7 +115,6 @@ export default {
      * @param {Number} offsetY 手指每次滑动的距离
      */
     exercise (offsetY) {
-      cancelAnimationFrame(this.$time)
       if (Math.abs(offsetY) > 3) {
         this.longAnimation(offsetY)
       } else {
@@ -154,6 +150,7 @@ export default {
      * @returns {Promise}
      */
     requestAnimationFrame (path, offsetY = macro.OFFSETY) {
+      cancelAnimationFrame(this.$time)
       return new Promise(resolve => {
         this.running(path, offsetY, resolve)
       })
@@ -272,6 +269,16 @@ export default {
       let y = translate.getY(this.element)
       let lineHeight = parseInt(this.lineHeight)
       this.sIndex = -y / lineHeight + 3
+    },
+    /**
+     * 用name去比较，然后定位到该地方。用来给二度封装的组件使用
+     * @param {Object}
+     * * @param {} val 对比的值
+     * * @param {String} [key = 'name'] 对比的key
+     * * @param {Boolean} [b = false] 是否有动画过渡
+     */
+    async nameLocation ({ val, key = 'name', b = false }) {
+
     }
   }
 }

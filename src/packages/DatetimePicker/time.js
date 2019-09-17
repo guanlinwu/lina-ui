@@ -14,6 +14,7 @@ export default class Time {
       let date = this.getDate()
       this.data[1].values = this.getForData(this.options.monthFormat, date.maxMonth, date.minMonth)
       this.data[2].values = this.getForData(this.options.dateFormat, date.maxDate, date.minDate)
+      this.setValueOnce()
     }
   }
   get values () {
@@ -38,7 +39,6 @@ export default class Time {
         min = $minDate
       }
       this.data[2].values = this.getForData(this.options.dateFormat, max, min)
-      this.setValueOnce && this.setValueOnce()
     }
   }
   get isYear () {
