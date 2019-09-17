@@ -1,6 +1,7 @@
 export default class Time {
-  constructor (type, options) {
+  constructor (type, picker, options) {
     this.options = options
+    this.picker = picker
     this.data = []
     this.type = type
   }
@@ -12,16 +13,28 @@ export default class Time {
     this.data = this[type]()
     if (this.isYear) {
       let date = this.getDate()
-      this.data[1].values = this.getForData(this.options.monthFormat, date.maxMonth, date.minMonth)
-      this.data[2].values = this.getForData(this.options.dateFormat, date.maxDate, date.minDate)
-      this.setValueOnce()
+      this.data[1].values = this.getForData(this.options.monthFormat, date.$maxMonth, date.$minMonth)
+      let max = date.$maxDate
+      let min = date.$minDate
+      if (this.options.defaultIndex instanceof Date) {
+        let defaultDate = this.getDefaultDate()
+        let obj = this.data[0].values.find(obj => obj.value === defaultDate.year)
+        if (defaultDate.month !== obj.$maxMonth) {
+          max = obj.$moth[defaultDate.month]
+        }
+        if (defaultDate.month !== obj.$maxMonth) {
+          min = 1
+        }
+      }
+      this.data[2].values = this.getForData(this.options.dateFormat, max, min)
+      this.setTypeValue()
     }
   }
   get values () {
     return this._values
   }
   set values (values) {
-    this._values = values
+    console.log(values)
     if (this.isYear && values[0]) {
       let {
         $maxMonth,
@@ -29,22 +42,48 @@ export default class Time {
         $maxDate,
         $minDate
       } = values[0]
-      let max = values[0].$moth[values[1].value]
-      let min = 1
-      this.data[1].values = this.getForData(this.options.monthFormat, $maxMonth, $minMonth)
-      if ($maxDate && $maxMonth === values[1].value) {
-        max = $maxDate
+      this.selValue(values)
+      // let max = values[0].$moth[values[1].value]
+      // let min = 1
+      // if ($maxDate && $maxMonth === values[1].value) {
+      //   max = $maxDate
+      // }
+      // if ($minMonth === values[1].value) {
+      //   min = $minDate
+      // }
+      // this.data[1].values = this.getForData(this.options.monthFormat, $maxMonth, $minMonth)
+      // this.data[2].values = this.getForData(this.options.dateFormat, max, min)
+      if (this._values && (this._values[0].$maxMonth !== $maxMonth || this.values[0].$minMonth !== $minMonth)) {
+        this.changeMove(this._values, 1)
       }
-      if ($minMonth === values[1].value) {
-        min = $minDate
+      if (this._values && (this._values[0].$maxDate !== $maxDate || this.values[0].$minDate !== $minDate)) {
+        this.changeMove(this._values, 2)
       }
-      this.data[2].values = this.getForData(this.options.dateFormat, max, min)
+      this._values = values
     }
   }
   get isYear () {
     return this.type === 'datetime' || this.type === 'date'
   }
-  setValueOnce () {
+  selValue (data) {
+    let {
+      $maxMonth,
+      $minMonth,
+      $maxDate,
+      $minDate
+    } = data[0]
+    let max = data[0].$moth[data[1].value]
+    let min = 1
+    if ($maxDate && $maxMonth === data[1].value) {
+      max = $maxDate
+    }
+    if ($minMonth === data[1].value) {
+      min = $minDate
+    }
+    this.data[1].values = this.getForData(this.options.monthFormat, $maxMonth, $minMonth)
+    this.data[2].values = this.getForData(this.options.dateFormat, max, min)
+  }
+  setTypeValue () {
     this.getDefaultIndex({
       arr: this.data[1],
       api: 'getMonth'
@@ -52,7 +91,6 @@ export default class Time {
       arr: this.data[2],
       api: 'getDate'
     })
-    this.setValueOnce = undefined
   }
   time () {
     const options = this.options
@@ -89,14 +127,14 @@ export default class Time {
     ]
     const options = this.options
     let {
-      minYear,
-      minMonth,
-      minDate,
-      maxYear,
-      maxMonth,
-      maxDate
+      $minYear,
+      $minMonth,
+      $minDate,
+      $maxYear,
+      $maxMonth,
+      $maxDate
     } = this.getDate()
-    for (let i = minYear; i <= maxYear; i++) {
+    for (let i = $minYear; i <= $maxYear; i++) {
       let obj = {
         value: i,
         name: options.yearFormat.replace(/({value})/g, i),
@@ -105,13 +143,13 @@ export default class Time {
         $minDate: 1,
         $moth: {}
       }
-      if (i === minYear) {
-        obj.$minMonth = minMonth
-        obj.$minDate = minDate
+      if (i === $minYear) {
+        obj.$minMonth = $minMonth
+        obj.$minDate = $minDate
       }
-      if (i === maxYear) {
-        obj.$maxMonth = maxMonth
-        obj.$maxDate = maxDate
+      if (i === $maxYear) {
+        obj.$maxMonth = $maxMonth
+        obj.$maxDate = $maxDate
       }
       for (let j = 1; j <= 12; j++) {
         obj.$moth[j] = this.getMonth(i, j)
@@ -143,6 +181,13 @@ export default class Time {
     }
     return data
   }
+  changeMove (values, i) {
+    if (values) {
+      this.picker.movePort(i, {
+        val: values[i].name
+      })
+    }
+  }
   getDefaultIndex (...apis) {
     const date = this.options.defaultIndex
     if (date instanceof Date) {
@@ -162,12 +207,20 @@ export default class Time {
   getDate () {
     const options = this.options
     return {
-      minYear: options.minDate.getFullYear(),
-      minMonth: options.minDate.getMonth() + 1,
-      minDate: options.minDate.getDate(),
-      maxYear: options.maxDate.getFullYear(),
-      maxMonth: options.maxDate.getMonth() + 1,
-      maxDate: options.maxDate.getDate()
+      $minYear: options.minDate.getFullYear(),
+      $minMonth: options.minDate.getMonth() + 1,
+      $minDate: options.minDate.getDate(),
+      $maxYear: options.maxDate.getFullYear(),
+      $maxMonth: options.maxDate.getMonth() + 1,
+      $maxDate: options.maxDate.getDate()
+    }
+  }
+  getDefaultDate () {
+    const defaultIndex = this.options.defaultIndex
+    return {
+      year: defaultIndex.getFullYear(),
+      month: defaultIndex.getMonth() + 1,
+      date: defaultIndex.getDate()
     }
   }
 }

@@ -104,7 +104,7 @@ export default {
     // 设置默认选择位置
     async initY (defaultIndex = this.datas.defaultIndex) {
       if (defaultIndex < this.datas.values.length && defaultIndex !== -1) {
-        let y = -defaultIndex * parseInt(this.lineHeight) + this.maxY
+        let y = this.calculateLocation(defaultIndex)
         await this.requestAnimationFrame(y)
       } else {
         await this.requestAnimationFrame(this.maxY)
@@ -270,6 +270,9 @@ export default {
       let lineHeight = parseInt(this.lineHeight)
       this.sIndex = -y / lineHeight + 3
     },
+    calculateLocation (defaultIndex) {
+      return -defaultIndex * parseInt(this.lineHeight) + this.maxY
+    },
     /**
      * 用name去比较，然后定位到该地方。用来给二度封装的组件使用
      * @param {Object}
@@ -277,8 +280,21 @@ export default {
      * * @param {String} [key = 'name'] 对比的key
      * * @param {Boolean} [b = false] 是否有动画过渡
      */
-    async nameLocation ({ val, key = 'name', b = false }) {
-
+    async movePort ({ val, key = 'name', b = false }) {
+      let defaultIndex = this.datas.values.findIndex(obj => {
+        if (typeof obj === 'object') {
+          return obj[key] === val
+        } else {
+          return obj === val
+        }
+      })
+      if (b) {
+        await this.initY(defaultIndex)
+      } else {
+        let y = this.calculateLocation(defaultIndex)
+        translate.setY(this.element, y)
+      }
+      this.getIndex()
     }
   }
 }

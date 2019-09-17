@@ -94,11 +94,12 @@ export default {
   methods: {
     handleChange (value, i) {
       this.$set(this.values, i, value)
-      this.$emit('change', this.values.concat())
-      this.$emit('update:value', this.values.concat())
+      let valuse = JSON.parse(JSON.stringify(this.values))
+      this.$emit('change', valuse)
+      this.$emit('update:value', valuse)
     },
     handleConfirm () {
-      this.$emit('confirm', this.values.concat())
+      this.$emit('confirm', JSON.parse(JSON.stringify(this.values)))
     },
     handleCance () {
       this.$emit('cance')
@@ -113,7 +114,11 @@ export default {
             this.$set(values, i, pickerSlot[i].defaultValue)
           }
         }
+        this.$emit('defaultValue', JSON.parse(JSON.stringify(this.values)))
       }
+    },
+    movePort (index, data) {
+      this.$refs.pickerSlot[index].movePort(data)
     }
   }
 }

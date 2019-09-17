@@ -152,13 +152,13 @@ export default {
   methods: {
     getDateSlots (type) {
       if (!(this.time instanceof Time)) {
-        this.time = new Time(type, this.options)
+        this.time = new Time(type, this.$refs.picker, this.options)
       } else {
         this.time.type = type
       }
-      this.$nextTick(() => {
-        this.time.values = this.$refs.picker.values
-      })
+      // this.$nextTick(() => {
+      //   this.time.values = this.$refs.picker.values
+      // })
     },
     handleChange (values) {
       this.time.values = values
