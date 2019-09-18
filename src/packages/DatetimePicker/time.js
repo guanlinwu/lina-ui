@@ -29,7 +29,6 @@ export default class Time {
       this.data[2].values = this.getForData(this.options.dateFormat, max, min)
       this.setTypeValue()
       this.getDefaultValues()
-      console.log(JSON.parse(JSON.stringify(this.data)))
     }
   }
   get values () {
@@ -44,14 +43,12 @@ export default class Time {
         $minDate
       } = values[0]
       this.selValue(values)
-      if (this._values) {
-        console.log(this._values[0].$maxMonth, $maxMonth, values[0].$minMonth, $minMonth)
-        console.log(JSON.parse(JSON.stringify(this._values[0])), JSON.parse(JSON.stringify(values[0])))
-      }
-      if (this._values && (this._values[0].$maxMonth !== $maxMonth || values[0].$minMonth !== $minMonth)) {
+      console.log(this._values[0].$maxMonth, $maxMonth, values[0].$minMonth, $minMonth)
+      console.log(JSON.parse(JSON.stringify(this._values[0])), JSON.parse(JSON.stringify(values[0])))
+      if (this._values[0].$maxMonth !== $maxMonth || values[0].$minMonth !== $minMonth) {
         this.changeMove(this._values, 1)
       }
-      if (this._values && (this._values[0].$maxDate !== $maxDate || values[0].$minDate !== $minDate)) {
+      if (this._values[0].$maxDate !== $maxDate || values[0].$minDate !== $minDate) {
         this.changeMove(this._values, 2)
       }
       this._values = values
@@ -205,17 +202,19 @@ export default class Time {
   }
   getDefaultValues () {
     this._values = []
-    this.data.map(obj => {
-      let index = 0
-      let defaultIndex = obj.defaultIndex
-      let length = obj.values.length
-      if (defaultIndex < length && defaultIndex >= 0) {
-        index = defaultIndex
-      } else if (defaultIndex >= length) {
-        index = length - 1
-      }
-      this._values.push(obj.values[index])
+    this.data.forEach((obj, i) => {
+      this._values.push(obj.values[this.getIndex(obj.defaultIndex, i)])
     })
+  }
+  getIndex (index, i) {
+    let length = this.data[i].values.length
+    let y = 0
+    if (index < length && index >= 0) {
+      y = index
+    } else if (index >= length) {
+      y = length
+    }
+    return y
   }
   getDate () {
     const options = this.options
