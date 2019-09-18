@@ -61,23 +61,24 @@ export default {
       }
     }
   },
-  watch: {
-    sIndex () {
-      this.sValue = this.datas.values[this.sIndex]
-      this.$emit('change', this.sValue, this.slotIndex)
-    }
-  },
   filters: {
     getValue (item, datas) {
       return typeof item === 'object' ? item[datas.content] : item
     }
   },
-  mounted () {
+  async mounted () {
     this.onScrollAnimation()
-    this.initY()
-    // this.$watch('datas.values.length', this.initY, {
-    //   immediate: true
-    // })
+    await this.initY()
+    this.getIndex()
+    this.getValue()
+    this.$watch('sIndex', function () {
+      this.getValue()
+      this.$emit('change', this.sValue, this.slotIndex)
+    })
+    this.$watch('datas.values.length', function () {
+      console.log(this.sIndex)
+      this.initY(this.sIndex)
+    })
   },
   methods: {
     // 注册Scroll
@@ -102,13 +103,15 @@ export default {
       })
     },
     // 设置默认选择位置
-    async initY (defaultIndex = this.datas.defaultIndex) {
-      if (defaultIndex < this.datas.values.length && defaultIndex !== -1) {
-        let y = this.calculateLocation(defaultIndex)
-        await this.requestAnimationFrame(y)
-      } else {
-        await this.requestAnimationFrame(this.maxY)
+    async initY (index = this.datas.defaultIndex) {
+      let length = this.datas.values.length
+      let y = this.maxY
+      if (index < length && index !== -1) {
+        y = this.calculateLocation(index)
+      } else if (index >= length) {
+        y = this.calculateLocation(length - 1)
       }
+      await this.requestAnimationFrame(y)
     },
     /**
      * 判断是长滚动，还是短滚动
@@ -269,6 +272,9 @@ export default {
       let y = translate.getY(this.element)
       let lineHeight = parseInt(this.lineHeight)
       this.sIndex = -y / lineHeight + 3
+    },
+    getValue () {
+      this.sValue = this.datas.values[this.sIndex]
     },
     calculateLocation (defaultIndex) {
       return -defaultIndex * parseInt(this.lineHeight) + this.maxY

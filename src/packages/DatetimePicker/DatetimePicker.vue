@@ -156,9 +156,6 @@ export default {
       } else {
         this.time.type = type
       }
-      // this.$nextTick(() => {
-      //   this.time.values = this.$refs.picker.values
-      // })
     },
     handleChange (values) {
       this.time.values = values

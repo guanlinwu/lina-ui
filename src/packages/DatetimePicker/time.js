@@ -34,7 +34,6 @@ export default class Time {
     return this._values
   }
   set values (values) {
-    console.log(values)
     if (this.isYear && values[0]) {
       let {
         $maxMonth,
