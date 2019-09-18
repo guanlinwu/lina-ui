@@ -36,44 +36,64 @@ export default class Time {
   }
   set values (values) {
     if (this.isYear && values[0]) {
-      let {
-        $maxMonth,
-        $minMonth,
-        $maxDate,
-        $minDate
-      } = values[0]
-      this.selValue(values)
-      console.log(this._values[0].$maxMonth, $maxMonth, values[0].$minMonth, $minMonth)
-      console.log(JSON.parse(JSON.stringify(this._values[0])), JSON.parse(JSON.stringify(values[0])))
-      if (this._values[0].$maxMonth !== $maxMonth || values[0].$minMonth !== $minMonth) {
-        this.changeMove(this._values, 1)
-      }
-      if (this._values[0].$maxDate !== $maxDate || values[0].$minDate !== $minDate) {
-        this.changeMove(this._values, 2)
-      }
+      this.diffYear(values)
+      this.diffMonth(values)
       this._values = values
     }
   }
   get isYear () {
     return this.type === 'datetime' || this.type === 'date'
   }
-  selValue (data) {
+  diff (values, max) {
+    return values.slice(0, max + 1).every((obj, i) => obj.name === this._values[i].name)
+  }
+  diffYear (values) {
+    let {
+      $maxMonth,
+      $minMonth
+    } = values[0]
+    let _values = this._values
+    // 年是否不一样
+    if (!this.diff(values, 0) &&
+      (
+        $maxMonth !== _values[0].$maxMonth ||
+        $minMonth !== _values[0].$minMonth
+      )) {
+      this.data[1].values = this.getForData(this.options.monthFormat, $maxMonth, $minMonth)
+      this.changeMove(_values, 1)
+    }
+  }
+  diffMonth (values) {
     let {
       $maxMonth,
       $minMonth,
       $maxDate,
       $minDate
-    } = data[0]
-    let max = data[0].$moth[data[1].value]
-    let min = 1
-    if ($maxDate && $maxMonth === data[1].value) {
-      max = $maxDate
+    } = values[0]
+    let _values = this._values
+    // 年月是否一样
+    if (!this.diff(values, 1)) {
+      let max = values[0].$moth[values[1].value]
+      let oldMax = _values[0].$moth[_values[1].value]
+      let min = 1
+      let oldMin = 1
+      if ($maxDate && $maxMonth === values[1].value) {
+        max = $maxDate
+      }
+      if ($minMonth === values[1].value) {
+        min = $minDate
+      }
+      if (_values[0].$maxDate && $maxMonth === _values[1].value) {
+        oldMax = _values[0].$maxDate
+      }
+      if (_values[0].$minMonth === _values[1].value) {
+        oldMin = _values[0].$minMonth
+      }
+      if (max !== oldMax || min !== oldMin) {
+        this.data[2].values = this.getForData(this.options.dateFormat, max, min)
+        this.changeMove(_values, 2)
+      }
     }
-    if ($minMonth === data[1].value) {
-      min = $minDate
-    }
-    this.data[1].values = this.getForData(this.options.monthFormat, $maxMonth, $minMonth)
-    this.data[2].values = this.getForData(this.options.dateFormat, max, min)
   }
   setTypeValue () {
     this.getDefaultIndex({
