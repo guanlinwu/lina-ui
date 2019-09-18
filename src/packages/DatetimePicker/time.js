@@ -12,22 +12,26 @@ export default class Time {
     this._type = type
     this.data = this[type]()
     if (this.isYear) {
-      let date = this.getDate()
-      this.data[1].values = this.getForData(this.options.monthFormat, date.$maxMonth, date.$minMonth)
-      let max = date.$maxDate
-      let min = date.$minDate
+      this.data[1].values = this.getForData(this.options.monthFormat, this.getDate.$maxMonth, this.getDate.$minMonth)
+      let max = this.data[0].values[0].$moth[this.data[0].values[0].$maxMonth]
+      let min = this.data[0].values[0].$minDate
       if (this.options.defaultIndex instanceof Date) {
-        let defaultDate = this.getDefaultDate()
-        let obj = this.data[0].values.find(obj => obj.value === defaultDate.year)
-        if (defaultDate.month !== obj.$maxMonth) {
-          max = obj.$moth[defaultDate.month]
+        let obj = this.data[0].values.find(obj => obj.value === this.getDefaultDate.year)
+        if (this.getDefaultDate.month === obj.$maxMonth) {
+          max = obj.$maxDate
         }
-        if (defaultDate.month !== obj.$maxMonth) {
-          min = 1
+        if (this.getDefaultDate.month === obj.$minMonth) {
+          min = obj.$minDate
         }
       }
       this.data[2].values = this.getForData(this.options.dateFormat, max, min)
-      this.setTypeValue()
+      this.getDefaultIndex({
+        arr: this.data[1],
+        api: 'getMonth'
+      }, {
+        arr: this.data[2],
+        api: 'getDate'
+      })
       this.getDefaultValues()
     }
   }
@@ -95,15 +99,6 @@ export default class Time {
       }
     }
   }
-  setTypeValue () {
-    this.getDefaultIndex({
-      arr: this.data[1],
-      api: 'getMonth'
-    }, {
-      arr: this.data[2],
-      api: 'getDate'
-    })
-  }
   time () {
     const options = this.options
     const arr = [
@@ -145,7 +140,7 @@ export default class Time {
       $maxYear,
       $maxMonth,
       $maxDate
-    } = this.getDate()
+    } = this.getDate
     for (let i = $minYear; i <= $maxYear; i++) {
       let obj = {
         value: i,
@@ -201,22 +196,33 @@ export default class Time {
     }
   }
   getDefaultIndex (...apis) {
-    const date = this.options.defaultIndex
-    if (date instanceof Date) {
-      let val
+    const {
+      defaultIndex,
+      minDate,
+      maxDate
+    } = this.options
+    let val = 0
+    if (defaultIndex instanceof Date) {
       apis.forEach(obj => {
-        val = date[obj.api]()
-        if (obj.api === 'getMonth') {
-          val++
+        if (defaultIndex > maxDate) {
+          val = obj.arr.values.length - 1
+        } else if (defaultIndex < minDate) {
+          val = 0
+        } else {
+          val = defaultIndex[obj.api]()
+          if (obj.api === 'getMonth') {
+            val++
+          }
+          val = obj.arr.values.findIndex(o => o.value === val)
+          if (val === -1) {
+            val = 0
+          }
         }
-        let defaultIndex = obj.arr.values.findIndex(o => o.value === val)
-        if (defaultIndex !== -1) {
-          obj.arr.defaultIndex = defaultIndex
-        }
+        obj.arr.defaultIndex = val
       })
     } else {
       apis.forEach(obj => {
-        obj.arr.defaultIndex = 0
+        obj.arr.defaultIndex = val
       })
     }
   }
@@ -236,7 +242,7 @@ export default class Time {
     }
     return y
   }
-  getDate () {
+  get getDate () {
     const options = this.options
     return {
       $minYear: options.minDate.getFullYear(),
@@ -247,8 +253,17 @@ export default class Time {
       $maxDate: options.maxDate.getDate()
     }
   }
-  getDefaultDate () {
-    const defaultIndex = this.options.defaultIndex
+  get getDefaultDate () {
+    let {
+      defaultIndex,
+      minDate,
+      maxDate
+    } = this.options
+    if (defaultIndex < minDate) {
+      defaultIndex = minDate
+    } else if (defaultIndex > maxDate) {
+      defaultIndex = maxDate
+    }
     return {
       year: defaultIndex.getFullYear(),
       month: defaultIndex.getMonth() + 1,

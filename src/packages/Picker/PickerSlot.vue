@@ -71,13 +71,11 @@ export default {
     await this.initY()
     this.getsIndex()
     this.getsValue()
+    console.log('sIndex', this.sIndex, this.element)
     this.$watch('sIndex', function () {
       this.getsValue()
       this.$emit('change', this.sValue, this.slotIndex)
     })
-    // this.$watch('datas.values.length', function () {
-    //   this.initY(this.sIndex)
-    // })
   },
   methods: {
     // 注册Scroll
@@ -104,6 +102,7 @@ export default {
     // 设置默认选择位置
     async initY (index = this.datas.defaultIndex) {
       let y = this.calculateLocation(this.getIndex(index))
+      console.log('initY', y, index, this.element)
       await this.requestAnimationFrame(y)
     },
     /**
@@ -198,11 +197,17 @@ export default {
     */
     adjustment (currentY, resolve) {
       cancelAnimationFrame(this.$time)
-      if (currentY > this.maxY || currentY < this.minY) {
-        let path = translate.getY(this.element) > 0 ? this.maxY : this.minY
-        this.running(path, macro.OFFSETY, resolve)
-      } else {
+      console.log('adjustment', translate.getY(this.element), this.element)
+      let path = false
+      if (currentY > this.maxY) {
+        path = this.maxY
+      } else if (currentY < this.minY) {
+        path = this.minY
+      }
+      if (path === false) {
         resolve(currentY)
+      } else {
+        this.running(path, macro.OFFSETY, resolve)
       }
     },
     /**
@@ -297,6 +302,7 @@ export default {
           return obj === val
         }
       })
+      defaultIndex = this.getIndex(defaultIndex)
       if (b) {
         await this.initY(defaultIndex)
       } else {
