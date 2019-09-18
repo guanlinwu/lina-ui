@@ -28,6 +28,8 @@ export default class Time {
       }
       this.data[2].values = this.getForData(this.options.dateFormat, max, min)
       this.setTypeValue()
+      this.getDefaultValues()
+      console.log(JSON.parse(JSON.stringify(this.data)))
     }
   }
   get values () {
@@ -42,20 +44,14 @@ export default class Time {
         $minDate
       } = values[0]
       this.selValue(values)
-      // let max = values[0].$moth[values[1].value]
-      // let min = 1
-      // if ($maxDate && $maxMonth === values[1].value) {
-      //   max = $maxDate
-      // }
-      // if ($minMonth === values[1].value) {
-      //   min = $minDate
-      // }
-      // this.data[1].values = this.getForData(this.options.monthFormat, $maxMonth, $minMonth)
-      // this.data[2].values = this.getForData(this.options.dateFormat, max, min)
-      if (this._values && (this._values[0].$maxMonth !== $maxMonth || this.values[0].$minMonth !== $minMonth)) {
+      if (this._values) {
+        console.log(this._values[0].$maxMonth, $maxMonth, values[0].$minMonth, $minMonth)
+        console.log(JSON.parse(JSON.stringify(this._values[0])), JSON.parse(JSON.stringify(values[0])))
+      }
+      if (this._values && (this._values[0].$maxMonth !== $maxMonth || values[0].$minMonth !== $minMonth)) {
         this.changeMove(this._values, 1)
       }
-      if (this._values && (this._values[0].$maxDate !== $maxDate || this.values[0].$minDate !== $minDate)) {
+      if (this._values && (this._values[0].$maxDate !== $maxDate || values[0].$minDate !== $minDate)) {
         this.changeMove(this._values, 2)
       }
       this._values = values
@@ -191,7 +187,7 @@ export default class Time {
     const date = this.options.defaultIndex
     if (date instanceof Date) {
       let val
-      apis.map(obj => {
+      apis.forEach(obj => {
         val = date[obj.api]()
         if (obj.api === 'getMonth') {
           val++
@@ -201,7 +197,25 @@ export default class Time {
           obj.arr.defaultIndex = defaultIndex
         }
       })
+    } else {
+      apis.forEach(obj => {
+        obj.arr.defaultIndex = 0
+      })
     }
+  }
+  getDefaultValues () {
+    this._values = []
+    this.data.map(obj => {
+      let index = 0
+      let defaultIndex = obj.defaultIndex
+      let length = obj.values.length
+      if (defaultIndex < length && defaultIndex >= 0) {
+        index = defaultIndex
+      } else if (defaultIndex >= length) {
+        index = length - 1
+      }
+      this._values.push(obj.values[index])
+    })
   }
   getDate () {
     const options = this.options

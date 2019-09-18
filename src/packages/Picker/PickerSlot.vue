@@ -36,7 +36,7 @@ export default {
       return this.$refs.pickerSlot
     },
     defaultValue () {
-      return this.datas.values[this.datas.defaultIndex]
+      return this.datas.values[this.getIndex(this.datas.defaultIndex)]
     },
     datas () {
       let data = {
@@ -69,16 +69,15 @@ export default {
   async mounted () {
     this.onScrollAnimation()
     await this.initY()
-    this.getIndex()
-    this.getValue()
+    this.getsIndex()
+    this.getsValue()
     this.$watch('sIndex', function () {
-      this.getValue()
+      this.getsValue()
       this.$emit('change', this.sValue, this.slotIndex)
     })
-    this.$watch('datas.values.length', function () {
-      console.log(this.sIndex)
-      this.initY(this.sIndex)
-    })
+    // this.$watch('datas.values.length', function () {
+    //   this.initY(this.sIndex)
+    // })
   },
   methods: {
     // 注册Scroll
@@ -97,20 +96,14 @@ export default {
           } else {
             let path = this.whole(translate.getY(element))
             await this.requestAnimationFrame(this.boundary(path))
-            this.getIndex()
+            this.getsIndex()
           }
         }
       })
     },
     // 设置默认选择位置
     async initY (index = this.datas.defaultIndex) {
-      let length = this.datas.values.length
-      let y = this.maxY
-      if (index < length && index !== -1) {
-        y = this.calculateLocation(index)
-      } else if (index >= length) {
-        y = this.calculateLocation(length - 1)
-      }
+      let y = this.calculateLocation(this.getIndex(index))
       await this.requestAnimationFrame(y)
     },
     /**
@@ -131,7 +124,7 @@ export default {
     async longAnimation (offsetY) {
       let path = this.whole(Math.abs(offsetY) * offsetY + translate.getY(this.element))
       await this.requestAnimationFrame(path, offsetY)
-      this.getIndex()
+      this.getsIndex()
     },
     /**
      * 短滚动
@@ -144,7 +137,7 @@ export default {
       }
       let path = this.whole(offsetY + translate.getY(this.element))
       await this.requestAnimationFrame(path, offsetY)
-      this.getIndex()
+      this.getsIndex()
     },
     /**
      * 滚动
@@ -268,16 +261,26 @@ export default {
     /**
      * 获取index
      */
-    getIndex () {
+    getsIndex () {
       let y = translate.getY(this.element)
       let lineHeight = parseInt(this.lineHeight)
       this.sIndex = -y / lineHeight + 3
     },
-    getValue () {
+    getsValue () {
       this.sValue = this.datas.values[this.sIndex]
     },
     calculateLocation (defaultIndex) {
       return -defaultIndex * parseInt(this.lineHeight) + this.maxY
+    },
+    getIndex (index) {
+      let length = this.datas.values.length
+      let y = 0
+      if (index < length && index >= 0) {
+        y = index
+      } else if (index >= length) {
+        y = length
+      }
+      return y
     },
     /**
      * 用name去比较，然后定位到该地方。用来给二度封装的组件使用
@@ -300,7 +303,7 @@ export default {
         let y = this.calculateLocation(defaultIndex)
         translate.setY(this.element, y)
       }
-      this.getIndex()
+      this.getsIndex()
     }
   }
 }
