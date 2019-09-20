@@ -68,10 +68,10 @@ export default {
   },
   async mounted () {
     this.onScrollAnimation()
+    translate.setY(this.element, this.maxY)
     await this.initY()
     this.getsIndex()
     this.getsValue()
-    console.log('sIndex', this.sIndex, this.element)
     this.$watch('sIndex', function () {
       this.getsValue()
       this.$emit('change', this.sValue, this.slotIndex)
@@ -102,7 +102,6 @@ export default {
     // 设置默认选择位置
     async initY (index = this.datas.defaultIndex) {
       let y = this.calculateLocation(this.getIndex(index))
-      console.log('initY', y, index, this.element)
       await this.requestAnimationFrame(y)
     },
     /**
@@ -197,7 +196,6 @@ export default {
     */
     adjustment (currentY, resolve) {
       cancelAnimationFrame(this.$time)
-      console.log('adjustment', translate.getY(this.element), this.element)
       let path = false
       if (currentY > this.maxY) {
         path = this.maxY

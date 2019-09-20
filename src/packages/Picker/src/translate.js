@@ -34,7 +34,7 @@ function setY (element, y) {
  */
 function easeOut (target, current, part) {
   var step = (target - current) / part
-  step > 0 ? Math.ceil(step) : Math.floor(step)
+  step = step > 0 ? Math.ceil(step) : Math.floor(step)
   return step
 }
 export default {
