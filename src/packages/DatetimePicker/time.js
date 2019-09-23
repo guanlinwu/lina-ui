@@ -13,17 +13,20 @@ export default class Time {
     this.data = this[type]()
     if (this.isYear) {
       this.data[1].values = this.getForData(this.options.monthFormat, this.getDate.$maxMonth, this.getDate.$minMonth)
-      let max = this.data[0].values[0].$moth[this.data[0].values[0].$maxMonth]
-      let min = this.data[0].values[0].$minDate
+      let data0 = this.data[0].values[0]
+      let max = data0.$moth[data0.$maxMonth]
+      let min = data0.$minDate
       if (this.options.defaultIndex instanceof Date) {
         let obj = this.data[0].values.find(obj => obj.value === this.getDefaultDate.year)
-        if (this.getDefaultDate.month === obj.$maxMonth) {
+        let isUnlikeYear = obj.value !== data0.value
+        if (isUnlikeYear || this.getDefaultDate.month === obj.$maxMonth) {
           max = obj.$maxDate
         }
-        if (this.getDefaultDate.month === obj.$minMonth) {
+        if (isUnlikeYear || this.getDefaultDate.month === obj.$minMonth) {
           min = obj.$minDate
         }
       }
+      console.log(max, min)
       this.data[2].values = this.getForData(this.options.dateFormat, max, min)
       this.getDefaultIndex({
         arr: this.data[1],

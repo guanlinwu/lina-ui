@@ -196,17 +196,23 @@ export default {
     */
     adjustment (currentY, resolve) {
       cancelAnimationFrame(this.$time)
-      let path = false
-      if (currentY > this.maxY) {
-        path = this.maxY
-      } else if (currentY < this.minY) {
-        path = this.minY
-      }
-      if (path === false) {
-        resolve(currentY)
-      } else {
+      if (currentY > this.maxY || currentY < this.minY) {
+        let path = translate.getY(this.element) > 0 ? this.maxY : this.minY
         this.running(path, macro.OFFSETY, resolve)
+      } else {
+        resolve(currentY)
       }
+      // let path = false
+      // if (currentY > this.maxY) {
+      //   path = this.maxY
+      // } else if (currentY < this.minY) {
+      //   path = this.minY
+      // }
+      // if (path === false) {
+      //   resolve(currentY)
+      // } else {
+      //   this.running(path, macro.OFFSETY, resolve)
+      // }
     },
     /**
      * 速度边界
