@@ -12,22 +12,8 @@ export default class Time {
     this._type = type
     this.data = this[type]()
     if (this.isYear) {
-      this.data[1].values = this.getForData(this.options.monthFormat, this.getDate.$maxMonth, this.getDate.$minMonth)
-      let data0 = this.data[0].values[0]
-      let max = data0.$moth[data0.$maxMonth]
-      let min = data0.$minDate
-      if (this.options.defaultIndex instanceof Date) {
-        let obj = this.data[0].values.find(obj => obj.value === this.getDefaultDate.year)
-        let isUnlikeYear = obj.value !== data0.value
-        if (isUnlikeYear || this.getDefaultDate.month === obj.$maxMonth) {
-          max = obj.$maxDate
-        }
-        if (isUnlikeYear || this.getDefaultDate.month === obj.$minMonth) {
-          min = obj.$minDate
-        }
-      }
-      console.log(max, min)
-      this.data[2].values = this.getForData(this.options.dateFormat, max, min)
+      this.createMonths()
+      this.createDates()
       this.getDefaultIndex({
         arr: this.data[1],
         api: 'getMonth'
@@ -48,8 +34,57 @@ export default class Time {
       this._values = values
     }
   }
+  get getDate () {
+    const options = this.options
+    return {
+      $minYear: options.minDate.getFullYear(),
+      $minMonth: options.minDate.getMonth() + 1,
+      $minDate: options.minDate.getDate(),
+      $maxYear: options.maxDate.getFullYear(),
+      $maxMonth: options.maxDate.getMonth() + 1,
+      $maxDate: options.maxDate.getDate()
+    }
+  }
+  get defaultDateName () {
+    let {
+      defaultIndex,
+      minDate,
+      maxDate
+    } = this.options
+    if (defaultIndex < minDate) {
+      defaultIndex = minDate
+    } else if (defaultIndex > maxDate) {
+      defaultIndex = maxDate
+    }
+    return {
+      year: defaultIndex.getFullYear(),
+      month: defaultIndex.getMonth() + 1,
+      date: defaultIndex.getDate()
+    }
+  }
   get isYear () {
     return this.type === 'datetime' || this.type === 'date'
+  }
+  createDates () {
+    let data0 = this.data[0].values[0]
+    let max = data0.$moth[data0.$maxMonth]
+    let min = data0.$minDate
+    if (this.options.defaultIndex instanceof Date) {
+      let obj = this.data[0].values.find(obj => obj.value === this.defaultDateName.year)
+      let isUnlikeYear = obj.value !== data0.value
+      // 不同的年 || 或者月份一样
+      if (isUnlikeYear || this.defaultDateName.month === obj.$maxMonth) {
+        max = obj.$maxDate
+      }
+      if (isUnlikeYear || this.defaultDateName.month === obj.$minMonth) {
+        min = obj.$minDate
+      }
+    }
+    this.data[2].values = this.getForData(this.options.dateFormat, max, min)
+  }
+  createMonths () {
+    let year = this.data[0].values[this.data[0].defaultIndex]
+    this.data[1].values = this.getForData(this.options.monthFormat, year.$maxMonth, year.$minMonth)
   }
   diff (values, max) {
     return values.slice(0, max + 1).every((obj, i) => obj.name === this._values[i].name)
@@ -232,46 +267,24 @@ export default class Time {
   getDefaultValues () {
     this._values = []
     this.data.forEach((obj, i) => {
-      this._values.push(obj.values[this.getIndex(obj.defaultIndex, i)])
+      this._values.push(obj.values[this.getLimit(obj.defaultIndex, i)])
     })
   }
-  getIndex (index, i) {
+  getLimit (index, i) {
     let length = this.data[i].values.length
     let y = 0
     if (index < length && index >= 0) {
       y = index
     } else if (index >= length) {
       y = length
+    } else {
+      y = 0
     }
     return y
   }
-  get getDate () {
-    const options = this.options
-    return {
-      $minYear: options.minDate.getFullYear(),
-      $minMonth: options.minDate.getMonth() + 1,
-      $minDate: options.minDate.getDate(),
-      $maxYear: options.maxDate.getFullYear(),
-      $maxMonth: options.maxDate.getMonth() + 1,
-      $maxDate: options.maxDate.getDate()
-    }
-  }
-  get getDefaultDate () {
-    let {
-      defaultIndex,
-      minDate,
-      maxDate
-    } = this.options
-    if (defaultIndex < minDate) {
-      defaultIndex = minDate
-    } else if (defaultIndex > maxDate) {
-      defaultIndex = maxDate
-    }
-    return {
-      year: defaultIndex.getFullYear(),
-      month: defaultIndex.getMonth() + 1,
-      date: defaultIndex.getDate()
-    }
+  getIndex (i, value) {
+    let index = this.data[i].values.findIndex(obj => obj.value === value)
+    return this.getLimit(index, i)
   }
 }
 Time.mObj = {

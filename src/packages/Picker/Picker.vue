@@ -119,6 +119,9 @@ export default {
     },
     movePort (index, data) {
       this.$refs.pickerSlot[index].movePort(data)
+    },
+    getNameIndex (index, name) {
+      return this.$refs.pickerSlot[index].getNameIndex(name)
     }
   }
 }

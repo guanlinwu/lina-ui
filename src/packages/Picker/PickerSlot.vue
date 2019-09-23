@@ -314,6 +314,9 @@ export default {
         translate.setY(this.element, y)
       }
       this.getsIndex()
+    },
+    getNameIndex (name) {
+      return this.datas.values.findIndex(obj => obj.name === name)
     }
   }
 }
