@@ -45,7 +45,7 @@ export default class Time {
       $maxDate: options.maxDate.getDate()
     }
   }
-  get defaultDateName () {
+  get defaultDateValue () {
     let {
       defaultIndex,
       minDate,
@@ -70,15 +70,16 @@ export default class Time {
     let max = data0.$moth[data0.$maxMonth]
     let min = data0.$minDate
     if (this.options.defaultIndex instanceof Date) {
-      let obj = this.data[0].values.find(obj => obj.value === this.defaultDateName.year)
+      let obj = this.data[0].values.find(obj => obj.value === this.defaultDateValue.year)
       let isUnlikeYear = obj.value !== data0.value
       // 不同的年 || 或者月份一样
-      if (isUnlikeYear || this.defaultDateName.month === obj.$maxMonth) {
-        max = obj.$maxDate
+      if (isUnlikeYear || this.defaultDateValue.month === obj.$maxMonth) {
+        max = obj.$maxDate || obj.$moth[this.defaultDateValue.month]
       }
-      if (isUnlikeYear || this.defaultDateName.month === obj.$minMonth) {
+      if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
         min = obj.$minDate
       }
+      console.log(obj, max, min)
     }
     this.data[2].values = this.getForData(this.options.dateFormat, max, min)
   }

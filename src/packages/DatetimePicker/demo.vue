@@ -5,8 +5,6 @@
       @confirm="handleConfirm1"
       @cance="handleCance1"
       :defaultIndex="new Date(`${new Date().getFullYear() + 1}/9/20 10:2`)"
-      :minDate="new Date()"
-      :maxDate="new Date(`${new Date().getFullYear() + 1}/9/19 6:2`)"
       yearFormat="{value}年"
       monthFormat="{value}月"
       dateFormat="{value}日"
