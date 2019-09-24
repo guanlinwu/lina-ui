@@ -235,16 +235,21 @@ export default class Time {
     })
   }
   changeMoveName (newValue, olbValue, i) {
-    let val
+    let val = olbValue[i].value
     if (i === 1) {
       let newY = newValue[0]
-      let month = olbValue[1].value
-      val = month
-      if (month <= newY.$minMonth) {
+      if (val <= newY.$minMonth) {
         val = newY.$minMonth
-      }
-      if (month >= newY.$maxMonth) {
+      } else if (val >= newY.$maxMonth) {
         val = newY.$maxMonth
+      }
+    } else if (i === 2) {
+      let newY = newValue[0]
+      let max = newY.$maxDate !== undefined ? newY.$maxDate : newY.$moth[newValue[1].value]
+      if (val <= newY.$minDate) {
+        val = newY.$minDate
+      } else if (val >= max) {
+        val = max
       }
     }
     return val
