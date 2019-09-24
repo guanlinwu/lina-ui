@@ -37,12 +37,16 @@ export default class Time {
   get getDate () {
     const options = this.options
     return {
+      $maxYear: options.maxDate.getFullYear(),
+      $maxMonth: options.maxDate.getMonth() + 1,
+      $maxDate: options.maxDate.getDate(),
+      $maxHour: options.maxDate.getHours(),
+      $maxMinute: options.maxDate.getMinutes(),
       $minYear: options.minDate.getFullYear(),
       $minMonth: options.minDate.getMonth() + 1,
       $minDate: options.minDate.getDate(),
-      $maxYear: options.maxDate.getFullYear(),
-      $maxMonth: options.maxDate.getMonth() + 1,
-      $maxDate: options.maxDate.getDate()
+      $minHours: options.minDate.getHours(),
+      $minMinute: options.minDate.getMinutes()
     }
   }
   get defaultDateValue () {
@@ -59,14 +63,35 @@ export default class Time {
     return {
       year: defaultIndex.getFullYear(),
       month: defaultIndex.getMonth() + 1,
-      date: defaultIndex.getDate()
+      date: defaultIndex.getDate(),
+      hour: defaultIndex.getHours(),
+      minute: defaultIndex.getMinutes()
     }
   }
   get isYear () {
     return this.type === 'datetime' || this.type === 'date'
   }
+  get maxHour () {
+    return this.type === 'time'
+      ? this.options.maxHour
+      : this.getDate.$maxHour
+  }
+  get minHour () {
+    return this.type === 'time'
+      ? this.options.minHour
+      : this.getDate.$minHour
+  }
+  get maxMinute () {
+    return this.type === 'time'
+      ? this.options.maxMinute
+      : this.getDate.$maxMinute
+  }
+  get minMinute () {
+    return this.type === 'time'
+      ? this.options.minMinute
+      : this.getDate.$minMinute
+  }
   time () {
-    const options = this.options
     const arr = [
       {
         values: []
@@ -75,8 +100,14 @@ export default class Time {
         values: []
       }
     ]
-    arr[0].values = this.getForData(this.options.hourFormat, options.maxHour, options.minHour)
-    arr[1].values = this.getForData(this.options.minuteFormat, options.maxMinute, options.minMinute)
+    let {
+      maxHour,
+      minHour,
+      maxMinute,
+      minMinute
+    } = this.createTime()
+    arr[0].values = this.getForData(this.options.hourFormat, maxHour, minHour)
+    arr[1].values = this.getForData(this.options.minuteFormat, maxMinute, minMinute)
     this.addDefaultIndex({
       arr: arr[0],
       api: 'getHours'
@@ -160,6 +191,33 @@ export default class Time {
       }
     }
     this.data[2].values = this.getForData(this.options.dateFormat, max, min)
+  }
+  // 创建时间
+  createTime () {
+    const date = {
+      maxHour: this.maxHour,
+      minHour: this.minHour,
+      maxMinute: this.maxMinute,
+      minMinute: this.minMinute
+    }
+    // const {
+    //   year,
+    //   month,
+    //   date,
+    //   hour,
+    //   minute
+    // } = this.defaultDateValue
+    if (this.type === 'time') {
+      return date
+    }
+    return date
+    // if (
+    //   year === this.getDate.$maxYear &&
+    //   month === this.getDate.$maxMonth &&
+
+    // ) {
+
+    // }
   }
   /**
    * 对比年份
