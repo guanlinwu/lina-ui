@@ -45,7 +45,7 @@ export default class Time {
       $minYear: options.minDate.getFullYear(),
       $minMonth: options.minDate.getMonth() + 1,
       $minDate: options.minDate.getDate(),
-      $minHours: options.minDate.getHours(),
+      $minHour: options.minDate.getHours(),
       $minMinute: options.minDate.getMinutes()
     }
   }
@@ -55,7 +55,7 @@ export default class Time {
       minDate,
       maxDate
     } = this.options
-    if (defaultIndex < minDate) {
+    if (!(defaultIndex instanceof Date) || defaultIndex < minDate) {
       defaultIndex = minDate
     } else if (defaultIndex > maxDate) {
       defaultIndex = maxDate
@@ -105,7 +105,7 @@ export default class Time {
       minHour,
       maxMinute,
       minMinute
-    } = this.createTime()
+    } = this.createDefaultTime()
     arr[0].values = this.getForData(this.options.hourFormat, maxHour, minHour)
     arr[1].values = this.getForData(this.options.minuteFormat, maxMinute, minMinute)
     this.addDefaultIndex({
@@ -193,31 +193,44 @@ export default class Time {
     this.data[2].values = this.getForData(this.options.dateFormat, max, min)
   }
   // 创建时间
-  createTime () {
-    const date = {
+  createDefaultTime () {
+    const obj = {
       maxHour: this.maxHour,
       minHour: this.minHour,
       maxMinute: this.maxMinute,
       minMinute: this.minMinute
     }
-    // const {
-    //   year,
-    //   month,
-    //   date,
-    //   hour,
-    //   minute
-    // } = this.defaultDateValue
+    console.log(JSON.parse(JSON.stringify(obj)))
+    const {
+      year,
+      month,
+      date,
+      hour
+    } = this.defaultDateValue
     if (this.type === 'time') {
-      return date
+      return obj
     }
-    return date
-    // if (
-    //   year === this.getDate.$maxYear &&
-    //   month === this.getDate.$maxMonth &&
-
-    // ) {
-
-    // }
+    if (
+      year === this.getDate.$maxYear &&
+      month === this.getDate.$maxMonth &&
+      date === this.getDate.$maxDate
+    ) {
+      obj.maxHour = this.getDate.$maxHour
+      if (hour === this.getDate.$maxHour) {
+        obj.maxMinute = this.getDate.$maxMinute
+      }
+    } else if (
+      year === this.getDate.$minYear &&
+      month === this.getDate.$minMonth &&
+      date === this.getDate.$minDate
+    ) {
+      obj.minHour = this.getDate.$minHour
+      if (hour === this.getDate.$minHour) {
+        obj.minMinute = this.getDate.$minMinute
+      }
+    }
+    console.log(obj)
+    return obj
   }
   /**
    * 对比年份
@@ -274,6 +287,9 @@ export default class Time {
         this.changeMove(values, _values, 2)
       }
     }
+  }
+  diff (values, max) {
+    return values.slice(0, max + 1).every((obj, i) => obj.name === this._values[i].name)
   }
   /**
    * 生成slot数据
