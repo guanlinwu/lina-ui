@@ -14,7 +14,7 @@ export default class Time {
     if (this.isYear) {
       this.createMonths()
       this.createDates()
-      this.getDefaultIndex({
+      this.addDefaultIndex({
         arr: this.data[1],
         api: 'getMonth'
       }, {
@@ -65,6 +65,83 @@ export default class Time {
   get isYear () {
     return this.type === 'datetime' || this.type === 'date'
   }
+  time () {
+    const options = this.options
+    const arr = [
+      {
+        values: []
+      },
+      {
+        values: []
+      }
+    ]
+    arr[0].values = this.getForData(this.options.hourFormat, options.maxHour, options.minHour)
+    arr[1].values = this.getForData(this.options.minuteFormat, options.maxMinute, options.minMinute)
+    this.addDefaultIndex({
+      arr: arr[0],
+      api: 'getHours'
+    }, {
+      arr: arr[1],
+      api: 'getMinutes'
+    })
+    return arr
+  }
+  date () {
+    const arr = [
+      {
+        values: []
+      },
+      {
+        values: []
+      },
+      {
+        values: []
+      }
+    ]
+    const options = this.options
+    let {
+      $minYear,
+      $minMonth,
+      $minDate,
+      $maxYear,
+      $maxMonth,
+      $maxDate
+    } = this.getDate
+    for (let i = $minYear; i <= $maxYear; i++) {
+      let obj = {
+        value: i,
+        name: options.yearFormat.replace(/({value})/g, i),
+        $minMonth: 1,
+        $maxMonth: 12,
+        $minDate: 1,
+        $moth: {}
+      }
+      if (i === $minYear) {
+        obj.$minMonth = $minMonth
+        obj.$minDate = $minDate
+      }
+      if (i === $maxYear) {
+        obj.$maxMonth = $maxMonth
+        obj.$maxDate = $maxDate
+      }
+      for (let j = 1; j <= 12; j++) {
+        obj.$moth[j] = this.getMonth(i, j)
+      }
+      arr[0].values.push(obj)
+    }
+    this.addDefaultIndex({
+      arr: arr[0],
+      api: 'getFullYear'
+    })
+    return arr
+  }
+  datetime () {
+    return this.date().concat(this.time())
+  }
+  createMonths () {
+    let year = this.data[0].values[this.data[0].defaultIndex]
+    this.data[1].values = this.getForData(this.options.monthFormat, year.$maxMonth, year.$minMonth)
+  }
   createDates () {
     let data0 = this.data[0].values[0]
     let max = data0.$moth[data0.$maxMonth]
@@ -81,10 +158,6 @@ export default class Time {
       }
     }
     this.data[2].values = this.getForData(this.options.dateFormat, max, min)
-  }
-  createMonths () {
-    let year = this.data[0].values[this.data[0].defaultIndex]
-    this.data[1].values = this.getForData(this.options.monthFormat, year.$maxMonth, year.$minMonth)
   }
   diff (values, max) {
     return values.slice(0, max + 1).every((obj, i) => obj.name === this._values[i].name)
@@ -137,85 +210,13 @@ export default class Time {
       }
     }
   }
-  time () {
-    const options = this.options
-    const arr = [
-      {
-        values: []
-      },
-      {
-        values: []
-      }
-    ]
-    arr[0].values = this.getForData(this.options.hourFormat, options.maxHour, options.minHour)
-    arr[1].values = this.getForData(this.options.minuteFormat, options.maxMinute, options.minMinute)
-    this.getDefaultIndex({
-      arr: arr[0],
-      api: 'getHours'
-    }, {
-      arr: arr[1],
-      api: 'getMinutes'
-    })
-    return arr
-  }
-  date () {
-    const arr = [
-      {
-        values: []
-      },
-      {
-        values: []
-      },
-      {
-        values: []
-      }
-    ]
-    const options = this.options
-    let {
-      $minYear,
-      $minMonth,
-      $minDate,
-      $maxYear,
-      $maxMonth,
-      $maxDate
-    } = this.getDate
-    for (let i = $minYear; i <= $maxYear; i++) {
-      let obj = {
-        value: i,
-        name: options.yearFormat.replace(/({value})/g, i),
-        $minMonth: 1,
-        $maxMonth: 12,
-        $minDate: 1,
-        $moth: {}
-      }
-      if (i === $minYear) {
-        obj.$minMonth = $minMonth
-        obj.$minDate = $minDate
-      }
-      if (i === $maxYear) {
-        obj.$maxMonth = $maxMonth
-        obj.$maxDate = $maxDate
-      }
-      for (let j = 1; j <= 12; j++) {
-        obj.$moth[j] = this.getMonth(i, j)
-      }
-      arr[0].values.push(obj)
-    }
-    this.getDefaultIndex({
-      arr: arr[0],
-      api: 'getFullYear'
-    })
-    return arr
-  }
-  datetime () {
-    return this.date().concat(this.time())
-  }
-  getMonth (y, m) {
-    if (m === 2) {
-      return y % 4 ? 28 : 29
-    }
-    return Time.mObj[m]
-  }
+  /**
+   * 生成slot数据
+   * @param {String} format 格式
+   * @param {Number} max
+   * @param {Number} min
+   * @returns {Array}
+   */
   getForData (format, max, min = 1) {
     const data = []
     for (let i = min; i <= max; i++) {
@@ -226,42 +227,74 @@ export default class Time {
     }
     return data
   }
+  /**
+   * 运动
+   * @param {Array} newValue 新的
+   * @param {Array} olbValue 旧的
+   * @param {Number} i 第几组
+   */
   changeMove (newValue, olbValue, i) {
     console.log(i, 'newValue:', JSON.parse(JSON.stringify(newValue)), 'olbValue:', JSON.parse(JSON.stringify(olbValue)))
-    let val = this.changeMoveValue(newValue, olbValue, i)
-    console.log(val)
+    let value = this.changeMoveValue(newValue, olbValue, i)
+    console.log(value)
     this.picker.movePort(i, {
-      val
+      value
     })
   }
+  /**
+   * 获取运动的value
+   * @param {Array} newValue 新的
+   * @param {Array} olbValue 旧的
+   * @param {Number} i 第几组
+   * @returns {String} 新的value
+   */
   changeMoveValue (newValue, olbValue, i) {
-    let val = olbValue[i].value
+    let value = olbValue[i].value
     let newY = newValue[0]
     if (i === 1) {
-      val = this.changeYear(val, newY)
+      value = this.changeYear(value, newY)
     } else if (i === 2) {
-      val = this.changeMonth(val, newY, newValue)
+      value = this.changeMonth(value, newY, newValue)
     }
-    return val
+    return value
   }
-  changeYear (val, newY) {
-    if (val <= newY.$minMonth) {
-      val = newY.$minMonth
-    } else if (val >= newY.$maxMonth) {
-      val = newY.$maxMonth
+  /**
+   * 返回运动需要的val
+   * @param {String} value 旧的value
+   * @param {Object} newY 新的年
+   * @returns {String} 新的value
+   */
+  changeYear (value, newY) {
+    if (value <= newY.$minMonth) {
+      value = newY.$minMonth
+    } else if (value >= newY.$maxMonth) {
+      value = newY.$maxMonth
     }
-    return val
+    return value
   }
-  changeMonth (val, newY, newValue) {
+  /**
+   * 返回运动需要的val
+   * @param {String} value 旧的value
+   * @param {Object} newY 新的年
+   * @param {Array} newValue 新的
+   * @returns {String} 新的value
+   */
+  changeMonth (value, newY, newValue) {
     let max = newY.$maxDate !== undefined ? newY.$maxDate : newY.$moth[newValue[1].value]
-    if (val <= newY.$minDate) {
-      val = newY.$minDate
-    } else if (val >= max) {
-      val = max
+    if (value <= newY.$minDate) {
+      value = newY.$minDate
+    } else if (value >= max) {
+      value = max
     }
-    return val
+    return value
   }
-  getDefaultIndex (...apis) {
+  /**
+   * 为slot添加defaIndex
+   * @param  {...any} apis
+   * * @param {String} api Date的方法
+   * * @param {String} arr slot数组
+   */
+  addDefaultIndex (...apis) {
     const {
       defaultIndex,
       minDate,
@@ -298,6 +331,12 @@ export default class Time {
       this._values.push(obj.values[this.getLimit(obj.defaultIndex, i)])
     })
   }
+  /**
+   * index的界限
+   * @param {Number} index 目前的index
+   * @param {Number} i 第几个数组
+   * @returns {Number} 界限内的index
+   */
   getLimit (index, i) {
     let length = this.data[i].values.length
     let y = 0
@@ -305,14 +344,30 @@ export default class Time {
       y = index
     } else if (index >= length) {
       y = length
-    } else {
-      y = 0
     }
     return y
   }
+  /**
+   * 通过value找到index
+   * @param {Number} i 第几个数组
+   * @param {String} value
+   * @returns {Number}
+   */
   getIndex (i, value) {
     let index = this.data[i].values.findIndex(obj => obj.value === value)
     return this.getLimit(index, i)
+  }
+  /**
+   * 闰年2月
+   * @param {Number} y 年
+   * @param {Number} m 月
+   * @returns {Number} 有多少日
+   */
+  getMonth (y, m) {
+    if (m === 2) {
+      return y % 4 ? 28 : 29
+    }
+    return Time.mObj[m]
   }
 }
 Time.mObj = {
