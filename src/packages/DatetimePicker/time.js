@@ -228,29 +228,36 @@ export default class Time {
   }
   changeMove (newValue, olbValue, i) {
     console.log(i, 'newValue:', JSON.parse(JSON.stringify(newValue)), 'olbValue:', JSON.parse(JSON.stringify(olbValue)))
-    let val = this.changeMoveName(newValue, olbValue, i)
+    let val = this.changeMoveValue(newValue, olbValue, i)
     console.log(val)
     this.picker.movePort(i, {
       val
     })
   }
-  changeMoveName (newValue, olbValue, i) {
+  changeMoveValue (newValue, olbValue, i) {
     let val = olbValue[i].value
+    let newY = newValue[0]
     if (i === 1) {
-      let newY = newValue[0]
-      if (val <= newY.$minMonth) {
-        val = newY.$minMonth
-      } else if (val >= newY.$maxMonth) {
-        val = newY.$maxMonth
-      }
+      val = this.changeYear(val, newY)
     } else if (i === 2) {
-      let newY = newValue[0]
-      let max = newY.$maxDate !== undefined ? newY.$maxDate : newY.$moth[newValue[1].value]
-      if (val <= newY.$minDate) {
-        val = newY.$minDate
-      } else if (val >= max) {
-        val = max
-      }
+      val = this.changeMonth(val, newY, newValue)
+    }
+    return val
+  }
+  changeYear (val, newY) {
+    if (val <= newY.$minMonth) {
+      val = newY.$minMonth
+    } else if (val >= newY.$maxMonth) {
+      val = newY.$maxMonth
+    }
+    return val
+  }
+  changeMonth (val, newY, newValue) {
+    let max = newY.$maxDate !== undefined ? newY.$maxDate : newY.$moth[newValue[1].value]
+    if (val <= newY.$minDate) {
+      val = newY.$minDate
+    } else if (val >= max) {
+      val = max
     }
     return val
   }
