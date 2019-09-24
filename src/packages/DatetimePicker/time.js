@@ -138,10 +138,12 @@ export default class Time {
   datetime () {
     return this.date().concat(this.time())
   }
+  // 创建月份
   createMonths () {
     let year = this.data[0].values[this.data[0].defaultIndex]
     this.data[1].values = this.getForData(this.options.monthFormat, year.$maxMonth, year.$minMonth)
   }
+  // 创建日期
   createDates () {
     let data0 = this.data[0].values[0]
     let max = data0.$moth[data0.$maxMonth]
@@ -159,9 +161,10 @@ export default class Time {
     }
     this.data[2].values = this.getForData(this.options.dateFormat, max, min)
   }
-  diff (values, max) {
-    return values.slice(0, max + 1).every((obj, i) => obj.name === this._values[i].name)
-  }
+  /**
+   * 对比年份
+   * @param {Array} values
+   */
   diffYear (values) {
     let {
       $maxMonth,
@@ -178,6 +181,10 @@ export default class Time {
       this.changeMove(values, _values, 1)
     }
   }
+  /**
+   * 对比月份变化
+   * @param {Array} values
+   */
   diffMonth (values) {
     let {
       $maxMonth,
@@ -228,20 +235,6 @@ export default class Time {
     return data
   }
   /**
-   * 运动
-   * @param {Array} newValue 新的
-   * @param {Array} olbValue 旧的
-   * @param {Number} i 第几组
-   */
-  changeMove (newValue, olbValue, i) {
-    console.log(i, 'newValue:', JSON.parse(JSON.stringify(newValue)), 'olbValue:', JSON.parse(JSON.stringify(olbValue)))
-    let value = this.changeMoveValue(newValue, olbValue, i)
-    console.log(value)
-    this.picker.movePort(i, {
-      value
-    })
-  }
-  /**
    * 获取运动的value
    * @param {Array} newValue 新的
    * @param {Array} olbValue 旧的
@@ -271,6 +264,20 @@ export default class Time {
       value = newY.$maxMonth
     }
     return value
+  }
+  /**
+   * 运动
+   * @param {Array} newValue 新的
+   * @param {Array} olbValue 旧的
+   * @param {Number} i 第几组
+   */
+  changeMove (newValue, olbValue, i) {
+    console.log(i, 'newValue:', JSON.parse(JSON.stringify(newValue)), 'olbValue:', JSON.parse(JSON.stringify(olbValue)))
+    let value = this.changeMoveValue(newValue, olbValue, i)
+    console.log(value)
+    this.picker.movePort(i, {
+      value
+    })
   }
   /**
    * 返回运动需要的val
