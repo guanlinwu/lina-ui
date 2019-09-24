@@ -332,6 +332,7 @@ export default class Time {
       })
     }
   }
+  // 生成默认values
   getDefaultValues () {
     this._values = []
     this.data.forEach((obj, i) => {
