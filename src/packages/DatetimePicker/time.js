@@ -79,7 +79,6 @@ export default class Time {
       if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
         min = obj.$minDate
       }
-      console.log(obj, max, min)
     }
     this.data[2].values = this.getForData(this.options.dateFormat, max, min)
   }
@@ -103,7 +102,7 @@ export default class Time {
         $minMonth !== _values[0].$minMonth
       )) {
       this.data[1].values = this.getForData(this.options.monthFormat, $maxMonth, $minMonth)
-      this.changeMove(_values, 1)
+      this.changeMove(values, _values, 1)
     }
   }
   diffMonth (values) {
@@ -134,7 +133,7 @@ export default class Time {
       }
       if (max !== oldMax || min !== oldMin) {
         this.data[2].values = this.getForData(this.options.dateFormat, max, min)
-        this.changeMove(_values, 2)
+        this.changeMove(values, _values, 2)
       }
     }
   }
@@ -227,12 +226,28 @@ export default class Time {
     }
     return data
   }
-  changeMove (values, i) {
-    if (values) {
-      this.picker.movePort(i, {
-        val: values[i].name
-      })
+  changeMove (newValue, olbValue, i) {
+    console.log(i, 'newValue:', JSON.parse(JSON.stringify(newValue)), 'olbValue:', JSON.parse(JSON.stringify(olbValue)))
+    let val = this.changeMoveName(newValue, olbValue, i)
+    console.log(val)
+    this.picker.movePort(i, {
+      val
+    })
+  }
+  changeMoveName (newValue, olbValue, i) {
+    let val
+    if (i === 1) {
+      let newY = newValue[0]
+      let month = olbValue[1].value
+      val = month
+      if (month <= newY.$minMonth) {
+        val = newY.$minMonth
+      }
+      if (month >= newY.$maxMonth) {
+        val = newY.$maxMonth
+      }
     }
+    return val
   }
   getDefaultIndex (...apis) {
     const {

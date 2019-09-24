@@ -298,7 +298,7 @@ export default {
      * * @param {String} [key = 'name'] 对比的key
      * * @param {Boolean} [b = false] 是否有动画过渡
      */
-    async movePort ({ val, key = 'name', b = false }) {
+    async movePort ({ val, key = 'value', b = false }) {
       let defaultIndex = this.datas.values.findIndex(obj => {
         if (typeof obj === 'object') {
           return obj[key] === val
