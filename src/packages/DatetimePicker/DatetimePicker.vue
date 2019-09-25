@@ -153,6 +153,7 @@ export default {
     getDateSlots (type) {
       if (!(this.time instanceof Time)) {
         this.time = new Time(type, this.$refs.picker, this.options)
+        window.a = this.time
       } else {
         this.time.type = type
       }

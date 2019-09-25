@@ -53,9 +53,21 @@ export default class Time {
     // 不同的年 || 或者月份一样
     if (isUnlikeYear || this.defaultDateValue.month === obj.$maxMonth) {
       defaultValue.maxDate = obj.$maxDate || obj.$moth[this.defaultDateValue.month]
+      if (this.type !== 'date' && this.defaultDateValue.date === obj.$maxDate) {
+        defaultValue.maxHour = obj.$maxHour
+        if (this.defaultDateValue.hour === obj.$maxHour) {
+          defaultValue.maxMinute = obj.$maxMinute
+        }
+      }
     }
     if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
       defaultValue.minDate = obj.$minDate
+      if (this.type !== 'date' && this.defaultDateValue.date === obj.$minDate) {
+        defaultValue.minHour = obj.$minHour
+        if (this.defaultDateValue.hour === obj.$minHour) {
+          defaultValue.minMinute = obj.$minMinute
+        }
+      }
     }
     return defaultValue
   }
@@ -127,14 +139,8 @@ export default class Time {
         values: []
       }
     ]
-    let {
-      maxHour,
-      minHour,
-      maxMinute,
-      minMinute
-    } = this.createDefaultTime()
-    arr[0].values = this.getForData(this.options.hourFormat, maxHour, minHour)
-    arr[1].values = this.getForData(this.options.minuteFormat, maxMinute, minMinute)
+    arr[0].values = this.getForData(this.options.hourFormat, this.defaultValue.maxHour, this.defaultValue.minHour)
+    arr[1].values = this.getForData(this.options.minuteFormat, this.defaultValue.maxMinute, this.defaultValue.minMinute)
     this.addDefaultIndex({
       arr: arr[0],
       api: 'getHours'
@@ -156,31 +162,31 @@ export default class Time {
         values: []
       }
     ]
+    const getDate = this.getDate
     const options = this.options
-    let {
-      $minYear,
-      $minMonth,
-      $minDate,
-      $maxYear,
-      $maxMonth,
-      $maxDate
-    } = this.getDate
-    for (let i = $minYear; i <= $maxYear; i++) {
+    for (let i = getDate.$minYear; i <= getDate.$maxYear; i++) {
       let obj = {
         value: i,
         name: options.yearFormat.replace(/({value})/g, i),
-        $minMonth: 1,
+        $moth: {},
         $maxMonth: 12,
+        $maxHour: 23,
+        $maxMinute: 59,
         $minDate: 1,
-        $moth: {}
+        $minHour: 1,
+        $minMinute: 1
       }
-      if (i === $minYear) {
-        obj.$minMonth = $minMonth
-        obj.$minDate = $minDate
+      if (i === getDate.$maxYear) {
+        obj.$maxMonth = getDate.$maxMonth
+        obj.$maxDate = getDate.$maxDate
+        obj.$maxHour = getDate.$maxHour
+        obj.$maxMinute = getDate.$maxMinute
       }
-      if (i === $maxYear) {
-        obj.$maxMonth = $maxMonth
-        obj.$maxDate = $maxDate
+      if (i === getDate.$minYear) {
+        obj.$minMonth = getDate.$minMonth
+        obj.$minDate = getDate.$minDate
+        obj.$minHour = getDate.$minHour
+        obj.$minMinute = getDate.$minMinute
       }
       for (let j = 1; j <= 12; j++) {
         obj.$moth[j] = this.getMonth(i, j)
@@ -194,7 +200,8 @@ export default class Time {
     return arr
   }
   datetime () {
-    return this.date().concat(this.time())
+    this.data = this.date()
+    return this.data.concat(this.time())
   }
   /**
    * 生成slot数据
