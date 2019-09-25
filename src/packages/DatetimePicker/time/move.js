@@ -47,17 +47,17 @@ export default {
   },
   /**
    * 返回运动需要的val
-   * @param {String} value 旧的value
+   * @param {String} value 旧的年.value
    * @param {Object} newY 新的年
    * @param {Array} newValue 新的
    * @returns {String} 新的value
    */
   changeMonth (value, newY, newValue) {
-    let max = newY.$maxDate !== undefined ? newY.$maxDate : newY.$moth[newValue[1].value]
-    if (value <= newY.$minDate) {
-      value = newY.$minDate
-    } else if (value >= max) {
-      value = max
+    let moth = newY.$moth[newValue[1].value]
+    if (value <= moth.min) {
+      value = moth.min
+    } else if (value >= moth.max) {
+      value = moth.max
     }
     return value
   }

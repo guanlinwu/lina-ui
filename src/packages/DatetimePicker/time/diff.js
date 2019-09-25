@@ -34,32 +34,29 @@ export default {
    * @param {Array} values
    */
   diffMonth (values) {
-    let {
-      $maxMonth,
-      $minMonth,
-      $maxDate,
-      $minDate
-    } = values[0]
     let _values = this._values
     // 年月是否一样
     if (!this.diff(values, 1)) {
-      let max = values[0].$moth[values[1].value]
-      let oldMax = _values[0].$moth[_values[1].value]
-      let min = 1
-      let oldMin = 1
-      if ($maxDate && $maxMonth === values[1].value) {
-        max = $maxDate
-      }
-      if ($minMonth === values[1].value) {
-        min = $minDate
-      }
-      if (_values[0].$maxDate && $maxMonth === _values[1].value) {
-        oldMax = _values[0].$maxDate
-      }
-      if (_values[0].$minMonth === _values[1].value) {
-        oldMin = _values[0].$minMonth
-      }
-      console.log(JSON.parse(JSON.stringify(values[0])), JSON.parse(JSON.stringify(_values[0])))
+      let {
+        min,
+        max
+      } = values[0].$moth[values[1].value]
+      let {
+        min: oldMin,
+        max: oldMax
+      } = _values[0].$moth[_values[1].value]
+      // if ($maxDate && $maxMonth === values[1].value) {
+      //   max = $maxDate
+      // }
+      // if (values[0].$minMonth === values[1].value) {
+      //   min = values[0].$minDate
+      // }
+      // if (_values[0].$maxDate && $maxMonth === _values[1].value) {
+      //   oldMax = _values[0].$maxDate
+      // }
+      // if (_values[0].$minMonth === _values[1].value) {
+      //   oldMin = _values[0].$minMonth
+      // }
       if (max !== oldMax || min !== oldMin) {
         this.data[2].values = this.getForData(this.options.dateFormat, max, min)
         this.changeMove(values, _values, 2)

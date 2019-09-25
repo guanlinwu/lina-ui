@@ -37,22 +37,24 @@ export default class Time {
   get defaultValue () {
     let dataValues = this.data[0].values
     let data0 = dataValues[0]
+    let moth = data0.$moth[data0.$maxMonth]
     let year = dataValues[this.data[0].defaultIndex]
     let defaultValue = {
       maxMonth: year.$maxMonth,
       minMonth: year.$minMonth,
-      maxDate: data0.$moth[data0.$maxMonth],
-      minDate: data0.$maxDate,
+      maxDate: moth.max,
+      minDate: moth.min,
       maxHour: data0.$maxHour,
       minHour: data0.$minHour,
       maxMinute: data0.$maxMinute,
       minMinute: data0.$minMinute
     }
     let obj = this.data[0].values.find(obj => obj.value === this.defaultDateValue.year)
+    let objMoth = obj.$moth[this.defaultDateValue.month]
     let isUnlikeYear = obj.value !== data0.value
     // 不同的年 || 或者月份一样
     if (isUnlikeYear || this.defaultDateValue.month === obj.$maxMonth) {
-      defaultValue.maxDate = obj.$maxDate || obj.$moth[this.defaultDateValue.month]
+      defaultValue.maxDate = objMoth.max
       if (this.type !== 'date' && this.defaultDateValue.date === obj.$maxDate) {
         defaultValue.maxHour = obj.$maxHour
         if (this.defaultDateValue.hour === obj.$maxHour) {
@@ -60,8 +62,9 @@ export default class Time {
         }
       }
     }
+    console.log(this.defaultDateValue, obj)
     if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
-      defaultValue.minDate = obj.$minDate
+      defaultValue.minDate = objMoth.min
       if (this.type !== 'date' && this.defaultDateValue.date === obj.$minDate) {
         defaultValue.minHour = obj.$minHour
         if (this.defaultDateValue.hour === obj.$minHour) {
@@ -177,20 +180,24 @@ export default class Time {
         $minMinute: 1
       }
       for (let j = 1; j <= 12; j++) {
-        obj.$moth[j] = this.getMonth(i, j)
+        obj.$moth[j] = {
+          min: 1,
+          max: this.getMonth(i, j)
+        }
       }
       if (i === getDate.$maxYear) {
         obj.$maxMonth = getDate.$maxMonth
         obj.$maxDate = getDate.$maxDate
         obj.$maxHour = getDate.$maxHour
         obj.$maxMinute = getDate.$maxMinute
-        obj.$moth[getDate.$maxMonth] = getDate.$maxDate
+        obj.$moth[getDate.$maxMonth].max = getDate.$maxDate
       }
       if (i === getDate.$minYear) {
         obj.$minMonth = getDate.$minMonth
         obj.$minDate = getDate.$minDate
         obj.$minHour = getDate.$minHour
         obj.$minMinute = getDate.$minMinute
+        obj.$moth[getDate.$maxMonth].min = getDate.$minDate
       }
       arr[0].values.push(obj)
     }
