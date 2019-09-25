@@ -59,6 +59,7 @@ export default {
       if (_values[0].$minMonth === _values[1].value) {
         oldMin = _values[0].$minMonth
       }
+      console.log(JSON.parse(JSON.stringify(values[0])), JSON.parse(JSON.stringify(_values[0])))
       if (max !== oldMax || min !== oldMin) {
         this.data[2].values = this.getForData(this.options.dateFormat, max, min)
         this.changeMove(values, _values, 2)

@@ -1,4 +1,4 @@
-// 初次化
+// 初始化
 export default {
   // 创建月份
   createMonths () {

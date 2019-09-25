@@ -38,9 +38,9 @@ export default {
    * @param {Number} i 第几组
    */
   changeMove (newValue, olbValue, i) {
-    console.log(i, 'newValue:', JSON.parse(JSON.stringify(newValue)), 'olbValue:', JSON.parse(JSON.stringify(olbValue)))
+    // console.log(i, 'newValue:', JSON.parse(JSON.stringify(newValue)), 'olbValue:', JSON.parse(JSON.stringify(olbValue)))
     let value = this.changeMoveValue(newValue, olbValue, i)
-    console.log(value)
+    // console.log(value)
     this.picker.movePort(i, {
       value
     })

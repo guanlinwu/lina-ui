@@ -176,20 +176,21 @@ export default class Time {
         $minHour: 1,
         $minMinute: 1
       }
+      for (let j = 1; j <= 12; j++) {
+        obj.$moth[j] = this.getMonth(i, j)
+      }
       if (i === getDate.$maxYear) {
         obj.$maxMonth = getDate.$maxMonth
         obj.$maxDate = getDate.$maxDate
         obj.$maxHour = getDate.$maxHour
         obj.$maxMinute = getDate.$maxMinute
+        obj.$moth[getDate.$maxMonth] = getDate.$maxDate
       }
       if (i === getDate.$minYear) {
         obj.$minMonth = getDate.$minMonth
         obj.$minDate = getDate.$minDate
         obj.$minHour = getDate.$minHour
         obj.$minMinute = getDate.$minMinute
-      }
-      for (let j = 1; j <= 12; j++) {
-        obj.$moth[j] = this.getMonth(i, j)
       }
       arr[0].values.push(obj)
     }
@@ -200,6 +201,7 @@ export default class Time {
     return arr
   }
   datetime () {
+    // 为了defaultValue这个值成功计算出来
     this.data = this.date()
     return this.data.concat(this.time())
   }
