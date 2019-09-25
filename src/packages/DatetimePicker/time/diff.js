@@ -45,18 +45,6 @@ export default {
         min: oldMin,
         max: oldMax
       } = _values[0].$moth[_values[1].value]
-      // if ($maxDate && $maxMonth === values[1].value) {
-      //   max = $maxDate
-      // }
-      // if (values[0].$minMonth === values[1].value) {
-      //   min = values[0].$minDate
-      // }
-      // if (_values[0].$maxDate && $maxMonth === _values[1].value) {
-      //   oldMax = _values[0].$maxDate
-      // }
-      // if (_values[0].$minMonth === _values[1].value) {
-      //   oldMin = _values[0].$minMonth
-      // }
       if (max !== oldMax || min !== oldMin) {
         this.data[2].values = this.getForData(this.options.dateFormat, max, min)
         this.changeMove(values, _values, 2)
