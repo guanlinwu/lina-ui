@@ -31,6 +31,7 @@ export default class Time {
     if (this.isYear && values[0]) {
       this.diffYear(values)
       this.diffMonth(values)
+      this.diffDate(values)
       this._values = values
     }
   }
