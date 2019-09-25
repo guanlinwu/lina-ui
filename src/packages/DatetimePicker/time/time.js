@@ -32,6 +32,7 @@ export default class Time {
       this.diffYear(values)
       this.diffMonth(values)
       this.diffDate(values)
+      this.diffHour(values)
       this._values = values
     }
   }
@@ -178,8 +179,8 @@ export default class Time {
         $maxHour: 23,
         $maxMinute: 59,
         $minDate: 1,
-        $minHour: 1,
-        $minMinute: 1
+        $minHour: 0,
+        $minMinute: 0
       }
       for (let j = 1; j <= 12; j++) {
         obj.$moth[j] = {
@@ -234,10 +235,13 @@ export default class Time {
     for (let i = min; i <= max; i++) {
       data.push({
         value: i,
-        name: format.replace(/({value})/g, i.toString().padStart(2, 0))
+        name: this.getFormat(format, i)
       })
     }
     return data
+  }
+  getFormat (format, val) {
+    return format.replace(/({value})/g, val.toString().padStart(2, 0))
   }
   /**
    * 为slot添加defaIndex
