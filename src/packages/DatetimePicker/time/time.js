@@ -34,6 +34,32 @@ export default class Time {
       this._values = values
     }
   }
+  get defaultValue () {
+    let dataValues = this.data[0].values
+    let data0 = dataValues[0]
+    let year = dataValues[this.data[0].defaultIndex]
+    let defaultValue = {
+      maxMonth: year.$maxMonth,
+      minMonth: year.$minMonth,
+      maxDate: data0.$moth[data0.$maxMonth],
+      minDate: data0.$maxDate,
+      maxHour: data0.$maxHour,
+      minHour: data0.$minHour,
+      maxMinute: data0.$maxMinute,
+      minMinute: data0.$minMinute
+    }
+    let obj = this.data[0].values.find(obj => obj.value === this.defaultDateValue.year)
+    let isUnlikeYear = obj.value !== data0.value
+    // 不同的年 || 或者月份一样
+    if (isUnlikeYear || this.defaultDateValue.month === obj.$maxMonth) {
+      defaultValue.maxDate = obj.$maxDate || obj.$moth[this.defaultDateValue.month]
+    }
+    if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
+      defaultValue.minDate = obj.$minDate
+    }
+    return defaultValue
+  }
+  // maxDate和minDate具体时间
   get getDate () {
     const options = this.options
     return {
@@ -49,6 +75,7 @@ export default class Time {
       $minMinute: options.minDate.getMinutes()
     }
   }
+  // 默认时间
   get defaultDateValue () {
     let {
       defaultIndex,

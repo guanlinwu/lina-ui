@@ -2,26 +2,11 @@
 export default {
   // 创建月份
   createMonths () {
-    let year = this.data[0].values[this.data[0].defaultIndex]
-    this.data[1].values = this.getForData(this.options.monthFormat, year.$maxMonth, year.$minMonth)
+    this.data[1].values = this.getForData(this.options.monthFormat, this.defaultValue.maxMonth, this.defaultValue.minMonth)
   },
   // 创建日期
   createDates () {
-    let data0 = this.data[0].values[0]
-    let max = data0.$moth[data0.$maxMonth]
-    let min = data0.$minDate
-    if (this.options.defaultIndex instanceof Date) {
-      let obj = this.data[0].values.find(obj => obj.value === this.defaultDateValue.year)
-      let isUnlikeYear = obj.value !== data0.value
-      // 不同的年 || 或者月份一样
-      if (isUnlikeYear || this.defaultDateValue.month === obj.$maxMonth) {
-        max = obj.$maxDate || obj.$moth[this.defaultDateValue.month]
-      }
-      if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
-        min = obj.$minDate
-      }
-    }
-    this.data[2].values = this.getForData(this.options.dateFormat, max, min)
+    this.data[2].values = this.getForData(this.options.dateFormat, this.defaultValue.maxDate, this.defaultValue.minDate)
   },
   // 创建时间
   createDefaultTime () {
