@@ -44,10 +44,10 @@ export default class Time {
       minMonth: year.$minMonth,
       maxDate: moth.max,
       minDate: moth.min,
-      maxHour: data0.$maxHour,
-      minHour: data0.$minHour,
-      maxMinute: data0.$maxMinute,
-      minMinute: data0.$minMinute
+      maxHour: 23,
+      minHour: 1,
+      maxMinute: 59,
+      minMinute: 1
     }
     let obj = this.data[0].values.find(obj => obj.value === this.defaultDateValue.year)
     let objMoth = obj.$moth[this.defaultDateValue.month]
@@ -62,7 +62,6 @@ export default class Time {
         }
       }
     }
-    console.log(this.defaultDateValue, obj)
     if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
       defaultValue.minDate = objMoth.min
       if (this.type !== 'date' && this.defaultDateValue.date === obj.$minDate) {
@@ -168,6 +167,8 @@ export default class Time {
     const getDate = this.getDate
     const options = this.options
     for (let i = getDate.$minYear; i <= getDate.$maxYear; i++) {
+      let minMonth = 0
+      let maxMonth = 12
       let obj = {
         value: i,
         name: options.yearFormat.replace(/({value})/g, i),
@@ -190,15 +191,23 @@ export default class Time {
         obj.$maxDate = getDate.$maxDate
         obj.$maxHour = getDate.$maxHour
         obj.$maxMinute = getDate.$maxMinute
-        obj.$moth[getDate.$maxMonth].max = getDate.$maxDate
+        maxMonth = getDate.$maxMonth
+        obj.$moth[maxMonth].max = getDate.$maxDate
       }
       if (i === getDate.$minYear) {
         obj.$minMonth = getDate.$minMonth
         obj.$minDate = getDate.$minDate
         obj.$minHour = getDate.$minHour
         obj.$minMinute = getDate.$minMinute
-        obj.$moth[getDate.$maxMonth].min = getDate.$minDate
+        minMonth = getDate.$minMonth
+        obj.$moth[minMonth].min = getDate.$minDate
       }
+      // for (let j = 1; j < minMonth; j++) {
+      //   delete obj.$moth[j]
+      // }
+      // for (let j = 12; j > minMonth; j--) {
+      //   delete obj.$moth[j]
+      // }
       arr[0].values.push(obj)
     }
     this.addDefaultIndex({

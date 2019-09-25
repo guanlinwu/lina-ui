@@ -5,7 +5,7 @@
       @confirm="handleConfirm1"
       @cance="handleCance1"
       :maxDate="new Date(`${new Date().getFullYear()}/9/21 10:2`)"
-      :minDate="new Date(`${new Date().getFullYear()}/9/20 10:2`)"
+      :minDate="new Date(`${new Date().getFullYear()}/9/21 10:1`)"
       yearFormat="{value}年"
       monthFormat="{value}月"
       dateFormat="{value}日"
