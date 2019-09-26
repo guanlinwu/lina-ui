@@ -72,8 +72,7 @@ export default {
     await this.initY()
     this.getsIndex()
     this.getsValue()
-    this.$watch('sIndex', function () {
-      this.getsValue()
+    this.$watch('sValue', function () {
       this.$emit('change', this.sValue, this.slotIndex)
     })
   },
@@ -274,6 +273,7 @@ export default {
       let y = translate.getY(this.element)
       let lineHeight = parseInt(this.lineHeight)
       this.sIndex = -y / lineHeight + 3
+      this.getsValue()
     },
     getsValue () {
       this.sValue = this.datas.values[this.sIndex]
@@ -313,6 +313,7 @@ export default {
         let y = this.calculateLocation(defaultIndex)
         translate.setY(this.element, y)
       }
+      console.log(this.slotIndex, JSON.parse(JSON.stringify(this.datas)))
       this.getsIndex()
     },
     getNameIndex (name) {
