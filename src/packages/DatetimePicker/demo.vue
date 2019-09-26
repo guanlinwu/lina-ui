@@ -66,9 +66,9 @@ export default {
   name: 'dom-date-time',
   data () {
     return {
-      value1: [],
-      value2: [],
-      value3: []
+      value1: '',
+      value2: '',
+      value3: ''
     }
   },
   methods: {

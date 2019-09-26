@@ -946,7 +946,7 @@ export default {
 | 名称        | 说明   |  类型  | 默认值 |
 | --------   | -----:  | :----:  | :----:  |
 | type     | datetime、date、time | String | datetime |
-| defaultIndex | 用来绑定sync或v-model |  Array  | - |
+| defaultDate | 默认选中得时间 |  Date  | - |
 | lineHeight        |    line-height	    |  String  | 34px |
 | fontSize        |    font-size	    |  String  | 16px |
 | head      |  是否出现头部按钮  | Boolean | false |

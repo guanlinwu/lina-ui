@@ -75,7 +75,7 @@ export default {
       type: String,
       default: '{value}'
     },
-    value: Array,
+    value: String,
     lineHeight: {
       type: String,
       default: '34px'
@@ -155,7 +155,6 @@ export default {
     getDateSlots (type) {
       if (!(this.time instanceof Time)) {
         this.time = new Time(type, this.$refs.picker, this.options)
-        window.a = this.time
       } else {
         this.time.type = type
       }
@@ -175,7 +174,18 @@ export default {
     },
     filterValue (values) {
       values = JSON.parse(JSON.stringify(values))
-      return values.map(obj => obj.name)
+      let arr = values.map(obj => obj.value.toString().padStart(2, 0))
+      let str = ''
+      if (this.type === 'time') {
+        str = arr.join(':')
+      } else {
+        let times = arr.splice(3)
+        str = arr.join('-')
+        if (times.length) {
+          str += ' ' + times.join(':')
+        }
+      }
+      return str
     }
   }
 }
