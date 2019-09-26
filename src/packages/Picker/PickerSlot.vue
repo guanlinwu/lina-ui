@@ -144,8 +144,10 @@ export default {
      */
     requestAnimationFrame (path, offsetY = macro.OFFSETY) {
       cancelAnimationFrame(this.$time)
+      offsetY = Math.abs(offsetY)
+      let coefficient = offsetY > 2 ? offsetY : 3
       return new Promise(resolve => {
-        this.running(path, offsetY, resolve)
+        this.running(path, coefficient, resolve)
       })
     },
     /**
@@ -154,9 +156,7 @@ export default {
      * @param {Number} offsetY 手指每次滑动的距离
      * @param {Function} resolve Promise的resolve
      */
-    running (path, offsetY, resolve) {
-      offsetY = Math.abs(offsetY)
-      let coefficient = offsetY > 2 ? offsetY : 3
+    running (path, coefficient, resolve) {
       this.$time = requestAnimationFrame(() => {
         let currentY = translate.getY(this.element)
         if (path === currentY) {
@@ -168,7 +168,7 @@ export default {
         if (b !== false) {
           path = b
         }
-        this.running(path, offsetY, resolve)
+        this.running(path, coefficient, resolve)
       })
     },
     /**
@@ -195,23 +195,23 @@ export default {
     */
     adjustment (currentY, resolve) {
       cancelAnimationFrame(this.$time)
-      if (currentY > this.maxY || currentY < this.minY) {
-        let path = translate.getY(this.element) > 0 ? this.maxY : this.minY
-        this.running(path, macro.OFFSETY, resolve)
-      } else {
-        resolve(currentY)
-      }
-      // let path = false
-      // if (currentY > this.maxY) {
-      //   path = this.maxY
-      // } else if (currentY < this.minY) {
-      //   path = this.minY
-      // }
-      // if (path === false) {
-      //   resolve(currentY)
-      // } else {
+      // if (currentY > this.maxY || currentY < this.minY) {
+      //   let path = translate.getY(this.element) > 0 ? this.maxY : this.minY
       //   this.running(path, macro.OFFSETY, resolve)
+      // } else {
+      //   resolve(currentY)
       // }
+      let path = false
+      if (currentY > this.maxY) {
+        path = this.maxY
+      } else if (currentY < this.minY) {
+        path = this.minY
+      }
+      if (path === false) {
+        resolve(currentY)
+      } else {
+        this.running(path, macro.OFFSETY, resolve)
+      }
     },
     /**
      * 速度边界
@@ -313,7 +313,6 @@ export default {
         let y = this.calculateLocation(defaultIndex)
         translate.setY(this.element, y)
       }
-      console.log(this.slotIndex, JSON.parse(JSON.stringify(this.datas)))
       this.getsIndex()
     },
     getNameIndex (name) {
