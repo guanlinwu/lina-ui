@@ -143,8 +143,18 @@ export default class Time {
         values: []
       }
     ]
-    arr[0].values = this.getForData(this.options.hourFormat, this.defaultValue.maxHour, this.defaultValue.minHour)
-    arr[1].values = this.getForData(this.options.minuteFormat, this.defaultValue.maxMinute, this.defaultValue.minMinute)
+    let maxHour = this.options.maxHour
+    let minHour = this.options.minHour
+    let maxMinute = this.options.maxMinute
+    let minMinute = this.options.minMinute
+    if (this.type === 'datetime') {
+      maxHour = this.defaultValue.maxHour
+      minHour = this.defaultValue.minHour
+      maxMinute = this.defaultValue.maxMinute
+      minMinute = this.defaultValue.minMinute
+    }
+    arr[0].values = this.getForData(this.options.hourFormat, maxHour, minHour)
+    arr[1].values = this.getForData(this.options.minuteFormat, maxMinute, minMinute)
     this.addDefaultIndex({
       arr: arr[0],
       api: 'getHours'

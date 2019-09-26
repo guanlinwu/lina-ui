@@ -25,13 +25,13 @@ export default {
     let value = olbValue[i].value
     let newY = newValue[0]
     if (i === 1) {
-      value = this.changeYear(value, newY, newValue)
+      value = this.changeYear(value, newY)
     } else if (i === 2) {
       value = this.changeMonth(value, newY, newValue)
     } else if (i === 3) {
-      value = this.changeDate(value, newY, newValue)
+      value = this.changeDate(value, newY)
     } else if (i === 4) {
-      value = this.changeHour(value, newY, newValue)
+      value = this.changeHour(value, newY)
     }
     return value
   },
@@ -41,15 +41,11 @@ export default {
    * @param {Object} newY 新的年
    * @returns {String} 新的value
    */
-  changeYear (value, newY, newValue) {
+  changeYear (value, newY) {
     if (value <= newY.$minMonth) {
       value = newY.$minMonth
     } else if (value >= newY.$maxMonth) {
       value = newY.$maxMonth
-    }
-    newValue[1] = {
-      value,
-      name: this.getFormat(this.options.monthFormat, value)
     }
     return value
   },
@@ -67,10 +63,6 @@ export default {
     } else if (value >= moth.max) {
       value = moth.max
     }
-    newValue[2] = {
-      value,
-      name: this.getFormat(this.options.dateFormat, value)
-    }
     return value
   },
   /**
@@ -79,16 +71,12 @@ export default {
    * @param {Object} newY 新的年
    * @returns {String} 新的value
    */
-  changeDate (value, newY, newValue) {
+  changeDate (value, newY) {
     if (value <= newY.$minHour) {
       value = newY.$minHour
     } else if (value >= newY.$maxHour) {
       value = newY.$maxHour
     }
-    newValue[3] = {
-      value,
-      name: this.getFormat(this.options.hourFormat, value)
-    }
     return value
   },
   /**
@@ -97,15 +85,11 @@ export default {
    * @param {Object} newY 新的年
    * @returns {String} 新的value
    */
-  changeHour (value, newY, newValue) {
+  changeHour (value, newY) {
     if (value <= newY.$minMinute) {
       value = newY.$minMinute
     } else if (value >= newY.$maxMinute) {
       value = newY.$maxMinute
-    }
-    newValue[4] = {
-      value,
-      name: this.getFormat(this.options.hourFormat, value)
     }
     return value
   }

@@ -4,8 +4,8 @@
       <lina-datetime-picker
       @confirm="handleConfirm1"
       @cance="handleCance1"
-      :defaultIndex="new Date(`${new Date().getFullYear()}/9/20 10:2`)"
-      :maxDate="new Date(`${new Date().getFullYear() + 1}/10/21 23:2`)"
+      :defaultIndex="new Date(`${new Date().getFullYear() + 1}/9/20 3:2`)"
+      :maxDate="new Date(`${new Date().getFullYear() + 5}/11/21 23:4`)"
       :minDate="new Date(`${new Date().getFullYear()}/9/20 10:2`)"
       yearFormat="{value}年"
       monthFormat="{value}月"
@@ -22,7 +22,7 @@
         </div>
       </div>
     </section>
-    <!-- <section>
+    <section>
       <lina-datetime-picker
       @confirm="handleConfirm2"
       type="date"
@@ -40,7 +40,13 @@
     </section>
     <section>
       <lina-datetime-picker
-      type="time"></lina-datetime-picker>
+      type="time"
+      :maxHour="10"
+      :minHour="5"
+      :maxMinute="44"
+      :minMinute="2"
+      :head="false"
+      v-model="value3"></lina-datetime-picker>
       <div class="content">
         <h4>value3: {{value3}}</h4>
         <div class="text-p">
@@ -49,7 +55,7 @@
           </ul>
         </div>
       </div>
-    </section> -->
+    </section>
   </div>
 </template>
 
