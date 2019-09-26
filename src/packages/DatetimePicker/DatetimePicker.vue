@@ -12,7 +12,9 @@
   :confirmText="confirmText"
   :cancelColor="cancelColor"
   :confirmColor="confirmColor"
-  ></lina-picker>
+  >
+    <slot name="title" slot="title"></slot>
+  </lina-picker>
 </template>
 
 <script>

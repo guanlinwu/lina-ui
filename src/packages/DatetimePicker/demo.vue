@@ -12,6 +12,7 @@
       dateFormat="{value}日"
       hourFormat="{value}时"
       minuteFormat="{value}分">
+        <p slot="title">datetime</p>
       </lina-datetime-picker>
       <div class="content">
         <h4>value1: {{value1}}</h4>
@@ -28,6 +29,7 @@
       type="date"
       :minDate="new Date()"
       :maxDate="new Date(`${new Date().getFullYear() + 7}/12/31`)">
+        <p slot="title">date</p>
       </lina-datetime-picker>
       <div class="content">
         <h4>value2: {{value2}}</h4>
