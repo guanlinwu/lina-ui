@@ -64,7 +64,6 @@ export default {
       let min = 0
       let oldMax = 23
       let oldMin = 0
-      console.log(JSON.parse(JSON.stringify(_values)), JSON.parse(JSON.stringify(values)))
       if (
         _values[0].$maxMonth === _values[1].value &&
         _values[0].$maxDate === _values[2].value

@@ -26,7 +26,7 @@ export default {
       type: String,
       default: 'datetime' // 'datetime', 'date', 'time'
     },
-    defaultIndex: Date, // 当前时间
+    defaultDate: Date, // 当前时间
     minDate: {
       type: Date,
       default () {
@@ -113,7 +113,7 @@ export default {
     },
     options () {
       let {
-        defaultIndex,
+        defaultDate,
         minDate,
         maxDate,
         minHour,
@@ -127,7 +127,7 @@ export default {
         minuteFormat
       } = this
       return {
-        defaultIndex,
+        defaultDate,
         minDate,
         maxDate,
         minHour,

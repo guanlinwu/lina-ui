@@ -891,6 +891,11 @@ slots数组对象得情况下
 | defaultIndex        |    默认选中	    |  Number  | 0 |
 | content        |    values是对象数组时，作为内容展示的key	    |  String  | name |
 
+> slot
+| 名称        | 说明   |
+| --------   | -----:  |
+| title     |  标题插槽 |
+
 > Event
 
 | 名称        | 说明   |  回调函数  |
@@ -898,6 +903,57 @@ slots数组对象得情况下
 | change     |  滚动停止的时候，并且值发生变化 | values(数组) |
 | confirm     |  确认 | values(数组) |
 | change     |  取消 | - |
+
+## <font color=#cf3e8e>DatatimePicker</font>
+> 一些事件、prop、slot请参考Picker
+
+> 基本用法
+```html
+<!-- type：datetime（默认） -->
+<lina-datetime-picker @confirm="handleConfirm1"></lina-datetime-picker>
+<!-- type: date -->
+<lina-datetime-picker type="date" @confirm="handleConfirm2"></lina-datetime-picker>
+<!-- type: time -->
+<lina-datetime-picker type="time" v-model="value3"></lina-datetime-picker>
+```
+
+```javascript
+export default {
+  name: 'dom-date-time',
+  data () {
+    return {
+      value1: [],
+      value2: [],
+      value3: []
+    }
+  },
+  methods: {
+    handleConfirm1 (values) {
+      this.value1 = values
+    },
+    handleConfirm2 (values) {
+      this.value2 = values
+    },
+    handleCance1 () {
+      alert('取消')
+    }
+  }
+}
+```
+
+> Prop
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| type     | datetime、date、time | String | datetime |
+| defaultIndex | 用来绑定sync或v-model |  Array  | - |
+| lineHeight        |    line-height	    |  String  | 34px |
+| fontSize        |    font-size	    |  String  | 16px |
+| head      |  是否出现头部按钮  | Boolean | false |
+| cancelText | 取消按钮的文本 | String | 取消 |
+| confirmText | 确认按钮的文本 | String | 确认 |
+| cancelColor | 取消按钮的文本颜色 | String | - |
+| confirmColor | 确认按钮的文本颜色 | String | - |
 
 ## 类型：通用函数
 

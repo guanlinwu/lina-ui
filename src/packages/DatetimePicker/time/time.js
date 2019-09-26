@@ -94,21 +94,21 @@ export default class Time {
   // 默认时间
   get defaultDateValue () {
     let {
-      defaultIndex,
+      defaultDate,
       minDate,
       maxDate
     } = this.options
-    if (!(defaultIndex instanceof Date) || defaultIndex < minDate) {
-      defaultIndex = minDate
-    } else if (defaultIndex > maxDate) {
-      defaultIndex = maxDate
+    if (!(defaultDate instanceof Date) || defaultDate < minDate) {
+      defaultDate = minDate
+    } else if (defaultDate > maxDate) {
+      defaultDate = maxDate
     }
     return {
-      year: defaultIndex.getFullYear(),
-      month: defaultIndex.getMonth() + 1,
-      date: defaultIndex.getDate(),
-      hour: defaultIndex.getHours(),
-      minute: defaultIndex.getMinutes()
+      year: defaultDate.getFullYear(),
+      month: defaultDate.getMonth() + 1,
+      date: defaultDate.getDate(),
+      hour: defaultDate.getHours(),
+      minute: defaultDate.getMinutes()
     }
   }
   get isYear () {
@@ -261,19 +261,19 @@ export default class Time {
    */
   addDefaultIndex (...apis) {
     const {
-      defaultIndex,
+      defaultDate,
       minDate,
       maxDate
     } = this.options
     let val = 0
-    if (defaultIndex instanceof Date) {
+    if (defaultDate instanceof Date) {
       apis.forEach(obj => {
-        if (defaultIndex > maxDate) {
+        if (defaultDate > maxDate) {
           val = obj.arr.values.length - 1
-        } else if (defaultIndex < minDate) {
+        } else if (defaultDate < minDate) {
           val = 0
         } else {
-          val = defaultIndex[obj.api]()
+          val = defaultDate[obj.api]()
           if (obj.api === 'getMonth') {
             val++
           }

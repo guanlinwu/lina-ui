@@ -4,7 +4,7 @@
       <lina-datetime-picker
       @confirm="handleConfirm1"
       @cance="handleCance1"
-      :defaultIndex="new Date(`${new Date().getFullYear() + 1}/9/20 3:2`)"
+      :defaultDate="new Date(`${new Date().getFullYear() + 1}/9/20 3:2`)"
       :maxDate="new Date(`${new Date().getFullYear() + 5}/11/21 23:4`)"
       :minDate="new Date(`${new Date().getFullYear()}/9/20 10:2`)"
       yearFormat="{value}年"
@@ -71,13 +71,6 @@ export default {
       value3: []
     }
   },
-  computed: {
-  },
-  components: {},
-  created () {},
-  mounted () {},
-  beforeDestroy () {},
-  destroyed () {},
   methods: {
     handleConfirm1 (values) {
       this.value1 = values
