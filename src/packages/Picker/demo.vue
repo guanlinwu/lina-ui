@@ -29,7 +29,9 @@
       </div>
     </section>
     <section>
-      <lina-picker :slots="slots3" :head="true" @confirm="handleConfirm" @cance="handleCance"></lina-picker>
+      <lina-picker :slots="slots3" :head="true" @confirm="handleConfirm" @cance="handleCance">
+        <p slot="title">title</p>
+      </lina-picker>
       <div class="content">
         <h4>value4: {{value4}}</h4>
         <div class="text-p">

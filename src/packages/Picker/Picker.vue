@@ -1,8 +1,11 @@
 <template>
   <div class="lina-picker" @touchmove.prevent>
     <div class="lina-header" :style="{lineHeight, fontSize}" v-if="head">
-      <div @click="handleCance" :style="{color: cancelColor}">{{cancelText}}</div>
-      <div @click="handleConfirm" :style="{color: confirmColor}">{{confirmText}}</div>
+      <div class="lina-btn" @click="handleCance" :style="{color: cancelColor}">{{cancelText}}</div>
+      <div class="lina-slot-title">
+        <slot name="title"></slot>
+      </div>
+      <div class="lina-btn" @click="handleConfirm" :style="{color: confirmColor}">{{confirmText}}</div>
     </div>
     <div class="lina-picker-container" :style="{height}">
       <div class="lina-picker-box" :style="{fontSize}">
@@ -137,14 +140,17 @@ export default {
     align-items: center;
     background: #fff;
     border-bottom: 1px #e8e8e8 solid;
-    div {
+    padding: 0 35px;
+    .lina-btn {
       color: #26a2ff;
       flex: 1;
-      text-align: center;
-      &:first-child {
-        border-right: 1px #e8e8e8 solid;
-        // @include border-width-1px($border-color: #e8e8e8, $border-width-right: 1);
+      &:last-child {
+        text-align: right;
       }
+    }
+    .lina-slot-title {
+      flex: 2;
+      text-align: center;
     }
   }
   .lina-picker-container {
