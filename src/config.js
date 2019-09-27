@@ -119,6 +119,15 @@ export default {
       'type': 'component',
       'belong': 'view component',
       'author': ['mwc']
+    },
+    {
+      'version': '1.0.0',
+      'name': 'DatetimePicker',
+      'chnName': '时间选择器',
+      'desc': 'DatetimePicker',
+      'type': 'component',
+      'belong': 'view component',
+      'author': ['mwc']
     }
   ]
 }

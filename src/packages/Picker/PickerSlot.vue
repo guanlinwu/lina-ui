@@ -1,10 +1,10 @@
 <template>
   <div class="u-picker-slot">
-    <div class="u-picker-slot-container" ref="pickerSlot">
-      <div class="u-ps-box" v-for="(item, index) in datas.values" :key="index" :style="{lineHeight}">
+    <ul class="u-picker-slot-container" ref="pickerSlot">
+      <li class="u-ps-box" v-for="(item, index) in datas.values" :key="index" :style="{lineHeight}">
         {{item | getValue(datas)}}
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -17,6 +17,7 @@ export default {
   data () {
     return {
       sIndex: '',
+      sValue: '',
       $time: null
     }
   },
@@ -35,7 +36,7 @@ export default {
       return this.$refs.pickerSlot
     },
     defaultValue () {
-      return this.datas.values[this.datas.defaultIndex]
+      return this.datas.values[this.getIndex(this.datas.defaultIndex)]
     },
     datas () {
       let data = {
@@ -48,16 +49,16 @@ export default {
           values: this.goods
         }
       } else {
+        let obj = {}
+        if (this.goods.defaultIndex === -1) {
+          obj.defaultIndex = 0
+        }
         return {
           ...data,
-          ...this.goods
+          ...this.goods,
+          ...obj
         }
       }
-    }
-  },
-  watch: {
-    sIndex () {
-      this.$emit('change', this.datas.values[this.sIndex], this.slotIndex)
     }
   },
   filters: {
@@ -65,15 +66,15 @@ export default {
       return typeof item === 'object' ? item[datas.content] : item
     }
   },
-  components: {
-  },
-  created () {},
-  mounted () {
+  async mounted () {
     this.onScrollAnimation()
-    this.initY()
-    // this.$watch('defaultIndex', this.initY, {
-    //   immediate: true
-    // })
+    translate.setY(this.element, this.maxY)
+    await this.initY()
+    this.getsIndex()
+    this.getsValue()
+    this.$watch('sValue', function () {
+      this.$emit('change', this.sValue, this.slotIndex)
+    })
   },
   methods: {
     // 注册Scroll
@@ -86,27 +87,27 @@ export default {
         move: event => {
           this.runBoundary(drag.offsetY)
         },
-        end: event => {
+        end: async event => {
           if (drag.offsetY !== 0) {
             this.exercise(drag.offsetY)
           } else {
             let path = this.whole(translate.getY(element))
-            this.requestAnimationFrame(this.boundary(path))
+            await this.requestAnimationFrame(this.boundary(path))
+            this.getsIndex()
           }
         }
       })
     },
     // 设置默认选择位置
-    initY () {
-      let y = -this.datas.defaultIndex * parseInt(this.lineHeight) + this.maxY
-      this.element.style.setProperty('transform', `translateY(${y}px)`)
+    async initY (index = this.datas.defaultIndex) {
+      let y = this.calculateLocation(this.getIndex(index))
+      await this.requestAnimationFrame(y)
     },
     /**
      * 判断是长滚动，还是短滚动
      * @param {Number} offsetY 手指每次滑动的距离
      */
     exercise (offsetY) {
-      cancelAnimationFrame(this.$time)
       if (Math.abs(offsetY) > 3) {
         this.longAnimation(offsetY)
       } else {
@@ -117,21 +118,23 @@ export default {
      * 长滚动
      * @param {Number} offsetY 手指每次滑动的距离
      */
-    longAnimation (offsetY) {
+    async longAnimation (offsetY) {
       let path = this.whole(Math.abs(offsetY) * offsetY + translate.getY(this.element))
-      this.requestAnimationFrame(path, offsetY)
+      await this.requestAnimationFrame(path, offsetY)
+      this.getsIndex()
     },
     /**
      * 短滚动
      * @param {Number} offsetY 手指每次滑动的距离
      */
-    backAnimation (offsetY) {
+    async backAnimation (offsetY) {
       let lineHeight = parseInt(this.lineHeight)
       if (offsetY % lineHeight === 0) {
         return
       }
       let path = this.whole(offsetY + translate.getY(this.element))
-      this.requestAnimationFrame(path, offsetY)
+      await this.requestAnimationFrame(path, offsetY)
+      this.getsIndex()
     },
     /**
      * 滚动
@@ -140,8 +143,11 @@ export default {
      * @returns {Promise}
      */
     requestAnimationFrame (path, offsetY = macro.OFFSETY) {
+      cancelAnimationFrame(this.$time)
+      offsetY = Math.abs(offsetY)
+      let coefficient = offsetY > 2 ? offsetY : 3
       return new Promise(resolve => {
-        this.running(path, offsetY, resolve)
+        this.running(path, coefficient, resolve)
       })
     },
     /**
@@ -150,9 +156,7 @@ export default {
      * @param {Number} offsetY 手指每次滑动的距离
      * @param {Function} resolve Promise的resolve
      */
-    running (path, offsetY, resolve) {
-      offsetY = Math.abs(offsetY)
-      let coefficient = offsetY > 2 ? offsetY : 3
+    running (path, coefficient, resolve) {
       this.$time = requestAnimationFrame(() => {
         let currentY = translate.getY(this.element)
         if (path === currentY) {
@@ -164,7 +168,7 @@ export default {
         if (b !== false) {
           path = b
         }
-        this.running(path, offsetY, resolve)
+        this.running(path, coefficient, resolve)
       })
     },
     /**
@@ -191,12 +195,22 @@ export default {
     */
     adjustment (currentY, resolve) {
       cancelAnimationFrame(this.$time)
-      if (currentY > this.maxY || currentY < this.minY) {
-        let path = translate.getY(this.element) > 0 ? this.maxY : this.minY
-        this.running(path, macro.OFFSETY, resolve)
-      } else {
-        this.getIndex()
+      // if (currentY > this.maxY || currentY < this.minY) {
+      //   let path = translate.getY(this.element) > 0 ? this.maxY : this.minY
+      //   this.running(path, macro.OFFSETY, resolve)
+      // } else {
+      //   resolve(currentY)
+      // }
+      let path = false
+      if (currentY > this.maxY) {
+        path = this.maxY
+      } else if (currentY < this.minY) {
+        path = this.minY
+      }
+      if (path === false) {
         resolve(currentY)
+      } else {
+        this.running(path, macro.OFFSETY, resolve)
       }
     },
     /**
@@ -255,10 +269,54 @@ export default {
     /**
      * 获取index
      */
-    getIndex () {
+    getsIndex () {
       let y = translate.getY(this.element)
       let lineHeight = parseInt(this.lineHeight)
       this.sIndex = -y / lineHeight + 3
+      this.getsValue()
+    },
+    getsValue () {
+      this.sValue = this.datas.values[this.sIndex]
+    },
+    calculateLocation (defaultIndex) {
+      return -defaultIndex * parseInt(this.lineHeight) + this.maxY
+    },
+    getIndex (index) {
+      let length = this.datas.values.length
+      let y = 0
+      if (index < length && index >= 0) {
+        y = index
+      } else if (index >= length) {
+        y = length
+      }
+      return y
+    },
+    /**
+     * 用name去比较，然后定位到该地方。用来给二度封装的组件使用
+     * @param {Object}
+     * * @param {} val 对比的值
+     * * @param {String} [key = 'name'] 对比的key
+     * * @param {Boolean} [b = false] 是否有动画过渡
+     */
+    async movePort ({ value, key = 'value', b = false }) {
+      let defaultIndex = this.datas.values.findIndex(obj => {
+        if (typeof obj === 'object') {
+          return obj[key] === value
+        } else {
+          return obj === value
+        }
+      })
+      defaultIndex = this.getIndex(defaultIndex)
+      if (b) {
+        await this.initY(defaultIndex)
+      } else {
+        let y = this.calculateLocation(defaultIndex)
+        translate.setY(this.element, y)
+      }
+      this.getsIndex()
+    },
+    getNameIndex (name) {
+      return this.datas.values.findIndex(obj => obj.name === name)
     }
   }
 }

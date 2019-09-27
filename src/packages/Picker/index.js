@@ -1,5 +1,4 @@
 import Picker from './Picker'
-console.log(Picker)
 Picker.install = function (Vue) {
   Vue.component(Picker.name, Picker)
 }

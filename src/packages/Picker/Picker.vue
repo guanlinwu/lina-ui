@@ -1,8 +1,11 @@
 <template>
   <div class="lina-picker" @touchmove.prevent>
     <div class="lina-header" :style="{lineHeight, fontSize}" v-if="head">
-      <div @click="handleCance" :style="{color: cancelColor}">{{cancelText}}</div>
-      <div @click="handleConfirm" :style="{color: confirmColor}">{{confirmText}}</div>
+      <div class="lina-btn" @click="handleCance" :style="{color: cancelColor}">{{cancelText}}</div>
+      <div class="lina-slot-title">
+        <slot name="title"></slot>
+      </div>
+      <div class="lina-btn" @click="handleConfirm" :style="{color: confirmColor}">{{confirmText}}</div>
     </div>
     <div class="lina-picker-container" :style="{height}">
       <div class="lina-picker-box" :style="{fontSize}">
@@ -70,9 +73,11 @@ export default {
   watch: {
     slots: {
       handler (slots) {
-        slots.forEach((arr, index) => {
-          this.$set(this.values, index)
-        })
+        if (Array.isArray(slots)) {
+          slots.forEach((arr, index) => {
+            this.$set(this.values, index)
+          })
+        }
       },
       immediate: true
     }
@@ -84,9 +89,6 @@ export default {
     prop: 'value',
     event: 'change'
   },
-  created () {
-    console.log(this.$attrs)
-  },
   mounted () {
     this.$watch('slots.length', this.getDefaultValue, {
       immediate: true
@@ -95,13 +97,12 @@ export default {
   methods: {
     handleChange (value, i) {
       this.$set(this.values, i, value)
-      // this.getDefaultValue()
-      this.$emit('change', this.values)
-      this.$emit('update:value', this.values)
+      let valuse = JSON.parse(JSON.stringify(this.values))
+      this.$emit('change', valuse)
+      this.$emit('update:value', valuse)
     },
     handleConfirm () {
-      // this.getDefaultValue()
-      this.$emit('confirm', this.values.concat())
+      this.$emit('confirm', JSON.parse(JSON.stringify(this.values)))
     },
     handleCance () {
       this.$emit('cance')
@@ -116,7 +117,14 @@ export default {
             this.$set(values, i, pickerSlot[i].defaultValue)
           }
         }
+        this.$emit('defaultValue', JSON.parse(JSON.stringify(this.values)))
       }
+    },
+    movePort (index, data) {
+      this.$refs.pickerSlot[index].movePort(data)
+    },
+    getNameIndex (index, name) {
+      return this.$refs.pickerSlot[index].getNameIndex(name)
     }
   }
 }
@@ -132,14 +140,17 @@ export default {
     align-items: center;
     background: #fff;
     border-bottom: 1px #e8e8e8 solid;
-    div {
+    padding: 0 35px;
+    .lina-btn {
       color: #26a2ff;
       flex: 1;
-      text-align: center;
-      &:first-child {
-        border-right: 1px #e8e8e8 solid;
-        // @include border-width-1px($border-color: #e8e8e8, $border-width-right: 1);
+      &:last-child {
+        text-align: right;
       }
+    }
+    .lina-slot-title {
+      flex: 2;
+      text-align: center;
     }
   }
   .lina-picker-container {
