@@ -816,9 +816,7 @@ export default {
           '阿斯顿发斯蒂芬',
           '12我去安慰',
           '阿三哥发',
-          'SADFSF',
-          '阿发',
-          '大厦访问'
+          'SADFSF'
         ]
       ],
       value2: [],
@@ -893,6 +891,11 @@ slots数组对象得情况下
 | defaultIndex        |    默认选中	    |  Number  | 0 |
 | content        |    values是对象数组时，作为内容展示的key	    |  String  | name |
 
+> slot
+| 名称        | 说明   |
+| --------   | -----:  |
+| title     |  标题插槽 |
+
 > Event
 
 | 名称        | 说明   |  回调函数  |
@@ -900,6 +903,61 @@ slots数组对象得情况下
 | change     |  滚动停止的时候，并且值发生变化 | values(数组) |
 | confirm     |  确认 | values(数组) |
 | change     |  取消 | - |
+
+## <font color=#cf3e8e>DatatimePicker</font>
+> 一些事件、prop、slot请参考Picker
+
+> 基本用法
+```html
+<!-- type：datetime（默认） -->
+<lina-datetime-picker @confirm="handleConfirm1"></lina-datetime-picker>
+<!-- type: date -->
+<lina-datetime-picker type="date" @confirm="handleConfirm2"></lina-datetime-picker>
+<!-- type: time -->
+<lina-datetime-picker type="time" v-model="value3"></lina-datetime-picker>
+```
+
+```javascript
+export default {
+  name: 'dom-date-time',
+  data () {
+    return {
+      value1: '',
+      value2: '',
+      value3: ''
+    }
+  },
+  methods: {
+    handleConfirm1 (values) {
+      this.value1 = values
+    },
+    handleConfirm2 (values) {
+      this.value2 = values
+    },
+    handleCance1 () {
+      alert('取消')
+    }
+  }
+}
+```
+
+> Prop
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| type     | datetime、date、time | String | datetime |
+| defaultDate | 默认选中得时间 |  Date  | - |
+| minDate |  	 |  日期的最小可选值  | Date | 十年前的 1 月 1 日 |
+| maxDate    |    日期的最大可选值	    |  Date  | 十年后的 12 月 31 日 |
+| minHour      |  小时的最小可选值  | Number | 0 |
+| maxHour | 小时的最打可选值 | Number | 23 |
+| minMinute | 分钟的最小可选值 | Number | 0 |
+| maxMinute | 分钟的最大可选值 | Number | 59 |
+| yearFormat | 年份模板 | String | '{value}' |
+| monthFormat | 	月份模板	 | String | '{value}' |
+| dateFormat | 	日期模板 | String | '{value}' |
+| hourFormat | 	小时模板 | String | '{value}' |
+| minuteFormat | 分钟模板 | String | '{value}' |
 
 ## 类型：通用函数
 
