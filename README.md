@@ -922,9 +922,9 @@ export default {
   name: 'dom-date-time',
   data () {
     return {
-      value1: [],
-      value2: [],
-      value3: []
+      value1: '',
+      value2: '',
+      value3: ''
     }
   },
   methods: {
@@ -947,13 +947,17 @@ export default {
 | --------   | -----:  | :----:  | :----:  |
 | type     | datetime、date、time | String | datetime |
 | defaultDate | 默认选中得时间 |  Date  | - |
-| lineHeight        |    line-height	    |  String  | 34px |
-| fontSize        |    font-size	    |  String  | 16px |
-| head      |  是否出现头部按钮  | Boolean | false |
-| cancelText | 取消按钮的文本 | String | 取消 |
-| confirmText | 确认按钮的文本 | String | 确认 |
-| cancelColor | 取消按钮的文本颜色 | String | - |
-| confirmColor | 确认按钮的文本颜色 | String | - |
+| minDate |  	 |  日期的最小可选值  | Date | 十年前的 1 月 1 日 |
+| maxDate    |    日期的最大可选值	    |  Date  | 十年后的 12 月 31 日 |
+| minHour      |  小时的最小可选值  | Number | 0 |
+| maxHour | 小时的最打可选值 | Number | 23 |
+| minMinute | 分钟的最小可选值 | Number | 0 |
+| maxMinute | 分钟的最大可选值 | Number | 59 |
+| yearFormat | 年份模板 | String | '{value}' |
+| monthFormat | 	月份模板	 | String | '{value}' |
+| dateFormat | 	日期模板 | String | '{value}' |
+| hourFormat | 	小时模板 | String | '{value}' |
+| minuteFormat | 分钟模板 | String | '{value}' |
 
 ## 类型：通用函数
 
