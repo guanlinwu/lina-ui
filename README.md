@@ -872,7 +872,7 @@ export default {
 | 名称        | 说明   |  类型  | 默认值 |
 | --------   | -----:  | :----:  | :----:  |
 | slots     | slot 对象数组或数组数组 |   Array  | - |
-| value        |    用来绑定sync或v-model	    |  Array  | - |
+| value        |    用来绑定sync或v-model	    |  any  | - |
 | lineHeight        |    line-height	    |  String  | 34px |
 | fontSize        |    font-size	    |  String  | 16px |
 | head      |  是否出现头部按钮  | Boolean | false |
@@ -953,6 +953,7 @@ export default {
 | maxHour | 小时的最打可选值 | Number | 23 |
 | minMinute | 分钟的最小可选值 | Number | 0 |
 | maxMinute | 分钟的最大可选值 | Number | 59 |
+| filterData | 返回一个Array类型的原始数据，由你过滤返回value | Function | - |
 | yearFormat | 年份模板 | String | '{value}' |
 | monthFormat | 	月份模板	 | String | '{value}' |
 | dateFormat | 	日期模板 | String | '{value}' |

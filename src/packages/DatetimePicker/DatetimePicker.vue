@@ -55,6 +55,7 @@ export default {
       type: Number,
       default: 59
     },
+    filterData: Function,
     yearFormat: {
       type: String,
       default: '{value}'
@@ -75,7 +76,11 @@ export default {
       type: String,
       default: '{value}'
     },
-    value: String,
+    value: {
+      validator () {
+        return true
+      }
+    },
     lineHeight: {
       type: String,
       default: '34px'
@@ -173,16 +178,20 @@ export default {
       this.$emit('cance')
     },
     filterValue (values) {
-      values = JSON.parse(JSON.stringify(values))
-      let arr = values.map(obj => obj.value.toString().padStart(2, 0))
       let str = ''
-      if (this.type === 'time') {
-        str = arr.join(':')
+      if (typeof this.filterData === 'function') {
+        str = this.filterData(values)
       } else {
-        let times = arr.splice(3)
-        str = arr.join('-')
-        if (times.length) {
-          str += ' ' + times.join(':')
+        values = JSON.parse(JSON.stringify(values))
+        let arr = values.map(obj => obj.value.toString().padStart(2, 0))
+        if (this.type === 'time') {
+          str = arr.join(':')
+        } else {
+          let times = arr.splice(3)
+          str = arr.join('-')
+          if (times.length) {
+            str += ' ' + times.join(':')
+          }
         }
       }
       return str

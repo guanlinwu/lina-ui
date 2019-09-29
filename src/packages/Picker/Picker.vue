@@ -32,7 +32,11 @@ export default {
   name: 'lina-picker',
   props: {
     slots: Array,
-    value: Array,
+    value: {
+      validator () {
+        return true
+      }
+    },
     lineHeight: {
       type: String,
       default: '34px'
