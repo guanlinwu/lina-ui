@@ -18202,7 +18202,8 @@ var isMove = 'ontouchstart' in window;
 var eventName = {
   start: isMove ? 'touchstart' : 'mousedown',
   move: isMove ? 'touchmove' : 'mousemove',
-  end: isMove ? 'touchend' : 'mouseup'
+  end: isMove ? 'touchend' : 'mouseup',
+  quit: isMove ? 'touchcancel' : 'mouseleave'
 };
 /**
  * @param {HTMLAnchorElement} element
@@ -18278,13 +18279,16 @@ function () {
     value: function onEvent() {
       var eventFn = this.eventFn,
           element = this.element;
-      Object.keys(eventFn).forEach(function (key) {
-        element.addEventListener(eventName[key], eventFn[key]);
-      });
 
       if (isMove) {
-        element.addEventListener('touchcancel', eventFn.end);
+        Object.keys(eventFn).forEach(function (key) {
+          element.addEventListener(eventName[key], eventFn[key]);
+        });
+      } else {
+        element.addEventListener(eventName.start, eventFn.start);
       }
+
+      element.addEventListener(eventName.quit, eventFn.end);
     }
   }, {
     key: "handle",
@@ -18992,7 +18996,11 @@ PickerSlot_component.options.__file = "src/packages/Picker/PickerSlot.vue"
   name: 'lina-picker',
   props: {
     slots: Array,
-    value: Array,
+    value: {
+      validator: function validator() {
+        return true;
+      }
+    },
     lineHeight: {
       type: String,
       default: '34px'
@@ -20003,6 +20011,7 @@ Object.keys(time_obj).forEach(function (key) {
       type: Number,
       default: 59
     },
+    filterData: Function,
     yearFormat: {
       type: String,
       default: '{value}'
@@ -20023,7 +20032,11 @@ Object.keys(time_obj).forEach(function (key) {
       type: String,
       default: '{value}'
     },
-    value: String,
+    value: {
+      validator: function validator() {
+        return true;
+      }
+    },
     lineHeight: {
       type: String,
       default: '34px'
@@ -20119,14 +20132,16 @@ Object.keys(time_obj).forEach(function (key) {
       this.$emit('cance');
     },
     filterValue: function filterValue(values) {
+      var str = '';
+      var date = null;
       values = JSON.parse(JSON.stringify(values));
       var arr = values.map(function (obj) {
         return obj.value.toString().padStart(2, 0);
       });
-      var str = '';
 
       if (this.type === 'time') {
         str = arr.join(':');
+        date = str;
       } else {
         var times = arr.splice(3);
         str = arr.join('-');
@@ -20134,6 +20149,12 @@ Object.keys(time_obj).forEach(function (key) {
         if (times.length) {
           str += ' ' + times.join(':');
         }
+
+        date = new Date(str).getTime();
+      }
+
+      if (typeof this.filterData === 'function') {
+        str = this.filterData(values, date);
       }
 
       return str;

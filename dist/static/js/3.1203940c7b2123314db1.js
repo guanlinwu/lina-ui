@@ -2248,6 +2248,10 @@ render._withStripped = true
     };
   },
   methods: {
+    // filterData (values, date) {
+    //   console.log(values, date)
+    //   return date
+    // },
     handleConfirm1: function handleConfirm1(values) {
       this.value1 = values;
     },
