@@ -32,7 +32,11 @@ export default {
   name: 'lina-picker',
   props: {
     slots: Array,
-    value: Array,
+    value: {
+      validator () {
+        return true
+      }
+    },
     lineHeight: {
       type: String,
       default: '34px'
@@ -133,6 +137,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scope>
 .lina-picker {
+  user-select: none;
   .lina-header {
     // @include border-width-1px($border-color: #e8e8e8, $border-width-bottom: 1);
     display: flex;
