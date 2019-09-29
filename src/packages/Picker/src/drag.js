@@ -2,7 +2,8 @@ const isMove = 'ontouchstart' in window
 const eventName = {
   start: isMove ? 'touchstart' : 'mousedown',
   move: isMove ? 'touchmove' : 'mousemove',
-  end: isMove ? 'touchend' : 'mouseup'
+  end: isMove ? 'touchend' : 'mouseup',
+  quit: isMove ? 'touchcancel' : 'mouseleave'
 }
 /**
  * @param {HTMLAnchorElement} element
@@ -55,12 +56,14 @@ export default class Drag {
   // 绑定事件
   onEvent () {
     let { eventFn, element } = this
-    Object.keys(eventFn).forEach(key => {
-      element.addEventListener(eventName[key], eventFn[key])
-    })
     if (isMove) {
-      element.addEventListener('touchcancel', eventFn.end)
+      Object.keys(eventFn).forEach(key => {
+        element.addEventListener(eventName[key], eventFn[key])
+      })
+    } else {
+      element.addEventListener(eventName.start, eventFn.start)
     }
+    element.addEventListener(eventName.quit, eventFn.end)
   }
   handle (name, event) {
     if (typeof this.options[name] === 'function') this.options[name](event)
