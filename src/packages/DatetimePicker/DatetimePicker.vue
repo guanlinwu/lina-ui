@@ -179,20 +179,22 @@ export default {
     },
     filterValue (values) {
       let str = ''
-      if (typeof this.filterData === 'function') {
-        str = this.filterData(values)
+      let date = null
+      values = JSON.parse(JSON.stringify(values))
+      let arr = values.map(obj => obj.value.toString().padStart(2, 0))
+      if (this.type === 'time') {
+        str = arr.join(':')
+        date = str
       } else {
-        values = JSON.parse(JSON.stringify(values))
-        let arr = values.map(obj => obj.value.toString().padStart(2, 0))
-        if (this.type === 'time') {
-          str = arr.join(':')
-        } else {
-          let times = arr.splice(3)
-          str = arr.join('-')
-          if (times.length) {
-            str += ' ' + times.join(':')
-          }
+        let times = arr.splice(3)
+        str = arr.join('-')
+        if (times.length) {
+          str += ' ' + times.join(':')
         }
+        date = new Date(str).getTime()
+      }
+      if (typeof this.filterData === 'function') {
+        str = this.filterData(values, date)
       }
       return str
     }

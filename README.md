@@ -953,7 +953,7 @@ export default {
 | maxHour | 小时的最打可选值 | Number | 23 |
 | minMinute | 分钟的最小可选值 | Number | 0 |
 | maxMinute | 分钟的最大可选值 | Number | 59 |
-| filterData | 返回一个Array类型的原始数据，由你过滤返回value | Function | - |
+| filterData | 返回一个Array类型的原始数据，和一个时间戳，如果是time的话，则返回格式化的时间样式 | Function | - |
 | yearFormat | 年份模板 | String | '{value}' |
 | monthFormat | 	月份模板	 | String | '{value}' |
 | dateFormat | 	日期模板 | String | '{value}' |
