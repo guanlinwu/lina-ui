@@ -84,9 +84,7 @@ module.exports = merge(baseConfig, {
     minimizer: [
       new UglifyJsPlugin({
         uglifyOptions: {
-          compress: {
-            warnings: false
-          }
+          warnings: false
         },
         sourceMap: false,
         parallel: true
