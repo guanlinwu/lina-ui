@@ -120,7 +120,6 @@ export default {
      */
     async longAnimation (offsetY) {
       let path = this.whole(Math.abs(offsetY) * offsetY + translate.getY(this.element))
-      console.log(path, Math.abs(offsetY) * offsetY + translate.getY(this.element))
       await this.requestAnimationFrame(path, offsetY)
       this.getsIndex()
     },
@@ -160,7 +159,6 @@ export default {
     running (path, coefficient, resolve) {
       this.$time = requestAnimationFrame(() => {
         let currentY = translate.getY(this.element)
-        console.log(path, currentY)
         if (path === currentY) {
           this.adjustment(currentY, resolve)
           return
