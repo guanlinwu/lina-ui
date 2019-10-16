@@ -15770,7 +15770,7 @@ config["a" /* default */].packages.map(function (item) {
   path: '/index',
   name: '首页',
   component: function component(resolve) {
-    __webpack_require__.e(/* AMD require */ 4).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(83)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+    __webpack_require__.e(/* AMD require */ 4).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(82)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
   },
   meta: {
     keepAlive: false
@@ -15779,7 +15779,7 @@ config["a" /* default */].packages.map(function (item) {
   path: '/demo',
   name: '示例',
   component: function component(resolve) {
-    __webpack_require__.e(/* AMD require */ 5).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(82)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
+    __webpack_require__.e(/* AMD require */ 5).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(83)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
   },
   children: [].concat(demoChildrenRoutes),
   meta: {
@@ -18162,7 +18162,7 @@ var PickerSlotvue_type_template_id_6726e444_scoped_true_render = function() {
           {
             key: index,
             staticClass: "u-ps-box",
-            style: { lineHeight: _vm.lineHeight }
+            style: { lineHeight: _vm.lineHeight, height: _vm.lineHeight }
           },
           [
             _vm._v(
@@ -20211,6 +20211,35 @@ DatetimePicker.install = function (Vue) {
 
 
 
+// CONCATENATED MODULE: ./src/utils/compatibility/requestAnimationFrame.js
+/* harmony default export */ var compatibility_requestAnimationFrame = (function () {
+  var lastTime = 0;
+  var vendors = ['webkit', 'moz'];
+
+  for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+  }
+
+  if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = function (callback) {
+      /* 调整时间，让一次动画等待和执行时间在最佳循环时间间隔内完成 */
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      lastTime = currTime + timeToCall;
+      var id = window.setTimeout(function () {
+        callback(lastTime);
+      }, timeToCall);
+      return id;
+    };
+  }
+
+  if (!window.cancelAnimationFrame) {
+    window.cancelAnimationFrame = function (id) {
+      clearTimeout(id);
+    };
+  }
+});
 // EXTERNAL MODULE: ./src/styles/index.scss
 var styles = __webpack_require__(37);
 
@@ -20224,8 +20253,10 @@ function src_objectSpread(target) { for (var i = 1; i < arguments.length; i++) {
 
 
 
+
  // 样式
 
+compatibility_requestAnimationFrame();
 var packagesList = config["a" /* default */].packages;
 var components = {}; // 组件
 

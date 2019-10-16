@@ -189,6 +189,284 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
+// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/CarouselNotice/demo.vue?vue&type=template&id=fa91095e&scoped=true&
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "page-demo-carouselNotice" }, [
+    _c("div", { staticClass: "demo-list-box e-unfold e-view" }, [
+      _c("ul", { staticClass: "demo-list" }, [
+        _c("li", { staticClass: "demo-list-item e-view" }, [
+          _c(
+            "a",
+            { staticClass: "router-link", attrs: { href: "javascript:;" } },
+            [_vm._v("上下跑马灯")]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "view-content" },
+            [
+              _c("lina-carousel-notice", {
+                attrs: {
+                  dataList: _vm.dataList,
+                  isNeedHorizontal: false,
+                  isShow: true
+                }
+              })
+            ],
+            1
+          )
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "demo-list-item e-view" }, [
+          _c(
+            "a",
+            { staticClass: "router-link", attrs: { href: "javascript:;" } },
+            [_vm._v("先左右再上下跑马灯（默认）")]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "view-content" },
+            [
+              _c("lina-carousel-notice", {
+                attrs: { dataList: _vm.dataList, isShow: true }
+              })
+            ],
+            1
+          )
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "demo-list-item e-view" }, [
+          _c(
+            "a",
+            { staticClass: "router-link", attrs: { href: "javascript:;" } },
+            [_vm._v("显示关闭按钮")]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "view-content" },
+            [
+              _c("lina-carousel-notice", {
+                attrs: {
+                  dataList: _vm.dataList,
+                  isShowClose: true,
+                  isShow: true
+                },
+                on: { close: _vm.close3 }
+              })
+            ],
+            1
+          )
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "demo-list-item e-view" }, [
+          _c(
+            "a",
+            { staticClass: "router-link", attrs: { href: "javascript:;" } },
+            [_vm._v("设置横行滚动速度")]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "view-content" },
+            [
+              _c("lina-carousel-notice", {
+                attrs: { dataList: _vm.dataList, slideSpeed: 100, isShow: true }
+              })
+            ],
+            1
+          )
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "demo-list-item e-view" }, [
+          _c(
+            "a",
+            { staticClass: "router-link", attrs: { href: "javascript:;" } },
+            [_vm._v("设置内容文本样式")]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "view-content" },
+            [
+              _c("lina-carousel-notice", {
+                attrs: {
+                  dataList: _vm.dataList,
+                  textStyle: _vm.textStyle,
+                  isShow: true
+                }
+              })
+            ],
+            1
+          )
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "demo-list-item e-view" }, [
+          _c(
+            "a",
+            { staticClass: "router-link", attrs: { href: "javascript:;" } },
+            [_vm._v("设置外框样式")]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "view-content" },
+            [
+              _c("lina-carousel-notice", {
+                attrs: {
+                  dataList: _vm.dataList,
+                  boxStyle: _vm.boxStyle,
+                  isShow: true
+                }
+              })
+            ],
+            1
+          )
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+// CONCATENATED MODULE: ./src/packages/CarouselNotice/demo.vue?vue&type=template&id=fa91095e&scoped=true&
+
+// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/CarouselNotice/demo.vue?vue&type=script&lang=js&
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ var demovue_type_script_lang_js_ = ({
+  name: 'demo-carouselNotice',
+  data: function data() {
+    return {
+      textStyle: {
+        // 设置内容文本样式
+        color: '#20aadf',
+        fontWeight: 300
+      },
+      boxStyle: {
+        // 设置外框样式
+        height: '36px',
+        borderRadius: '30px',
+        opacity: 0.8,
+        backgroundColor: '#0c0c0c'
+      },
+      dataList: [{
+        id: 0,
+        title: '这是轮播公告栏',
+        tag: {
+          title: '基础'
+        }
+      }, {
+        id: 1,
+        title: '请注意，请注意，如果字数溢出，则先左右轮播，然后再上下轮播'
+      }, {
+        id: 2,
+        title: '被设置了tag的内容和颜色',
+        tag: {
+          title: '重点',
+          borderColor: '#20aadf',
+          color: '#20aadf'
+        }
+      }],
+      data1: {}
+    };
+  },
+  methods: {
+    handle1: function handle1() {},
+    close3: function close3() {
+      this.$toast('close, you can do something');
+    }
+  }
+});
+// CONCATENATED MODULE: ./src/packages/CarouselNotice/demo.vue?vue&type=script&lang=js&
+ /* harmony default export */ var CarouselNotice_demovue_type_script_lang_js_ = (demovue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./src/packages/CarouselNotice/demo.vue?vue&type=style&index=0&id=fa91095e&lang=scss&scoped=true&
+var demovue_type_style_index_0_id_fa91095e_lang_scss_scoped_true_ = __webpack_require__(53);
+
+// EXTERNAL MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(1);
+
+// CONCATENATED MODULE: ./src/packages/CarouselNotice/demo.vue
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(componentNormalizer["a" /* default */])(
+  CarouselNotice_demovue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  "fa91095e",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "src/packages/CarouselNotice/demo.vue"
+/* harmony default export */ var demo = __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+/* 70 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
 // CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Toast/demo.vue?vue&type=template&id=4456e684&scoped=true&
 var render = function() {
   var _vm = this
@@ -285,7 +563,7 @@ component.options.__file = "src/packages/Toast/demo.vue"
 /* harmony default export */ var demo = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -454,7 +732,7 @@ component.options.__file = "src/packages/PullRefresh/demo.vue"
 /* harmony default export */ var demo = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -591,7 +869,7 @@ component.options.__file = "src/packages/PreLoad/demo.vue"
 /* harmony default export */ var demo = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -680,21 +958,20 @@ component.options.__file = "src/packages/PopupPicker/demo.vue"
 /* harmony default export */ var demo = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Popup/demo.vue?vue&type=template&id=ee27dcc2&scoped=true&
+// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PopCurtain/demo.vue?vue&type=template&id=ccd92370&scoped=true&
 var render = function() {
-  var this$1 = this
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "page-demo-popup" },
+    { staticClass: "page-demo-popCurtain" },
     [
       _c("div", { staticClass: "demo-list-box e-unfold" }, [
         _c("h4", { staticClass: "type" }, [_vm._v("基本用法")]),
@@ -704,7 +981,7 @@ var render = function() {
             _c(
               "a",
               { staticClass: "router-link", on: { click: _vm.handle1 } },
-              [_vm._v("显示popup")]
+              [_vm._v("普通用法")]
             )
           ]),
           _vm._v(" "),
@@ -712,7 +989,7 @@ var render = function() {
             _c(
               "a",
               { staticClass: "router-link", on: { click: _vm.handle2 } },
-              [_vm._v("关闭之前有事件 用:closeCallBack")]
+              [_vm._v("内嵌slot")]
             )
           ]),
           _vm._v(" "),
@@ -720,7 +997,7 @@ var render = function() {
             _c(
               "a",
               { staticClass: "router-link", on: { click: _vm.handle3 } },
-              [_vm._v("关闭之前有事件 用@closeCallBack")]
+              [_vm._v("设置关闭按钮位置")]
             )
           ]),
           _vm._v(" "),
@@ -728,90 +1005,60 @@ var render = function() {
             _c(
               "a",
               { staticClass: "router-link", on: { click: _vm.handle4 } },
-              [_vm._v("显示popup 禁止点击蒙层关闭popup")]
-            )
-          ]),
-          _vm._v(" "),
-          _c("li", { staticClass: "demo-list-item" }, [
-            _c(
-              "a",
-              { staticClass: "router-link", on: { click: _vm.handle5 } },
-              [_vm._v("显示popup 隐藏close按钮")]
+              [_vm._v("监听点击幕帘内容事件")]
             )
           ])
         ])
       ]),
       _vm._v(" "),
+      _c("lina-pop-curtain", {
+        attrs: { dialog: _vm.dialog1 },
+        on: {
+          "update:dialog": function($event) {
+            _vm.dialog1 = $event
+          }
+        }
+      }),
+      _vm._v(" "),
       _c(
-        "lina-popup",
+        "lina-pop-curtain",
         {
-          attrs: {
-            isShow: _vm.isShow1,
-            isHideClose: _vm.isHideClose1,
-            preventMaskClose: _vm.preventMaskClose1,
-            closeCallBack: function() {
-              this$1.isShow1 = !this$1.isShow1
-            }
-          },
+          attrs: { dialog: _vm.dialog2 },
           on: {
-            "update:isShow": function($event) {
-              _vm.isShow1 = $event
-            },
-            "update:is-show": function($event) {
-              _vm.isShow1 = $event
+            "update:dialog": function($event) {
+              _vm.dialog2 = $event
             }
           }
         },
         [
-          _c("p", { staticStyle: { color: "#fff" } }, [
-            _vm._v("这是一个Popup，空空如也")
-          ])
+          _c("img", {
+            staticStyle: { width: "300px" },
+            attrs: {
+              src: "https://dummyimage.com/600x400/ff45ff/ffffff",
+              alt: ""
+            }
+          })
         ]
       ),
       _vm._v(" "),
-      _c(
-        "lina-popup",
-        {
-          attrs: {
-            isShow: _vm.isShow2,
-            closeCallBack: _vm.handle2CloseCallBack
-          },
-          on: {
-            "update:isShow": function($event) {
-              _vm.isShow2 = $event
-            },
-            "update:is-show": function($event) {
-              _vm.isShow2 = $event
-            }
+      _c("lina-pop-curtain", {
+        attrs: { dialog: _vm.dialog3 },
+        on: {
+          "update:dialog": function($event) {
+            _vm.dialog3 = $event
           }
-        },
-        [
-          _c("p", { staticStyle: { color: "#fff" } }, [
-            _vm._v("这是一个Popup，关闭之前有事件")
-          ])
-        ]
-      ),
+        }
+      }),
       _vm._v(" "),
-      _c(
-        "lina-popup",
-        {
-          attrs: { isShow: _vm.isShow3 },
-          on: {
-            "update:isShow": function($event) {
-              _vm.isShow3 = $event
-            },
-            "update:is-show": function($event) {
-              _vm.isShow3 = $event
-            },
-            closeCallBack: _vm.handle2CloseCallBack
-          }
-        },
-        [
-          _c("p", { staticStyle: { color: "#fff" } }, [
-            _vm._v("这是一个Popup，关闭之前有事件")
-          ])
-        ]
-      )
+      _c("lina-pop-curtain", {
+        attrs: { dialog: _vm.dialog4 },
+        on: {
+          "update:dialog": function($event) {
+            _vm.dialog4 = $event
+          },
+          clickCurtain: _vm.handleClickDialog
+        }
+      })
     ],
     1
   )
@@ -820,11 +1067,9 @@ var staticRenderFns = []
 render._withStripped = true
 
 
-// CONCATENATED MODULE: ./src/packages/Popup/demo.vue?vue&type=template&id=ee27dcc2&scoped=true&
+// CONCATENATED MODULE: ./src/packages/PopCurtain/demo.vue?vue&type=template&id=ccd92370&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Popup/demo.vue?vue&type=script&lang=js&
-//
-//
+// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PopCurtain/demo.vue?vue&type=script&lang=js&
 //
 //
 //
@@ -858,54 +1103,58 @@ render._withStripped = true
 //
 //
 /* harmony default export */ var demovue_type_script_lang_js_ = ({
-  name: 'demo-popup',
+  name: 'demo-popCurtain',
   data: function data() {
     return {
-      isShow1: false,
-      isShow2: false,
-      isShow3: false,
-      preventMaskClose1: false,
-      // 是否禁止点击蒙层关闭popup
-      isHideClose1: false // 是否显示close按钮
-
+      dialog1: {
+        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
+        isShow: false
+      },
+      dialog3: {
+        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
+        isShow: false
+      },
+      dialog2: {
+        isShow: false
+      },
+      dialog4: {
+        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
+        link: 'http://www.baidu.com',
+        isShow: false
+      }
     };
   },
   methods: {
     handle1: function handle1() {
-      this.isShow1 = !this.isShow1;
-      this.isHideClose1 = false;
-      this.preventMaskClose1 = false;
+      this.dialog1.isShow = true;
     },
     handle2: function handle2() {
-      this.isShow2 = !this.isShow2;
+      this.dialog2.isShow = true;
     },
     handle3: function handle3() {
-      this.isShow2 = !this.isShow2;
+      this.dialog3.isShow = true;
+      this.dialog3.closeBtnPosition = 'top';
     },
     handle4: function handle4() {
-      this.preventMaskClose1 = true;
-      this.isHideClose1 = false;
-      this.isShow1 = !this.isShow1;
+      this.dialog4.isShow = true;
     },
-    handle5: function handle5() {
-      this.isShow1 = !this.isShow1;
-      this.preventMaskClose1 = false;
-      this.isHideClose1 = true;
-    },
-    handle2CloseCallBack: function handle2CloseCallBack() {
-      alert('关闭Popup');
+    handleClickDialog: function handleClickDialog(dialog) {
+      this.$toast('即将跳转链接');
+      setTimeout(function () {
+        window.location.href = dialog.link;
+      }, 2000);
     }
   }
 });
-// CONCATENATED MODULE: ./src/packages/Popup/demo.vue?vue&type=script&lang=js&
- /* harmony default export */ var Popup_demovue_type_script_lang_js_ = (demovue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/Popup/demo.vue?vue&type=style&index=0&id=ee27dcc2&lang=scss&scoped=true&
-var demovue_type_style_index_0_id_ee27dcc2_lang_scss_scoped_true_ = __webpack_require__(59);
+// CONCATENATED MODULE: ./src/packages/PopCurtain/demo.vue?vue&type=script&lang=js&
+ /* harmony default export */ var PopCurtain_demovue_type_script_lang_js_ = (demovue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./src/packages/PopCurtain/demo.vue?vue&type=style&index=0&id=ccd92370&lang=scss&scoped=true&
+var demovue_type_style_index_0_id_ccd92370_lang_scss_scoped_true_ = __webpack_require__(58);
 
 // EXTERNAL MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(1);
 
-// CONCATENATED MODULE: ./src/packages/Popup/demo.vue
+// CONCATENATED MODULE: ./src/packages/PopCurtain/demo.vue
 
 
 
@@ -915,23 +1164,23 @@ var componentNormalizer = __webpack_require__(1);
 /* normalize component */
 
 var component = Object(componentNormalizer["a" /* default */])(
-  Popup_demovue_type_script_lang_js_,
+  PopCurtain_demovue_type_script_lang_js_,
   render,
   staticRenderFns,
   false,
   null,
-  "ee27dcc2",
+  "ccd92370",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "src/packages/Popup/demo.vue"
+component.options.__file = "src/packages/PopCurtain/demo.vue"
 /* harmony default export */ var demo = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1227,284 +1476,6 @@ var component = Object(componentNormalizer["a" /* default */])(
 /* hot reload */
 if (false) { var api; }
 component.options.__file = "src/packages/Picker/demo.vue"
-/* harmony default export */ var demo = __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-/* 75 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/CarouselNotice/demo.vue?vue&type=template&id=fa91095e&scoped=true&
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "page-demo-carouselNotice" }, [
-    _c("div", { staticClass: "demo-list-box e-unfold e-view" }, [
-      _c("ul", { staticClass: "demo-list" }, [
-        _c("li", { staticClass: "demo-list-item e-view" }, [
-          _c(
-            "a",
-            { staticClass: "router-link", attrs: { href: "javascript:;" } },
-            [_vm._v("上下跑马灯")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "view-content" },
-            [
-              _c("lina-carousel-notice", {
-                attrs: {
-                  dataList: _vm.dataList,
-                  isNeedHorizontal: false,
-                  isShow: true
-                }
-              })
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("li", { staticClass: "demo-list-item e-view" }, [
-          _c(
-            "a",
-            { staticClass: "router-link", attrs: { href: "javascript:;" } },
-            [_vm._v("先左右再上下跑马灯（默认）")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "view-content" },
-            [
-              _c("lina-carousel-notice", {
-                attrs: { dataList: _vm.dataList, isShow: true }
-              })
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("li", { staticClass: "demo-list-item e-view" }, [
-          _c(
-            "a",
-            { staticClass: "router-link", attrs: { href: "javascript:;" } },
-            [_vm._v("显示关闭按钮")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "view-content" },
-            [
-              _c("lina-carousel-notice", {
-                attrs: {
-                  dataList: _vm.dataList,
-                  isShowClose: true,
-                  isShow: true
-                },
-                on: { close: _vm.close3 }
-              })
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("li", { staticClass: "demo-list-item e-view" }, [
-          _c(
-            "a",
-            { staticClass: "router-link", attrs: { href: "javascript:;" } },
-            [_vm._v("设置横行滚动速度")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "view-content" },
-            [
-              _c("lina-carousel-notice", {
-                attrs: { dataList: _vm.dataList, slideSpeed: 100, isShow: true }
-              })
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("li", { staticClass: "demo-list-item e-view" }, [
-          _c(
-            "a",
-            { staticClass: "router-link", attrs: { href: "javascript:;" } },
-            [_vm._v("设置内容文本样式")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "view-content" },
-            [
-              _c("lina-carousel-notice", {
-                attrs: {
-                  dataList: _vm.dataList,
-                  textStyle: _vm.textStyle,
-                  isShow: true
-                }
-              })
-            ],
-            1
-          )
-        ]),
-        _vm._v(" "),
-        _c("li", { staticClass: "demo-list-item e-view" }, [
-          _c(
-            "a",
-            { staticClass: "router-link", attrs: { href: "javascript:;" } },
-            [_vm._v("设置外框样式")]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "view-content" },
-            [
-              _c("lina-carousel-notice", {
-                attrs: {
-                  dataList: _vm.dataList,
-                  boxStyle: _vm.boxStyle,
-                  isShow: true
-                }
-              })
-            ],
-            1
-          )
-        ])
-      ])
-    ])
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/CarouselNotice/demo.vue?vue&type=template&id=fa91095e&scoped=true&
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/CarouselNotice/demo.vue?vue&type=script&lang=js&
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ var demovue_type_script_lang_js_ = ({
-  name: 'demo-carouselNotice',
-  data: function data() {
-    return {
-      textStyle: {
-        // 设置内容文本样式
-        color: '#20aadf',
-        fontWeight: 300
-      },
-      boxStyle: {
-        // 设置外框样式
-        height: '36px',
-        borderRadius: '30px',
-        opacity: 0.8,
-        backgroundColor: '#0c0c0c'
-      },
-      dataList: [{
-        id: 0,
-        title: '这是轮播公告栏',
-        tag: {
-          title: '基础'
-        }
-      }, {
-        id: 1,
-        title: '请注意，请注意，如果字数溢出，则先左右轮播，然后再上下轮播'
-      }, {
-        id: 2,
-        title: '被设置了tag的内容和颜色',
-        tag: {
-          title: '重点',
-          borderColor: '#20aadf',
-          color: '#20aadf'
-        }
-      }],
-      data1: {}
-    };
-  },
-  methods: {
-    handle1: function handle1() {},
-    close3: function close3() {
-      this.$toast('close, you can do something');
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/CarouselNotice/demo.vue?vue&type=script&lang=js&
- /* harmony default export */ var CarouselNotice_demovue_type_script_lang_js_ = (demovue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/CarouselNotice/demo.vue?vue&type=style&index=0&id=fa91095e&lang=scss&scoped=true&
-var demovue_type_style_index_0_id_fa91095e_lang_scss_scoped_true_ = __webpack_require__(53);
-
-// EXTERNAL MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/runtime/componentNormalizer.js
-var componentNormalizer = __webpack_require__(1);
-
-// CONCATENATED MODULE: ./src/packages/CarouselNotice/demo.vue
-
-
-
-
-
-
-/* normalize component */
-
-var component = Object(componentNormalizer["a" /* default */])(
-  CarouselNotice_demovue_type_script_lang_js_,
-  render,
-  staticRenderFns,
-  false,
-  null,
-  "fa91095e",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "src/packages/CarouselNotice/demo.vue"
 /* harmony default export */ var demo = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
@@ -2577,14 +2548,15 @@ component.options.__file = "src/packages/ActionSheet/demo.vue"
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PopCurtain/demo.vue?vue&type=template&id=ccd92370&scoped=true&
+// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Popup/demo.vue?vue&type=template&id=ee27dcc2&scoped=true&
 var render = function() {
+  var this$1 = this
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "page-demo-popCurtain" },
+    { staticClass: "page-demo-popup" },
     [
       _c("div", { staticClass: "demo-list-box e-unfold" }, [
         _c("h4", { staticClass: "type" }, [_vm._v("基本用法")]),
@@ -2594,7 +2566,7 @@ var render = function() {
             _c(
               "a",
               { staticClass: "router-link", on: { click: _vm.handle1 } },
-              [_vm._v("普通用法")]
+              [_vm._v("显示popup")]
             )
           ]),
           _vm._v(" "),
@@ -2602,7 +2574,7 @@ var render = function() {
             _c(
               "a",
               { staticClass: "router-link", on: { click: _vm.handle2 } },
-              [_vm._v("内嵌slot")]
+              [_vm._v("关闭之前有事件 用:closeCallBack")]
             )
           ]),
           _vm._v(" "),
@@ -2610,7 +2582,7 @@ var render = function() {
             _c(
               "a",
               { staticClass: "router-link", on: { click: _vm.handle3 } },
-              [_vm._v("设置关闭按钮位置")]
+              [_vm._v("关闭之前有事件 用@closeCallBack")]
             )
           ]),
           _vm._v(" "),
@@ -2618,60 +2590,90 @@ var render = function() {
             _c(
               "a",
               { staticClass: "router-link", on: { click: _vm.handle4 } },
-              [_vm._v("监听点击幕帘内容事件")]
+              [_vm._v("显示popup 禁止点击蒙层关闭popup")]
+            )
+          ]),
+          _vm._v(" "),
+          _c("li", { staticClass: "demo-list-item" }, [
+            _c(
+              "a",
+              { staticClass: "router-link", on: { click: _vm.handle5 } },
+              [_vm._v("显示popup 隐藏close按钮")]
             )
           ])
         ])
       ]),
       _vm._v(" "),
-      _c("lina-pop-curtain", {
-        attrs: { dialog: _vm.dialog1 },
-        on: {
-          "update:dialog": function($event) {
-            _vm.dialog1 = $event
-          }
-        }
-      }),
-      _vm._v(" "),
       _c(
-        "lina-pop-curtain",
+        "lina-popup",
         {
-          attrs: { dialog: _vm.dialog2 },
+          attrs: {
+            isShow: _vm.isShow1,
+            isHideClose: _vm.isHideClose1,
+            preventMaskClose: _vm.preventMaskClose1,
+            closeCallBack: function() {
+              this$1.isShow1 = !this$1.isShow1
+            }
+          },
           on: {
-            "update:dialog": function($event) {
-              _vm.dialog2 = $event
+            "update:isShow": function($event) {
+              _vm.isShow1 = $event
+            },
+            "update:is-show": function($event) {
+              _vm.isShow1 = $event
             }
           }
         },
         [
-          _c("img", {
-            staticStyle: { width: "300px" },
-            attrs: {
-              src: "https://dummyimage.com/600x400/ff45ff/ffffff",
-              alt: ""
-            }
-          })
+          _c("p", { staticStyle: { color: "#fff" } }, [
+            _vm._v("这是一个Popup，空空如也")
+          ])
         ]
       ),
       _vm._v(" "),
-      _c("lina-pop-curtain", {
-        attrs: { dialog: _vm.dialog3 },
-        on: {
-          "update:dialog": function($event) {
-            _vm.dialog3 = $event
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("lina-pop-curtain", {
-        attrs: { dialog: _vm.dialog4 },
-        on: {
-          "update:dialog": function($event) {
-            _vm.dialog4 = $event
+      _c(
+        "lina-popup",
+        {
+          attrs: {
+            isShow: _vm.isShow2,
+            closeCallBack: _vm.handle2CloseCallBack
           },
-          clickCurtain: _vm.handleClickDialog
-        }
-      })
+          on: {
+            "update:isShow": function($event) {
+              _vm.isShow2 = $event
+            },
+            "update:is-show": function($event) {
+              _vm.isShow2 = $event
+            }
+          }
+        },
+        [
+          _c("p", { staticStyle: { color: "#fff" } }, [
+            _vm._v("这是一个Popup，关闭之前有事件")
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "lina-popup",
+        {
+          attrs: { isShow: _vm.isShow3 },
+          on: {
+            "update:isShow": function($event) {
+              _vm.isShow3 = $event
+            },
+            "update:is-show": function($event) {
+              _vm.isShow3 = $event
+            },
+            closeCallBack: _vm.handle2CloseCallBack
+          }
+        },
+        [
+          _c("p", { staticStyle: { color: "#fff" } }, [
+            _vm._v("这是一个Popup，关闭之前有事件")
+          ])
+        ]
+      )
     ],
     1
   )
@@ -2680,9 +2682,11 @@ var staticRenderFns = []
 render._withStripped = true
 
 
-// CONCATENATED MODULE: ./src/packages/PopCurtain/demo.vue?vue&type=template&id=ccd92370&scoped=true&
+// CONCATENATED MODULE: ./src/packages/Popup/demo.vue?vue&type=template&id=ee27dcc2&scoped=true&
 
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PopCurtain/demo.vue?vue&type=script&lang=js&
+// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Popup/demo.vue?vue&type=script&lang=js&
+//
+//
 //
 //
 //
@@ -2716,58 +2720,54 @@ render._withStripped = true
 //
 //
 /* harmony default export */ var demovue_type_script_lang_js_ = ({
-  name: 'demo-popCurtain',
+  name: 'demo-popup',
   data: function data() {
     return {
-      dialog1: {
-        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
-        isShow: false
-      },
-      dialog3: {
-        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
-        isShow: false
-      },
-      dialog2: {
-        isShow: false
-      },
-      dialog4: {
-        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
-        link: 'http://www.baidu.com',
-        isShow: false
-      }
+      isShow1: false,
+      isShow2: false,
+      isShow3: false,
+      preventMaskClose1: false,
+      // 是否禁止点击蒙层关闭popup
+      isHideClose1: false // 是否显示close按钮
+
     };
   },
   methods: {
     handle1: function handle1() {
-      this.dialog1.isShow = true;
+      this.isShow1 = !this.isShow1;
+      this.isHideClose1 = false;
+      this.preventMaskClose1 = false;
     },
     handle2: function handle2() {
-      this.dialog2.isShow = true;
+      this.isShow2 = !this.isShow2;
     },
     handle3: function handle3() {
-      this.dialog3.isShow = true;
-      this.dialog3.closeBtnPosition = 'top';
+      this.isShow2 = !this.isShow2;
     },
     handle4: function handle4() {
-      this.dialog4.isShow = true;
+      this.preventMaskClose1 = true;
+      this.isHideClose1 = false;
+      this.isShow1 = !this.isShow1;
     },
-    handleClickDialog: function handleClickDialog(dialog) {
-      this.$toast('即将跳转链接');
-      setTimeout(function () {
-        window.location.href = dialog.link;
-      }, 2000);
+    handle5: function handle5() {
+      this.isShow1 = !this.isShow1;
+      this.preventMaskClose1 = false;
+      this.isHideClose1 = true;
+    },
+    handle2CloseCallBack: function handle2CloseCallBack() {
+      alert('关闭Popup');
     }
   }
 });
-// CONCATENATED MODULE: ./src/packages/PopCurtain/demo.vue?vue&type=script&lang=js&
- /* harmony default export */ var PopCurtain_demovue_type_script_lang_js_ = (demovue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/PopCurtain/demo.vue?vue&type=style&index=0&id=ccd92370&lang=scss&scoped=true&
-var demovue_type_style_index_0_id_ccd92370_lang_scss_scoped_true_ = __webpack_require__(58);
+// CONCATENATED MODULE: ./src/packages/Popup/demo.vue?vue&type=script&lang=js&
+ /* harmony default export */ var Popup_demovue_type_script_lang_js_ = (demovue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./src/packages/Popup/demo.vue?vue&type=style&index=0&id=ee27dcc2&lang=scss&scoped=true&
+var demovue_type_style_index_0_id_ee27dcc2_lang_scss_scoped_true_ = __webpack_require__(59);
 
 // EXTERNAL MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/runtime/componentNormalizer.js
 var componentNormalizer = __webpack_require__(1);
 
-// CONCATENATED MODULE: ./src/packages/PopCurtain/demo.vue
+// CONCATENATED MODULE: ./src/packages/Popup/demo.vue
 
 
 
@@ -2777,19 +2777,19 @@ var componentNormalizer = __webpack_require__(1);
 /* normalize component */
 
 var component = Object(componentNormalizer["a" /* default */])(
-  PopCurtain_demovue_type_script_lang_js_,
+  Popup_demovue_type_script_lang_js_,
   render,
   staticRenderFns,
   false,
   null,
-  "ccd92370",
+  "ee27dcc2",
   null
   
 )
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "src/packages/PopCurtain/demo.vue"
+component.options.__file = "src/packages/Popup/demo.vue"
 /* harmony default export */ var demo = __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
@@ -2798,17 +2798,17 @@ component.options.__file = "src/packages/PopCurtain/demo.vue"
 
 var map = {
 	"./ActionSheet/demo": 79,
-	"./CarouselNotice/demo": 75,
+	"./CarouselNotice/demo": 69,
 	"./DatetimePicker/demo": 78,
 	"./Dialog/demo": 77,
 	"./Loading/demo": 76,
-	"./Picker/demo": 74,
-	"./PopCurtain/demo": 80,
-	"./Popup/demo": 73,
-	"./PopupPicker/demo": 72,
-	"./PreLoad/demo": 71,
-	"./PullRefresh/demo": 70,
-	"./Toast/demo": 69
+	"./Picker/demo": 75,
+	"./PopCurtain/demo": 74,
+	"./Popup/demo": 80,
+	"./PopupPicker/demo": 73,
+	"./PreLoad/demo": 72,
+	"./PullRefresh/demo": 71,
+	"./Toast/demo": 70
 };
 
 
