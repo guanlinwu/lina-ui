@@ -18690,7 +18690,6 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
       var _this2 = this;
 
       var offsetY = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : macro.OFFSETY;
-      cancelAnimationFrame(this.$time);
       offsetY = Math.abs(offsetY);
       var coefficient = offsetY > 2 ? offsetY : 3;
       return new Promise(function (resolve) {
@@ -18707,6 +18706,7 @@ function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1
     running: function running(path, coefficient, resolve) {
       var _this3 = this;
 
+      cancelAnimationFrame(this.$time);
       this.$time = requestAnimationFrame(function () {
         var currentY = translate.getY(_this3.element);
 
