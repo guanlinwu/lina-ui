@@ -128,6 +128,15 @@ export default {
       'type': 'component',
       'belong': 'view component',
       'author': ['mwc']
+    },
+    {
+      'version': '1.0.0',
+      'name': 'Tabs',
+      'chnName': '标签页',
+      'desc': 'Tabs',
+      'type': 'component',
+      'belong': 'view component',
+      'author': ['lgn']
     }
   ]
 }

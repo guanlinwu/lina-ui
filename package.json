@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/guanlinwu/lina-ui.git#readme",
   "dependencies": {
+    "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
+    "@vue/babel-preset-jsx": "^1.1.0",
     "vue": "^2.6.8",
     "vue-router": "^3.0.6"
   },
