@@ -2,7 +2,8 @@ import { version } from '../package.json'
 import config from './config'
 import * as packages from '@/packages'
 import requestAnimationFrameFn from '@/utils/compatibility/requestAnimationFrame'
-import './styles/index.scss' // 样式
+import './styles/index.scss'
+import lazyLoadImg from './packages/lazyLoadImg/main' // 样式
 requestAnimationFrameFn()
 let packagesList = config.packages
 let components = {} // 组件
@@ -42,6 +43,9 @@ let install = function (Vue, options = {}) {
   for (const componentKey in components) {
     components[componentKey] && components[componentKey].name && Vue.component(components[componentKey].name, components[componentKey])
   }
+
+  // 安装懒加载指令
+  Vue.use(lazyLoadImg)
 
   console.info(`lina-ui has been installed， version： ${version} `)
 

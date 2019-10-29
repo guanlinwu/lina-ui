@@ -27,6 +27,10 @@ export default {
     {
       typeName: '通用函数', // 名称
       typeEnName: 'general function' // 英文
+    },
+    {
+      typeName: '指令', // 名称
+      typeEnName: 'directive' // 英文
     }
   ],
   packages: [ // 组件列表
@@ -136,6 +140,15 @@ export default {
       'desc': 'Tabs',
       'type': 'component',
       'belong': 'view component',
+      'author': ['lgn']
+    },
+    {
+      'version': '1.0.0',
+      'name': 'lazyLoadImg',
+      'chnName': '图片懒加载',
+      'desc': 'lazyload images',
+      'type': 'directive',
+      'belong': 'directive',
       'author': ['lgn']
     }
   ]
