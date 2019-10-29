@@ -1,6 +1,6 @@
 import throttleFn from '../../utils/throttle'
 function Lazy (el, binding) {
-  if (!(this instanceof Lazy)) return new Lazy(el, binding)
+  if (!(this instanceof Lazy)) return new Lazy(el, binding) // 防止忘记用new 创建实例
   this.el = el
   this.binding = binding
   this.judgeEnv = function () {
