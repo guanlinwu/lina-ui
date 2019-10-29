@@ -48,7 +48,7 @@ Lazy.prototype.handleLazyLoad = function () {
   // console.log('图片进入shi野区:', this.isInView(this.el, window))
   if (this.isInView(this.el, document)) {
     this.el.setAttribute('src', `${this.binding.value}?timeStamp=${+new Date()}`)
-    this.off(document, 'scroll', this._throttleFn)
+    this.off(document, 'scroll', this._throttleFn) // 进入窗口之后取消监听
   }
 }
 Lazy.prototype.unbindListener = function () {
@@ -57,16 +57,29 @@ Lazy.prototype.unbindListener = function () {
 
 // 使用intersection API
 Lazy.prototype.useIntersectionObserver = function (el, binding) {
-  let obserConfig = {
+  let obserConfig = { // 监听设置，先把mdn的解释抄过来，方便记
     root: null,
+    // The element that is used as the viewport for checking visiblity of the target.
+    // Must be the ancestor of the target.
+    // Defaults to the browser viewport if not specified or if null.
+
     rootMargin: '0px',
+    // Margin around the root.
+    // Can have values similar to the CSS margin property,
+    // e.g. "10px 20px 30px 40px" (top, right, bottom, left).
+    // The values can be percentages.
+    // This set of values serves to grow or shrink each side of the root element's bounding box before computing intersections.
+    // Defaults to all zeros.
+
     threshold: [0]
+    // Either a single number or an array of numbers which indicate at what percentage of
+    // the target's visibility the observer's callback should be executed.
   }
   this.observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      const target = entry.target
+      const target = entry.target // 目标元素
       if (entry.intersectionRatio > 0) {
-        this.observer.unobserve(target)
+        this.observer.unobserve(target) // 进入窗口之后取消监听
         const src = binding.value;
         (target.tagName.toLocaleLowerCase() === 'img') && el.setAttribute('src', src)
       }
@@ -77,6 +90,7 @@ Lazy.prototype.useIntersectionObserver = function (el, binding) {
 export default {
   name: 'lazyLoadImg',
   inserted: function (el, binding) {
+    // 使用dom来做衔接桥梁，把取消监听方法给弄上去，暂时不知道有没有什么副作用
     !!binding.value && (el['lina-lazyload-listenser'] = Lazy(el, binding))
   },
   unbind (el) {
