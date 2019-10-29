@@ -3,10 +3,16 @@ function Lazy (el, binding) {
   if (!(this instanceof Lazy)) return new Lazy(el, binding)
   this.el = el
   this.binding = binding
-  this._throttleFn = throttleFn(this.handleLazyLoad.bind(this, this.el, this.binding), 500)
-  this.on(document, 'scroll', this._throttleFn)
-  this.handleLazyLoad()
+  if ('IntersectionObserver' in window) {
+    this.observer = null
+    this.useIntersectionObserver(el, binding)
+  } else {
+    this._throttleFn = throttleFn(this.handleLazyLoad.bind(this, this.el, this.binding), 500)
+    this.on(document, 'scroll', this._throttleFn)
+    this.handleLazyLoad()
+  }
 }
+// 使用常规的getboundingclientreact来判断
 Lazy.prototype.on = (function () {
   if (document.addEventListener) {
     return (element, event, handler) => element && event && handler && element.addEventListener(event, handler, false)
@@ -49,10 +55,29 @@ Lazy.prototype.unbindListener = function () {
   this.off(document, 'scroll', this._throttleFn)
 }
 
+// 使用intersection API
+Lazy.prototype.useIntersectionObserver = function (el, binding) {
+  let obserConfig = {
+    root: null,
+    rootMargin: '0px',
+    threshold: [0]
+  }
+  this.observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const target = entry.target
+      if (entry.intersectionRatio > 0) {
+        this.observer.unobserve(target)
+        const src = binding.value;
+        (target.tagName.toLocaleLowerCase() === 'img') && el.setAttribute('src', src)
+      }
+    })
+  }, obserConfig)
+  this.observer.observe(el)
+}
 export default {
   name: 'lazyLoadImg',
   inserted: function (el, binding) {
-    el['lina-lazyload-listenser'] = Lazy(el, binding)
+    !!binding.value && (el['lina-lazyload-listenser'] = Lazy(el, binding))
   },
   unbind (el) {
     el['lina-lazyload-listenser'].unbindListener()
