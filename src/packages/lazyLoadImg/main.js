@@ -3,14 +3,23 @@ function Lazy (el, binding) {
   if (!(this instanceof Lazy)) return new Lazy(el, binding)
   this.el = el
   this.binding = binding
-  if ('IntersectionObserver' in window) {
-    this.observer = null
-    this.useIntersectionObserver(el, binding)
-  } else {
-    this._throttleFn = throttleFn(this.handleLazyLoad.bind(this, this.el, this.binding), 500)
-    this.on(document, 'scroll', this._throttleFn)
-    this.handleLazyLoad()
+  this.judgeEnv = function () {
+    let self = this
+    // 此处使用惰性函数，防止每次都进行做判断，增加性能，节省js引擎的计算
+    if ('IntersectionObserver' in window) {
+      this.judgeEnv = (function () {
+        self.observer = null
+        self.useIntersectionObserver(el, binding)
+      })()
+    } else {
+      this.judgeEnv = (function () {
+        self._throttleFn = throttleFn(self.handleLazyLoad.bind(self, self.el, self.binding), 500)
+        self.on(document, 'scroll', self._throttleFn)
+        self.handleLazyLoad()
+      })()
+    }
   }
+  this.judgeEnv()
 }
 // 使用常规的getboundingclientreact来判断
 Lazy.prototype.on = (function () {
