@@ -38,7 +38,7 @@ Lazy.prototype.isInView = function (element, container) {
   const elRect = element.getBoundingClientRect()
   let containerRect
   // window, document, document.documentElement, undefined
-  // 暂时只能想到是这几个
+  // 若不传container，则取以上默认值
   [window, document, document.documentElement, undefined].includes(container)
     ? containerRect = {
       top: 0,

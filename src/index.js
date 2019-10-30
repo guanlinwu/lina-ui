@@ -2,8 +2,8 @@ import { version } from '../package.json'
 import config from './config'
 import * as packages from '@/packages'
 import requestAnimationFrameFn from '@/utils/compatibility/requestAnimationFrame'
-import './styles/index.scss'
-import lazyLoadImg from './packages/lazyLoadImg/main' // 样式
+import './styles/index.scss' // 样式
+import lazyLoadImg from './packages/lazyLoadImg/main'
 requestAnimationFrameFn()
 let packagesList = config.packages
 let components = {} // 组件
