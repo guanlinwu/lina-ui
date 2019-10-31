@@ -5,18 +5,17 @@ function Lazy (el, binding) {
   this.binding = binding
   this.judgeEnv = function () { // 公有方法
     let self = this
-    // 此处使用惰性函数，防止每次都进行做判断，增加性能，节省js引擎的计算
     if ('IntersectionObserver' in window) {
-      this.judgeEnv = (function () {
-        self.observer = null
-        self.useIntersectionObserver(el, binding)
-      })()
+      // this.judgeEnv = (function () {
+      self.observer = null
+      self.useIntersectionObserver(el, binding)
+      // })()
     } else {
-      this.judgeEnv = (function () {
-        self._throttleFn = throttleFn(self.handleLazyLoad.bind(self, el, binding), 500)
-        self.on(document, 'scroll', self._throttleFn)
-        self.handleLazyLoad()
-      })()
+      // this.judgeEnv = (function () {
+      self._throttleFn = throttleFn(self.handleLazyLoad.bind(self, el, binding), 500)
+      self.on(document, 'scroll', self._throttleFn)
+      self.handleLazyLoad()
+      // })()
     }
   }
   this.judgeEnv()
