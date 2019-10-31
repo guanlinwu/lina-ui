@@ -13,7 +13,7 @@ function Lazy (el, binding) {
       })()
     } else {
       this.judgeEnv = (function () {
-        self._throttleFn = throttleFn(self.handleLazyLoad.bind(self, self.el, self.binding), 500)
+        self._throttleFn = throttleFn(self.handleLazyLoad.bind(self, el, binding), 500)
         self.on(document, 'scroll', self._throttleFn)
         self.handleLazyLoad()
       })()
