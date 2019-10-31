@@ -1,9 +1,9 @@
 import throttleFn from '../../utils/throttle'
 function Lazy (el, binding) {
   if (!(this instanceof Lazy)) return new Lazy(el, binding) // 防止忘记用new 创建实例
-  this.el = el
+  this.el = el // 公有属性
   this.binding = binding
-  this.judgeEnv = function () {
+  this.judgeEnv = function () { // 公有方法
     let self = this
     // 此处使用惰性函数，防止每次都进行做判断，增加性能，节省js引擎的计算
     if ('IntersectionObserver' in window) {
@@ -22,7 +22,7 @@ function Lazy (el, binding) {
   this.judgeEnv()
 }
 // 使用常规的getboundingclientreact来判断
-Lazy.prototype.on = (function () {
+Lazy.prototype.on = (function () { // 原型方法
   if (document.addEventListener) {
     return (element, event, handler) => element && event && handler && element.addEventListener(event, handler, false)
   }
