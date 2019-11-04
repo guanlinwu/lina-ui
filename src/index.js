@@ -1,9 +1,9 @@
 import { version } from '../package.json'
 import config from './config'
 import * as packages from '@/packages'
-
+import requestAnimationFrameFn from '@/utils/compatibility/requestAnimationFrame'
 import './styles/index.scss' // 样式
-
+requestAnimationFrameFn()
 let packagesList = config.packages
 let components = {} // 组件
 let methods = {} // 方法 $挂载

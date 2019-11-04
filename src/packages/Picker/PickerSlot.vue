@@ -1,7 +1,7 @@
 <template>
   <div class="u-picker-slot">
     <ul class="u-picker-slot-container" ref="pickerSlot">
-      <li class="u-ps-box" v-for="(item, index) in datas.values" :key="index" :style="{lineHeight}">
+      <li class="u-ps-box" v-for="(item, index) in datas.values" :key="index" :style="{lineHeight, height: lineHeight}">
         {{item | getValue(datas)}}
       </li>
     </ul>
@@ -143,7 +143,6 @@ export default {
      * @returns {Promise}
      */
     requestAnimationFrame (path, offsetY = macro.OFFSETY) {
-      cancelAnimationFrame(this.$time)
       offsetY = Math.abs(offsetY)
       let coefficient = offsetY > 2 ? offsetY : 3
       return new Promise(resolve => {
@@ -157,6 +156,7 @@ export default {
      * @param {Function} resolve Promise的resolve
      */
     running (path, coefficient, resolve) {
+      cancelAnimationFrame(this.$time)
       this.$time = requestAnimationFrame(() => {
         let currentY = translate.getY(this.element)
         if (path === currentY) {
