@@ -3,4 +3,6 @@ lazyLoadImg.install = function (Vue) {
   Vue.directive(lazyLoadImg.name, lazyLoadImg)
 }
 
-export default lazyLoadImg
+export default {
+  directive: lazyLoadImg
+}
