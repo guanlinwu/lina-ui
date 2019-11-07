@@ -88,7 +88,7 @@ Lazy.prototype.isInView = function (element, container) {
  */
 Lazy.prototype.handleLazyLoad = function () {
   // console.log('图片进入shi野区:', this.isInView(this.el, window))
-  console.log(1)
+  // console.log(1)
   const { isNeedCache, src } = this.binding.value // 参数
   if (this.isInView(this.el, document)) {
     this.el.setAttribute(
