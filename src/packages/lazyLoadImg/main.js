@@ -10,7 +10,7 @@ function Lazy (el, binding) {
   if (!(this instanceof Lazy)) return new Lazy(el, binding) // 防止忘记用new 创建实例
   this.el = el // 公有属性
   this.binding = binding
-  function hasIntersectionObserver () { // 私有属性,实例无法获取
+  function hasIntersectionObserver () { // 私有方法,实例无法获取
     if ('IntersectionObserver' in window &&
       'IntersectionObserverEntry' in window &&
       'intersectionRatio' in window.IntersectionObserverEntry.prototype) {
