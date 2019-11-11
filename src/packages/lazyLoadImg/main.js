@@ -89,10 +89,11 @@ Lazy.prototype.isInView = function (element, container) {
 Lazy.prototype.handleLazyLoad = function () {
   // console.log('图片进入shi野区:', this.isInView(this.el, window))
   console.log(1)
+  const { isNeedCache, src } = this.binding.value // 参数
   if (this.isInView(this.el, document)) {
     this.el.setAttribute(
       'src',
-      `${this.binding.value}?timeStamp=${+new Date()}`
+      isNeedCache ? `${src}?timeStamp=${+new Date()}` : src
     )
     this.off(document, 'scroll', this._throttleFn) // 进入窗口之后取消监听
   }
@@ -129,11 +130,14 @@ Lazy.prototype.useIntersectionObserver = function (el, binding) {
   this.observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       const target = entry.target // 目标元素
+      const { isNeedCache, src } = this.binding.value // 参数
       if (entry.intersectionRatio > 0) {
         this.observer.unobserve(target) // 进入窗口之后取消监听
-        const src = binding.value
         target.tagName.toLocaleLowerCase() === 'img' &&
-          el.setAttribute('src', `${src}?timeStamp=${+new Date()}`)
+          el.setAttribute(
+            'src',
+            isNeedCache ? `${src}?timeStamp=${+new Date()}` : src
+          )
       }
     })
   }, obserConfig)
@@ -143,7 +147,7 @@ export default {
   name: 'lazyLoadImg',
   inserted (el, binding) {
     // 使用dom来做衔接桥梁，把取消监听方法给弄上去，暂时不知道有没有什么副作用
-    !!binding.value && (el['lina-lazyload-listenser'] = Lazy(el, binding))
+    !!binding.value.src && (el['lina-lazyload-listenser'] = Lazy(el, binding))
   },
   unbind (el) {
     el['lina-lazyload-listenser'].unbindListener()

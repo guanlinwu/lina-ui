@@ -1,7 +1,7 @@
 <template>
   <div class="page-demo">
     <div class="imgwrap">
-      <img v-for="(src, index) of imgArr" v-lazyLoadImg="src" class="test" :key="src+index">
+      <img v-for="(src, index) of imgArr" v-lazyLoadImg="{src, isNeedCache: true}" class="test" :key="src+index">
     </div>
   </div>
 </template>
