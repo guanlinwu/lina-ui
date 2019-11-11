@@ -93,7 +93,7 @@ Lazy.prototype.handleLazyLoad = function () {
   if (this.isInView(this.el, document)) {
     this.el.setAttribute(
       'src',
-      isNeedCache ? `${src}?timeStamp=${+new Date()}` : src
+      isNeedCache ? src : `${src}?timeStamp=${+new Date()}`
     )
     this.off(document, 'scroll', this._throttleFn) // 进入窗口之后取消监听
   }
@@ -136,7 +136,7 @@ Lazy.prototype.useIntersectionObserver = function (el, binding) {
         target.tagName.toLocaleLowerCase() === 'img' &&
           el.setAttribute(
             'src',
-            isNeedCache ? `${src}?timeStamp=${+new Date()}` : src
+            isNeedCache ? src : `${src}?timeStamp=${+new Date()}`
           )
       }
     })
