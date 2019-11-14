@@ -1,5 +1,5 @@
 import { version } from '../package.json'
-import config from './config'
+import config from './config.json'
 import * as packages from '@/packages'
 import requestAnimationFrameFn from '@/utils/compatibility/requestAnimationFrame'
 import './styles/index.scss' // 样式
