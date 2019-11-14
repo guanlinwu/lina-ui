@@ -1,5 +1,5 @@
 import { version } from '../package.json'
-import config from './config'
+import config from './config.json'
 import * as packages from '@/packages'
 import requestAnimationFrameFn from '@/utils/compatibility/requestAnimationFrame'
 import './styles/index.scss' // 样式
@@ -7,10 +7,10 @@ requestAnimationFrameFn()
 let packagesList = config.packages
 let components = {} // 组件
 let methods = {} // 方法 $挂载
+let directives = {} // 指令 $挂载
 
 packagesList.map(item => {
   const pkg = packages[item.name]
-
   if (!pkg) {
     return
   }
@@ -20,6 +20,9 @@ packagesList.map(item => {
   }
   if (/method/.test(item.type)) {
     methods[item.name] = pkg.method
+  }
+  if (/directive/.test(item.type)) {
+    directives[item.name] = pkg.directive
   }
 })
 
@@ -41,6 +44,12 @@ let install = function (Vue, options = {}) {
   // console.log(components)
   for (const componentKey in components) {
     components[componentKey] && components[componentKey].name && Vue.component(components[componentKey].name, components[componentKey])
+  }
+  /**
+   * 安装指令
+   */
+  for (const directiveKey in directives) {
+    directives[directiveKey] && Vue.use(directives[directiveKey])
   }
 
   console.info(`lina-ui has been installed， version： ${version} `)
