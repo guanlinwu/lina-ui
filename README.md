@@ -1,5 +1,6 @@
 # linaUi
-一个轻量的UI框架
++ 一个轻量的UI框架
++ 配合[@linahome/cli（lina指令）](https://www.npmjs.com/package/@linahome/cli)，可以把指定的ui组件拉取下来，进行二次开发。
 
 # demo page
 [在线demo page预览][1]

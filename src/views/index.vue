@@ -29,7 +29,6 @@ export default {
     }
   },
   created () {
-    console.log('create')
     let foldStatus = JSON.parse(sessionStorage.getItem('foldStatus'))
     this.foldStore = foldStatus || []
 

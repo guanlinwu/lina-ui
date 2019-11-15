@@ -1,9 +1,13 @@
 # Changelog
 
+## 0.0.33 (2019-11-15)
+
 ### Features
 + 添加新组件 Picker，选择器
 + 添加新组件 DatetimePicker，时间选择器
 + 在index中添加了兼容requestAnimationFrame函数
++ 添加懒加载图片指令v-lazyLoadImg
+
 ## 0.0.32 (2019-09-02)
 
 ### Features
