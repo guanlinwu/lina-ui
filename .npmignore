@@ -21,3 +21,4 @@ config/
 postcss.config.js
 index.html
 .prettierrc.js
+AddComponent.md

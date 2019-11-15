@@ -1,0 +1,190 @@
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+.dom-date-time section .content[data-v-29153a40] {
+  margin: 0.26667rem;
+}
+.dom-date-time section .content h4[data-v-29153a40] {
+    font-size: 0.34667rem;
+    padding-bottom: 0.26667rem;
+}
+.dom-date-time section .content .text-p[data-v-29153a40] {
+    padding-bottom: 0.26667rem;
+    font-size: 0.32rem;
+}
+.dom-date-time section .content .text-p ul li[data-v-29153a40] {
+      margin-bottom: 0.2rem;
+}
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+.page-demo-dialog .rules[data-v-23b4513e] {
+  text-align: left;
+  font-size: 0.37333rem;
+  font-weight: 400;
+  color: #929292;
+  line-height: 0.58667rem;
+}
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+.page-demo-pull-refresh section .content[data-v-b007ca4a] {
+  margin: 0.26667rem;
+}
+.page-demo-pull-refresh section .content h4[data-v-b007ca4a] {
+    font-size: 0.34667rem;
+    padding-bottom: 0.26667rem;
+}
+.page-demo-pull-refresh section .content .text-p[data-v-b007ca4a] {
+    padding-bottom: 0.26667rem;
+    font-size: 0.32rem;
+}
+.page-demo-pull-refresh section .content .text-p ul li[data-v-b007ca4a] {
+      margin-bottom: 0.2rem;
+}
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+.page-demo-pull-refresh[data-v-73ce0016] {
+  font-size: 0;
+  height: calc(100vh - 1.17333rem);
+}
+.page-demo-pull-refresh .pull-content .text[data-v-73ce0016] {
+    margin: 0.13333rem 0.4rem;
+    font-size: 0.37333rem;
+    line-height: 0.58667rem;
+    color: rgba(69, 90, 100, 0.6);
+}
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+.page-demo-tabs code[data-v-0dc9dcaa] {
+  color: deeppink;
+}
+.page-demo-tabs .title[data-v-0dc9dcaa] {
+  padding-bottom: 0.26667rem;
+  line-height: 1.5;
+  color: #04bbfa;
+  text-align: center;
+  font-size: 0.46667rem;
+}
+.page-demo-tabs > p[data-v-0dc9dcaa] {
+  padding: 0 1em;
+  font-size: 0.4rem;
+  color: #ff9923;
+  text-align: left;
+  text-indent: 2em;
+}
+.page-demo-tabs > p[data-v-0dc9dcaa]:nth-of-type(odd) {
+    color: #64a5ff;
+}
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+.page-demo .imgwrap[data-v-5eab6322] {
+  padding: 0 1.33333rem;
+}
+.page-demo .imgwrap .test[data-v-5eab6322] {
+    border-radius: 0.2rem;
+    width: 7.33333rem;
+    height: 4.66667rem;
+}
+

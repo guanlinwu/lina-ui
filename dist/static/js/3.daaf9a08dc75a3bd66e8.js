@@ -1,12 +1,5 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[0],[
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[3],[
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(22);
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -107,6 +100,13 @@ function normalizeComponent (
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(26);
+
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
@@ -154,7 +154,7 @@ module.exports = _asyncToGenerator;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global, setImmediate) {/*!
- * Vue.js v2.6.10
+ * Vue.js v2.6.8
  * (c) 2014-2019 Evan You
  * Released under the MIT License.
  */
@@ -1863,11 +1863,10 @@ function invokeWithErrorHandling (
   var res;
   try {
     res = args ? handler.apply(context, args) : handler.call(context);
-    if (res && !res._isVue && isPromise(res) && !res._handled) {
-      res.catch(function (e) { return handleError(e, vm, info + " (Promise/async)"); });
+    if (res && !res._isVue && isPromise(res)) {
       // issue #9511
-      // avoid catch triggering multiple times when nested calls
-      res._handled = true;
+      // reassign to res to avoid catch triggering multiple times when nested calls
+      res = res.catch(function (e) { return handleError(e, vm, info + " (Promise/async)"); });
     }
   } catch (e) {
     handleError(e, vm, info);
@@ -2421,8 +2420,7 @@ function normalizeScopedSlots (
   prevSlots
 ) {
   var res;
-  var hasNormalSlots = Object.keys(normalSlots).length > 0;
-  var isStable = slots ? !!slots.$stable : !hasNormalSlots;
+  var isStable = slots ? !!slots.$stable : true;
   var key = slots && slots.$key;
   if (!slots) {
     res = {};
@@ -2434,8 +2432,7 @@ function normalizeScopedSlots (
     prevSlots &&
     prevSlots !== emptyObject &&
     key === prevSlots.$key &&
-    !hasNormalSlots &&
-    !prevSlots.$hasNormal
+    Object.keys(normalSlots).length === 0
   ) {
     // fast path 2: stable scoped slots w/ no normal slots to proxy,
     // only need to normalize once
@@ -2461,7 +2458,6 @@ function normalizeScopedSlots (
   }
   def(res, '$stable', isStable);
   def(res, '$key', key);
-  def(res, '$hasNormal', hasNormalSlots);
   return res
 }
 
@@ -2471,10 +2467,8 @@ function normalizeScopedSlot(normalSlots, key, fn) {
     res = res && typeof res === 'object' && !Array.isArray(res)
       ? [res] // single vnode
       : normalizeChildren(res);
-    return res && (
-      res.length === 0 ||
-      (res.length === 1 && res[0].isComment) // #9658
-    ) ? undefined
+    return res && res.length === 0
+      ? undefined
       : res
   };
   // this is a slot using the new v-slot syntax without scope. although it is
@@ -2646,13 +2640,12 @@ function bindObjectProps (
             : data.attrs || (data.attrs = {});
         }
         var camelizedKey = camelize(key);
-        var hyphenatedKey = hyphenate(key);
-        if (!(camelizedKey in hash) && !(hyphenatedKey in hash)) {
+        if (!(key in hash) && !(camelizedKey in hash)) {
           hash[key] = value[key];
 
           if (isSync) {
             var on = data.on || (data.on = {});
-            on[("update:" + key)] = function ($event) {
+            on[("update:" + camelizedKey)] = function ($event) {
               value[key] = $event;
             };
           }
@@ -3445,7 +3438,7 @@ function resolveAsyncComponent (
   }
 
   var owner = currentRenderingInstance;
-  if (owner && isDef(factory.owners) && factory.owners.indexOf(owner) === -1) {
+  if (isDef(factory.owners) && factory.owners.indexOf(owner) === -1) {
     // already pending
     factory.owners.push(owner);
   }
@@ -3454,11 +3447,9 @@ function resolveAsyncComponent (
     return factory.loadingComp
   }
 
-  if (owner && !isDef(factory.owners)) {
+  if (!isDef(factory.owners)) {
     var owners = factory.owners = [owner];
-    var sync = true;
-    var timerLoading = null;
-    var timerTimeout = null
+    var sync = true
 
     ;(owner).$on('hook:destroyed', function () { return remove(owners, owner); });
 
@@ -3469,14 +3460,6 @@ function resolveAsyncComponent (
 
       if (renderCompleted) {
         owners.length = 0;
-        if (timerLoading !== null) {
-          clearTimeout(timerLoading);
-          timerLoading = null;
-        }
-        if (timerTimeout !== null) {
-          clearTimeout(timerTimeout);
-          timerTimeout = null;
-        }
       }
     };
 
@@ -3520,8 +3503,7 @@ function resolveAsyncComponent (
           if (res.delay === 0) {
             factory.loading = true;
           } else {
-            timerLoading = setTimeout(function () {
-              timerLoading = null;
+            setTimeout(function () {
               if (isUndef(factory.resolved) && isUndef(factory.error)) {
                 factory.loading = true;
                 forceRender(false);
@@ -3531,8 +3513,7 @@ function resolveAsyncComponent (
         }
 
         if (isDef(res.timeout)) {
-          timerTimeout = setTimeout(function () {
-            timerTimeout = null;
+          setTimeout(function () {
             if (isUndef(factory.resolved)) {
               reject(
                  false
@@ -4030,21 +4011,11 @@ var getNow = Date.now;
 // timestamp can either be hi-res (relative to page load) or low-res
 // (relative to UNIX epoch), so in order to compare time we have to use the
 // same timestamp type when saving the flush timestamp.
-// All IE versions use low-res event timestamps, and have problematic clock
-// implementations (#9632)
-if (inBrowser && !isIE) {
-  var performance = window.performance;
-  if (
-    performance &&
-    typeof performance.now === 'function' &&
-    getNow() > document.createEvent('Event').timeStamp
-  ) {
-    // if the event timestamp, although evaluated AFTER the Date.now(), is
-    // smaller than it, it means the event is using a hi-res timestamp,
-    // and we need to use the hi-res version for event listener timestamps as
-    // well.
-    getNow = function () { return performance.now(); };
-  }
+if (inBrowser && getNow() > document.createEvent('Event').timeStamp) {
+  // if the low-res timestamp which is bigger than the event timestamp
+  // (which is evaluated AFTER) it means the event is using a hi-res timestamp,
+  // and we need to use the hi-res version for event listeners as well.
+  getNow = function () { return performance.now(); };
 }
 
 /**
@@ -5088,7 +5059,7 @@ Object.defineProperty(Vue, 'FunctionalRenderContext', {
   value: FunctionalRenderContext
 });
 
-Vue.version = '2.6.10';
+Vue.version = '2.6.8';
 
 /*  */
 
@@ -7099,10 +7070,8 @@ function add$1 (
         e.target === e.currentTarget ||
         // event is fired after handler attachment
         e.timeStamp >= attachedTimestamp ||
-        // bail for environments that have buggy event.timeStamp implementations
-        // #9462 iOS 9 bug: event.timeStamp is 0 after history.pushState
-        // #9681 QtWebEngine event.timeStamp is negative value
-        e.timeStamp <= 0 ||
+        // #9462 bail for iOS 9 bug: event.timeStamp is 0 after history.pushState
+        e.timeStamp === 0 ||
         // #9448 bail if event is fired in another document in a multi-page
         // electron/nw.js app, since event.timeStamp will be using a different
         // starting reference
@@ -7169,11 +7138,10 @@ function updateDOMProps (oldVnode, vnode) {
   }
 
   for (key in oldProps) {
-    if (!(key in props)) {
+    if (isUndef(props[key])) {
       elm[key] = '';
     }
   }
-
   for (key in props) {
     cur = props[key];
     // ignore children if the node has textContent or innerHTML,
@@ -7721,8 +7689,8 @@ function enter (vnode, toggleDisplay) {
   var context = activeInstance;
   var transitionNode = activeInstance.$vnode;
   while (transitionNode && transitionNode.parent) {
-    context = transitionNode.context;
     transitionNode = transitionNode.parent;
+    context = transitionNode.context;
   }
 
   var isAppear = !context._isMounted || !vnode.isRootInsert;
@@ -9312,7 +9280,7 @@ function parse (
         text = preserveWhitespace ? ' ' : '';
       }
       if (text) {
-        if (!inPre && whitespaceOption === 'condense') {
+        if (whitespaceOption === 'condense') {
           // condense consecutive whitespaces into single space
           text = text.replace(whitespaceRE$1, ' ');
         }
@@ -10049,7 +10017,7 @@ function isDirectChildOfTemplateFor (node) {
 
 /*  */
 
-var fnExpRE = /^([\w$_]+|\([^)]*?\))\s*=>|^function\s*(?:[\w$]+)?\s*\(/;
+var fnExpRE = /^([\w$_]+|\([^)]*?\))\s*=>|^function\s*\(/;
 var fnInvokeRE = /\([^)]*?\);*$/;
 var simplePathRE = /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['[^']*?']|\["[^"]*?"]|\[\d+]|\[[A-Za-z_$][\w$]*])*$/;
 
@@ -11164,28 +11132,34 @@ Vue.compile = compileToFunctions;
 
 /* harmony default export */ __webpack_exports__["a"] = (Vue);
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(20), __webpack_require__(24).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(22), __webpack_require__(29).setImmediate))
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
+var defineProperty = __webpack_require__(23);
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    var ownKeys = Object.keys(source);
+
+    if (typeof Object.getOwnPropertySymbols === 'function') {
+      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+      }));
+    }
+
+    ownKeys.forEach(function (key) {
+      defineProperty(target, key, source[key]);
     });
-  } else {
-    obj[key] = value;
   }
 
-  return obj;
+  return target;
 }
 
-module.exports = _defineProperty;
+module.exports = _objectSpread;
 
 /***/ }),
 /* 5 */
@@ -11210,204 +11184,21 @@ function _typeof(obj) {
 module.exports = _typeof;
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/**
- * packagesTypes => { 组件分类列表
-    typeName: '操作反馈', // 名称 【*必须】
-    typeEnName: 'operate feedback' // 英文 【*必须】
- * }
- *
- *  packages => { 组件列表
-      'version': '1.0.0', // 版本
-      'name': 'Toast', // 组件名称 【*必须】
-      'chnName': '吐司', // 组件中文名 【*必须】
-      'desc': '轻提示。', // 组件描述 【*必须】
-      'type': 'method', // 组件类型，method | component 【*必须】
-      'belong': 'operate feedback', // 组件所属大类，operate feedback（操作反馈） 【*必须】
-      'author': ['lin'] // 作者
-    },
- */
-/* harmony default export */ __webpack_exports__["a"] = ({
-  packagesTypes: [// 组件分类列表
-  {
-    typeName: '操作反馈',
-    // 名称
-    typeEnName: 'operate feedback' // 英文
-
-  }, {
-    typeName: '视图组件',
-    // 名称
-    typeEnName: 'view component' // 英文
-
-  }, {
-    typeName: '通用函数',
-    // 名称
-    typeEnName: 'general function' // 英文
-
-  }],
-  packages: [// 组件列表
-  {
-    'version': '1.0.0',
-    'name': 'Toast',
-    'chnName': '轻提示',
-    'desc': '轻提示。',
-    'type': 'method',
-    'belong': 'operate feedback',
-    'author': ['lin']
-  }, {
-    'version': '1.0.0',
-    'name': 'Loading',
-    'chnName': '加载圈',
-    'desc': 'loading',
-    'type': 'method',
-    'belong': 'operate feedback',
-    'author': ['lin']
-  }, {
-    'version': '1.0.1',
-    'name': 'Dialog',
-    'chnName': '对话框',
-    'desc': 'Dialog',
-    'type': 'method|component',
-    'belong': 'operate feedback',
-    'author': ['lin']
-  }, {
-    'version': '1.0.0',
-    'name': 'ActionSheet',
-    'chnName': '动作面板',
-    'desc': 'ActionSheet',
-    'type': 'component',
-    'belong': 'operate feedback',
-    'author': ['lin']
-  }, {
-    'version': '1.0.0',
-    'name': 'Popup',
-    'chnName': '弹出蒙层',
-    'desc': 'Popup',
-    'type': 'component',
-    'belong': 'operate feedback',
-    'author': ['lin']
-  }, {
-    'version': '1.0.0',
-    'name': 'PopCurtain',
-    'chnName': '广告图弹窗',
-    'desc': 'PopCurtain',
-    'type': 'component',
-    'belong': 'view component',
-    'author': ['lin']
-  }, {
-    'version': '1.0.0',
-    'name': 'PreLoad',
-    'chnName': '预加载',
-    'desc': 'PreLoad',
-    'type': 'method',
-    'belong': 'general function',
-    'author': ['lin']
-  }, {
-    'version': '1.0.0',
-    'name': 'CarouselNotice',
-    'chnName': '滚动公告',
-    'desc': '滚动公告',
-    'type': 'component',
-    'belong': 'view component',
-    'author': ['lin']
-  }, {
-    'version': '1.0.0',
-    'name': 'PullRefresh',
-    'chnName': '下拉刷新',
-    'desc': 'PullRefresh',
-    'type': 'component',
-    'belong': 'operate feedback',
-    'author': ['lin']
-  }, {
-    'version': '1.0.0',
-    'name': 'Picker',
-    'chnName': '选择器',
-    'desc': 'Picker',
-    'type': 'component',
-    'belong': 'view component',
-    'author': ['mwc']
-  }, {
-    'version': '1.0.0',
-    'name': 'DatetimePicker',
-    'chnName': '时间选择器',
-    'desc': 'DatetimePicker',
-    'type': 'component',
-    'belong': 'view component',
-    'author': ['mwc']
-  }]
-});
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-/* 18 */
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */
 /***/ (function(module, exports) {
 
 function _classCallCheck(instance, Constructor) {
@@ -11419,7 +11210,7 @@ function _classCallCheck(instance, Constructor) {
 module.exports = _classCallCheck;
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports) {
 
 function _defineProperties(target, props) {
@@ -11441,7 +11232,7 @@ function _createClass(Constructor, protoProps, staticProps) {
 module.exports = _createClass;
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports) {
 
 var g;
@@ -11467,1497 +11258,33 @@ module.exports = g;
 
 
 /***/ }),
-/* 21 */
-/***/ (function(module) {
+/* 23 */
+/***/ (function(module, exports) {
 
-module.exports = JSON.parse("{\"a\":\"0.0.32\"}");
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Copyright (c) 2014-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-var runtime = (function (exports) {
-  "use strict";
-
-  var Op = Object.prototype;
-  var hasOwn = Op.hasOwnProperty;
-  var undefined; // More compressible than void 0.
-  var $Symbol = typeof Symbol === "function" ? Symbol : {};
-  var iteratorSymbol = $Symbol.iterator || "@@iterator";
-  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
-  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
-    var generator = Object.create(protoGenerator.prototype);
-    var context = new Context(tryLocsList || []);
-
-    // The ._invoke method unifies the implementations of the .next,
-    // .throw, and .return methods.
-    generator._invoke = makeInvokeMethod(innerFn, self, context);
-
-    return generator;
-  }
-  exports.wrap = wrap;
-
-  // Try/catch helper to minimize deoptimizations. Returns a completion
-  // record like context.tryEntries[i].completion. This interface could
-  // have been (and was previously) designed to take a closure to be
-  // invoked without arguments, but in all the cases we care about we
-  // already have an existing method we want to call, so there's no need
-  // to create a new function object. We can even get away with assuming
-  // the method takes exactly one argument, since that happens to be true
-  // in every case, so we don't have to touch the arguments object. The
-  // only additional allocation required is the completion record, which
-  // has a stable shape and so hopefully should be cheap to allocate.
-  function tryCatch(fn, obj, arg) {
-    try {
-      return { type: "normal", arg: fn.call(obj, arg) };
-    } catch (err) {
-      return { type: "throw", arg: err };
-    }
-  }
-
-  var GenStateSuspendedStart = "suspendedStart";
-  var GenStateSuspendedYield = "suspendedYield";
-  var GenStateExecuting = "executing";
-  var GenStateCompleted = "completed";
-
-  // Returning this object from the innerFn has the same effect as
-  // breaking out of the dispatch switch statement.
-  var ContinueSentinel = {};
-
-  // Dummy constructor functions that we use as the .constructor and
-  // .constructor.prototype properties for functions that return Generator
-  // objects. For full spec compliance, you may wish to configure your
-  // minifier not to mangle the names of these two functions.
-  function Generator() {}
-  function GeneratorFunction() {}
-  function GeneratorFunctionPrototype() {}
-
-  // This is a polyfill for %IteratorPrototype% for environments that
-  // don't natively support it.
-  var IteratorPrototype = {};
-  IteratorPrototype[iteratorSymbol] = function () {
-    return this;
-  };
-
-  var getProto = Object.getPrototypeOf;
-  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  if (NativeIteratorPrototype &&
-      NativeIteratorPrototype !== Op &&
-      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
-    // This environment has a native %IteratorPrototype%; use it instead
-    // of the polyfill.
-    IteratorPrototype = NativeIteratorPrototype;
-  }
-
-  var Gp = GeneratorFunctionPrototype.prototype =
-    Generator.prototype = Object.create(IteratorPrototype);
-  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
-  GeneratorFunctionPrototype.constructor = GeneratorFunction;
-  GeneratorFunctionPrototype[toStringTagSymbol] =
-    GeneratorFunction.displayName = "GeneratorFunction";
-
-  // Helper for defining the .next, .throw, and .return methods of the
-  // Iterator interface in terms of a single ._invoke method.
-  function defineIteratorMethods(prototype) {
-    ["next", "throw", "return"].forEach(function(method) {
-      prototype[method] = function(arg) {
-        return this._invoke(method, arg);
-      };
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
     });
+  } else {
+    obj[key] = value;
   }
 
-  exports.isGeneratorFunction = function(genFun) {
-    var ctor = typeof genFun === "function" && genFun.constructor;
-    return ctor
-      ? ctor === GeneratorFunction ||
-        // For the native GeneratorFunction constructor, the best we can
-        // do is to check its .name property.
-        (ctor.displayName || ctor.name) === "GeneratorFunction"
-      : false;
-  };
-
-  exports.mark = function(genFun) {
-    if (Object.setPrototypeOf) {
-      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
-    } else {
-      genFun.__proto__ = GeneratorFunctionPrototype;
-      if (!(toStringTagSymbol in genFun)) {
-        genFun[toStringTagSymbol] = "GeneratorFunction";
-      }
-    }
-    genFun.prototype = Object.create(Gp);
-    return genFun;
-  };
-
-  // Within the body of any async function, `await x` is transformed to
-  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
-  // `hasOwn.call(value, "__await")` to determine if the yielded value is
-  // meant to be awaited.
-  exports.awrap = function(arg) {
-    return { __await: arg };
-  };
-
-  function AsyncIterator(generator) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-      if (record.type === "throw") {
-        reject(record.arg);
-      } else {
-        var result = record.arg;
-        var value = result.value;
-        if (value &&
-            typeof value === "object" &&
-            hasOwn.call(value, "__await")) {
-          return Promise.resolve(value.__await).then(function(value) {
-            invoke("next", value, resolve, reject);
-          }, function(err) {
-            invoke("throw", err, resolve, reject);
-          });
-        }
-
-        return Promise.resolve(value).then(function(unwrapped) {
-          // When a yielded Promise is resolved, its final value becomes
-          // the .value of the Promise<{value,done}> result for the
-          // current iteration.
-          result.value = unwrapped;
-          resolve(result);
-        }, function(error) {
-          // If a rejected Promise was yielded, throw the rejection back
-          // into the async generator function so it can be handled there.
-          return invoke("throw", error, resolve, reject);
-        });
-      }
-    }
-
-    var previousPromise;
-
-    function enqueue(method, arg) {
-      function callInvokeWithMethodAndArg() {
-        return new Promise(function(resolve, reject) {
-          invoke(method, arg, resolve, reject);
-        });
-      }
-
-      return previousPromise =
-        // If enqueue has been called before, then we want to wait until
-        // all previous Promises have been resolved before calling invoke,
-        // so that results are always delivered in the correct order. If
-        // enqueue has not been called before, then it is important to
-        // call invoke immediately, without waiting on a callback to fire,
-        // so that the async generator function has the opportunity to do
-        // any necessary setup in a predictable way. This predictability
-        // is why the Promise constructor synchronously invokes its
-        // executor callback, and why async functions synchronously
-        // execute code before the first await. Since we implement simple
-        // async functions in terms of async generators, it is especially
-        // important to get this right, even though it requires care.
-        previousPromise ? previousPromise.then(
-          callInvokeWithMethodAndArg,
-          // Avoid propagating failures to Promises returned by later
-          // invocations of the iterator.
-          callInvokeWithMethodAndArg
-        ) : callInvokeWithMethodAndArg();
-    }
-
-    // Define the unified helper method that is used to implement .next,
-    // .throw, and .return (see defineIteratorMethods).
-    this._invoke = enqueue;
-  }
-
-  defineIteratorMethods(AsyncIterator.prototype);
-  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
-    return this;
-  };
-  exports.AsyncIterator = AsyncIterator;
-
-  // Note that simple async functions are implemented on top of
-  // AsyncIterator objects; they just return a Promise for the value of
-  // the final result produced by the iterator.
-  exports.async = function(innerFn, outerFn, self, tryLocsList) {
-    var iter = new AsyncIterator(
-      wrap(innerFn, outerFn, self, tryLocsList)
-    );
-
-    return exports.isGeneratorFunction(outerFn)
-      ? iter // If outerFn is a generator, return the full iterator.
-      : iter.next().then(function(result) {
-          return result.done ? result.value : iter.next();
-        });
-  };
-
-  function makeInvokeMethod(innerFn, self, context) {
-    var state = GenStateSuspendedStart;
-
-    return function invoke(method, arg) {
-      if (state === GenStateExecuting) {
-        throw new Error("Generator is already running");
-      }
-
-      if (state === GenStateCompleted) {
-        if (method === "throw") {
-          throw arg;
-        }
-
-        // Be forgiving, per 25.3.3.3.3 of the spec:
-        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
-        return doneResult();
-      }
-
-      context.method = method;
-      context.arg = arg;
-
-      while (true) {
-        var delegate = context.delegate;
-        if (delegate) {
-          var delegateResult = maybeInvokeDelegate(delegate, context);
-          if (delegateResult) {
-            if (delegateResult === ContinueSentinel) continue;
-            return delegateResult;
-          }
-        }
-
-        if (context.method === "next") {
-          // Setting context._sent for legacy support of Babel's
-          // function.sent implementation.
-          context.sent = context._sent = context.arg;
-
-        } else if (context.method === "throw") {
-          if (state === GenStateSuspendedStart) {
-            state = GenStateCompleted;
-            throw context.arg;
-          }
-
-          context.dispatchException(context.arg);
-
-        } else if (context.method === "return") {
-          context.abrupt("return", context.arg);
-        }
-
-        state = GenStateExecuting;
-
-        var record = tryCatch(innerFn, self, context);
-        if (record.type === "normal") {
-          // If an exception is thrown from innerFn, we leave state ===
-          // GenStateExecuting and loop back for another invocation.
-          state = context.done
-            ? GenStateCompleted
-            : GenStateSuspendedYield;
-
-          if (record.arg === ContinueSentinel) {
-            continue;
-          }
-
-          return {
-            value: record.arg,
-            done: context.done
-          };
-
-        } else if (record.type === "throw") {
-          state = GenStateCompleted;
-          // Dispatch the exception by looping back around to the
-          // context.dispatchException(context.arg) call above.
-          context.method = "throw";
-          context.arg = record.arg;
-        }
-      }
-    };
-  }
-
-  // Call delegate.iterator[context.method](context.arg) and handle the
-  // result, either by returning a { value, done } result from the
-  // delegate iterator, or by modifying context.method and context.arg,
-  // setting context.delegate to null, and returning the ContinueSentinel.
-  function maybeInvokeDelegate(delegate, context) {
-    var method = delegate.iterator[context.method];
-    if (method === undefined) {
-      // A .throw or .return when the delegate iterator has no .throw
-      // method always terminates the yield* loop.
-      context.delegate = null;
-
-      if (context.method === "throw") {
-        // Note: ["return"] must be used for ES3 parsing compatibility.
-        if (delegate.iterator["return"]) {
-          // If the delegate iterator has a return method, give it a
-          // chance to clean up.
-          context.method = "return";
-          context.arg = undefined;
-          maybeInvokeDelegate(delegate, context);
-
-          if (context.method === "throw") {
-            // If maybeInvokeDelegate(context) changed context.method from
-            // "return" to "throw", let that override the TypeError below.
-            return ContinueSentinel;
-          }
-        }
-
-        context.method = "throw";
-        context.arg = new TypeError(
-          "The iterator does not provide a 'throw' method");
-      }
-
-      return ContinueSentinel;
-    }
-
-    var record = tryCatch(method, delegate.iterator, context.arg);
-
-    if (record.type === "throw") {
-      context.method = "throw";
-      context.arg = record.arg;
-      context.delegate = null;
-      return ContinueSentinel;
-    }
-
-    var info = record.arg;
-
-    if (! info) {
-      context.method = "throw";
-      context.arg = new TypeError("iterator result is not an object");
-      context.delegate = null;
-      return ContinueSentinel;
-    }
-
-    if (info.done) {
-      // Assign the result of the finished delegate to the temporary
-      // variable specified by delegate.resultName (see delegateYield).
-      context[delegate.resultName] = info.value;
-
-      // Resume execution at the desired location (see delegateYield).
-      context.next = delegate.nextLoc;
-
-      // If context.method was "throw" but the delegate handled the
-      // exception, let the outer generator proceed normally. If
-      // context.method was "next", forget context.arg since it has been
-      // "consumed" by the delegate iterator. If context.method was
-      // "return", allow the original .return call to continue in the
-      // outer generator.
-      if (context.method !== "return") {
-        context.method = "next";
-        context.arg = undefined;
-      }
-
-    } else {
-      // Re-yield the result returned by the delegate method.
-      return info;
-    }
-
-    // The delegate iterator is finished, so forget it and continue with
-    // the outer generator.
-    context.delegate = null;
-    return ContinueSentinel;
-  }
-
-  // Define Generator.prototype.{next,throw,return} in terms of the
-  // unified ._invoke helper method.
-  defineIteratorMethods(Gp);
-
-  Gp[toStringTagSymbol] = "Generator";
-
-  // A Generator should always return itself as the iterator object when the
-  // @@iterator function is called on it. Some browsers' implementations of the
-  // iterator prototype chain incorrectly implement this, causing the Generator
-  // object to not be returned from this call. This ensures that doesn't happen.
-  // See https://github.com/facebook/regenerator/issues/274 for more details.
-  Gp[iteratorSymbol] = function() {
-    return this;
-  };
-
-  Gp.toString = function() {
-    return "[object Generator]";
-  };
-
-  function pushTryEntry(locs) {
-    var entry = { tryLoc: locs[0] };
-
-    if (1 in locs) {
-      entry.catchLoc = locs[1];
-    }
-
-    if (2 in locs) {
-      entry.finallyLoc = locs[2];
-      entry.afterLoc = locs[3];
-    }
-
-    this.tryEntries.push(entry);
-  }
-
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal";
-    delete record.arg;
-    entry.completion = record;
-  }
-
-  function Context(tryLocsList) {
-    // The root entry object (effectively a try statement without a catch
-    // or a finally block) gives us a place to store values thrown from
-    // locations where there is no enclosing try statement.
-    this.tryEntries = [{ tryLoc: "root" }];
-    tryLocsList.forEach(pushTryEntry, this);
-    this.reset(true);
-  }
-
-  exports.keys = function(object) {
-    var keys = [];
-    for (var key in object) {
-      keys.push(key);
-    }
-    keys.reverse();
-
-    // Rather than returning an object with a next method, we keep
-    // things simple and return the next function itself.
-    return function next() {
-      while (keys.length) {
-        var key = keys.pop();
-        if (key in object) {
-          next.value = key;
-          next.done = false;
-          return next;
-        }
-      }
-
-      // To avoid creating an additional object, we just hang the .value
-      // and .done properties off the next function object itself. This
-      // also ensures that the minifier will not anonymize the function.
-      next.done = true;
-      return next;
-    };
-  };
-
-  function values(iterable) {
-    if (iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) {
-        return iteratorMethod.call(iterable);
-      }
-
-      if (typeof iterable.next === "function") {
-        return iterable;
-      }
-
-      if (!isNaN(iterable.length)) {
-        var i = -1, next = function next() {
-          while (++i < iterable.length) {
-            if (hasOwn.call(iterable, i)) {
-              next.value = iterable[i];
-              next.done = false;
-              return next;
-            }
-          }
-
-          next.value = undefined;
-          next.done = true;
-
-          return next;
-        };
-
-        return next.next = next;
-      }
-    }
-
-    // Return an iterator with no values.
-    return { next: doneResult };
-  }
-  exports.values = values;
-
-  function doneResult() {
-    return { value: undefined, done: true };
-  }
-
-  Context.prototype = {
-    constructor: Context,
-
-    reset: function(skipTempReset) {
-      this.prev = 0;
-      this.next = 0;
-      // Resetting context._sent for legacy support of Babel's
-      // function.sent implementation.
-      this.sent = this._sent = undefined;
-      this.done = false;
-      this.delegate = null;
-
-      this.method = "next";
-      this.arg = undefined;
-
-      this.tryEntries.forEach(resetTryEntry);
-
-      if (!skipTempReset) {
-        for (var name in this) {
-          // Not sure about the optimal order of these conditions:
-          if (name.charAt(0) === "t" &&
-              hasOwn.call(this, name) &&
-              !isNaN(+name.slice(1))) {
-            this[name] = undefined;
-          }
-        }
-      }
-    },
-
-    stop: function() {
-      this.done = true;
-
-      var rootEntry = this.tryEntries[0];
-      var rootRecord = rootEntry.completion;
-      if (rootRecord.type === "throw") {
-        throw rootRecord.arg;
-      }
-
-      return this.rval;
-    },
-
-    dispatchException: function(exception) {
-      if (this.done) {
-        throw exception;
-      }
-
-      var context = this;
-      function handle(loc, caught) {
-        record.type = "throw";
-        record.arg = exception;
-        context.next = loc;
-
-        if (caught) {
-          // If the dispatched exception was caught by a catch block,
-          // then let that catch block handle the exception normally.
-          context.method = "next";
-          context.arg = undefined;
-        }
-
-        return !! caught;
-      }
-
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        var record = entry.completion;
-
-        if (entry.tryLoc === "root") {
-          // Exception thrown outside of any try block that could handle
-          // it, so set the completion value of the entire function to
-          // throw the exception.
-          return handle("end");
-        }
-
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc");
-          var hasFinally = hasOwn.call(entry, "finallyLoc");
-
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) {
-              return handle(entry.catchLoc, true);
-            } else if (this.prev < entry.finallyLoc) {
-              return handle(entry.finallyLoc);
-            }
-
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) {
-              return handle(entry.catchLoc, true);
-            }
-
-          } else if (hasFinally) {
-            if (this.prev < entry.finallyLoc) {
-              return handle(entry.finallyLoc);
-            }
-
-          } else {
-            throw new Error("try statement without catch or finally");
-          }
-        }
-      }
-    },
-
-    abrupt: function(type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc <= this.prev &&
-            hasOwn.call(entry, "finallyLoc") &&
-            this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
-          break;
-        }
-      }
-
-      if (finallyEntry &&
-          (type === "break" ||
-           type === "continue") &&
-          finallyEntry.tryLoc <= arg &&
-          arg <= finallyEntry.finallyLoc) {
-        // Ignore the finally entry if control is not jumping to a
-        // location outside the try/catch block.
-        finallyEntry = null;
-      }
-
-      var record = finallyEntry ? finallyEntry.completion : {};
-      record.type = type;
-      record.arg = arg;
-
-      if (finallyEntry) {
-        this.method = "next";
-        this.next = finallyEntry.finallyLoc;
-        return ContinueSentinel;
-      }
-
-      return this.complete(record);
-    },
-
-    complete: function(record, afterLoc) {
-      if (record.type === "throw") {
-        throw record.arg;
-      }
-
-      if (record.type === "break" ||
-          record.type === "continue") {
-        this.next = record.arg;
-      } else if (record.type === "return") {
-        this.rval = this.arg = record.arg;
-        this.method = "return";
-        this.next = "end";
-      } else if (record.type === "normal" && afterLoc) {
-        this.next = afterLoc;
-      }
-
-      return ContinueSentinel;
-    },
-
-    finish: function(finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) {
-          this.complete(entry.completion, entry.afterLoc);
-          resetTryEntry(entry);
-          return ContinueSentinel;
-        }
-      }
-    },
-
-    "catch": function(tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-          if (record.type === "throw") {
-            var thrown = record.arg;
-            resetTryEntry(entry);
-          }
-          return thrown;
-        }
-      }
-
-      // The context.catch method must only be called with a location
-      // argument that corresponds to a known catch block.
-      throw new Error("illegal catch attempt");
-    },
-
-    delegateYield: function(iterable, resultName, nextLoc) {
-      this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      };
-
-      if (this.method === "next") {
-        // Deliberately forget the last sent value so that we don't
-        // accidentally pass it on to the delegate.
-        this.arg = undefined;
-      }
-
-      return ContinueSentinel;
-    }
-  };
-
-  // Regardless of whether this script is executing as a CommonJS module
-  // or not, return the runtime object so that we can declare the variable
-  // regeneratorRuntime in the outer scope, which allows this module to be
-  // injected easily by `bin/regenerator --include-runtime script.js`.
-  return exports;
-
-}(
-  // If this script is executing as a CommonJS module, use module.exports
-  // as the regeneratorRuntime namespace. Otherwise create a new empty
-  // object. Either way, the resulting object will be used to initialize
-  // the regeneratorRuntime variable at the top of this file.
-   true ? module.exports : undefined
-));
-
-try {
-  regeneratorRuntime = runtime;
-} catch (accidentalStrictMode) {
-  // This module should not be running in strict mode, so the above
-  // assignment should always work unless something is misconfigured. Just
-  // in case runtime.js accidentally runs in strict mode, we can escape
-  // strict mode using a global Function call. This could conceivably fail
-  // if a Content Security Policy forbids using Function, but in that case
-  // the proper solution is to fix the accidental strict mode problem. If
-  // you've misconfigured your bundler to force strict mode and applied a
-  // CSP to forbid Function, and you're not willing to fix either of those
-  // problems, please detail your unique predicament in a GitHub issue.
-  Function("r", "regeneratorRuntime = r")(runtime);
+  return obj;
 }
 
-
-/***/ }),
-/* 23 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
+module.exports = _defineProperty;
 
 /***/ }),
 /* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
-            (typeof self !== "undefined" && self) ||
-            window;
-var apply = Function.prototype.apply;
-
-// DOM APIs, for completeness
-
-exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
-};
-exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
-};
-exports.clearTimeout =
-exports.clearInterval = function(timeout) {
-  if (timeout) {
-    timeout.close();
-  }
-};
-
-function Timeout(id, clearFn) {
-  this._id = id;
-  this._clearFn = clearFn;
-}
-Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-Timeout.prototype.close = function() {
-  this._clearFn.call(scope, this._id);
-};
-
-// Does not start the time, just sets up the members needed.
-exports.enroll = function(item, msecs) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = msecs;
-};
-
-exports.unenroll = function(item) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = -1;
-};
-
-exports._unrefActive = exports.active = function(item) {
-  clearTimeout(item._idleTimeoutId);
-
-  var msecs = item._idleTimeout;
-  if (msecs >= 0) {
-    item._idleTimeoutId = setTimeout(function onTimeout() {
-      if (item._onTimeout)
-        item._onTimeout();
-    }, msecs);
-  }
-};
-
-// setimmediate attaches itself to the global object
-__webpack_require__(25);
-// On some exotic environments, it's not clear which object `setimmediate` was
-// able to install onto.  Search each possibility in the same order as the
-// `setimmediate` library.
-exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
-                       (typeof global !== "undefined" && global.setImmediate) ||
-                       (this && this.setImmediate);
-exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
-                         (typeof global !== "undefined" && global.clearImmediate) ||
-                         (this && this.clearImmediate);
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(20)))
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
-    "use strict";
-
-    if (global.setImmediate) {
-        return;
-    }
-
-    var nextHandle = 1; // Spec says greater than zero
-    var tasksByHandle = {};
-    var currentlyRunningATask = false;
-    var doc = global.document;
-    var registerImmediate;
-
-    function setImmediate(callback) {
-      // Callback can either be a function or a string
-      if (typeof callback !== "function") {
-        callback = new Function("" + callback);
-      }
-      // Copy function arguments
-      var args = new Array(arguments.length - 1);
-      for (var i = 0; i < args.length; i++) {
-          args[i] = arguments[i + 1];
-      }
-      // Store and register the task
-      var task = { callback: callback, args: args };
-      tasksByHandle[nextHandle] = task;
-      registerImmediate(nextHandle);
-      return nextHandle++;
-    }
-
-    function clearImmediate(handle) {
-        delete tasksByHandle[handle];
-    }
-
-    function run(task) {
-        var callback = task.callback;
-        var args = task.args;
-        switch (args.length) {
-        case 0:
-            callback();
-            break;
-        case 1:
-            callback(args[0]);
-            break;
-        case 2:
-            callback(args[0], args[1]);
-            break;
-        case 3:
-            callback(args[0], args[1], args[2]);
-            break;
-        default:
-            callback.apply(undefined, args);
-            break;
-        }
-    }
-
-    function runIfPresent(handle) {
-        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
-        // So if we're currently running a task, we'll need to delay this invocation.
-        if (currentlyRunningATask) {
-            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
-            // "too much recursion" error.
-            setTimeout(runIfPresent, 0, handle);
-        } else {
-            var task = tasksByHandle[handle];
-            if (task) {
-                currentlyRunningATask = true;
-                try {
-                    run(task);
-                } finally {
-                    clearImmediate(handle);
-                    currentlyRunningATask = false;
-                }
-            }
-        }
-    }
-
-    function installNextTickImplementation() {
-        registerImmediate = function(handle) {
-            process.nextTick(function () { runIfPresent(handle); });
-        };
-    }
-
-    function canUsePostMessage() {
-        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
-        // where `global.postMessage` means something completely different and can't be used for this purpose.
-        if (global.postMessage && !global.importScripts) {
-            var postMessageIsAsynchronous = true;
-            var oldOnMessage = global.onmessage;
-            global.onmessage = function() {
-                postMessageIsAsynchronous = false;
-            };
-            global.postMessage("", "*");
-            global.onmessage = oldOnMessage;
-            return postMessageIsAsynchronous;
-        }
-    }
-
-    function installPostMessageImplementation() {
-        // Installs an event handler on `global` for the `message` event: see
-        // * https://developer.mozilla.org/en/DOM/window.postMessage
-        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
-
-        var messagePrefix = "setImmediate$" + Math.random() + "$";
-        var onGlobalMessage = function(event) {
-            if (event.source === global &&
-                typeof event.data === "string" &&
-                event.data.indexOf(messagePrefix) === 0) {
-                runIfPresent(+event.data.slice(messagePrefix.length));
-            }
-        };
-
-        if (global.addEventListener) {
-            global.addEventListener("message", onGlobalMessage, false);
-        } else {
-            global.attachEvent("onmessage", onGlobalMessage);
-        }
-
-        registerImmediate = function(handle) {
-            global.postMessage(messagePrefix + handle, "*");
-        };
-    }
-
-    function installMessageChannelImplementation() {
-        var channel = new MessageChannel();
-        channel.port1.onmessage = function(event) {
-            var handle = event.data;
-            runIfPresent(handle);
-        };
-
-        registerImmediate = function(handle) {
-            channel.port2.postMessage(handle);
-        };
-    }
-
-    function installReadyStateChangeImplementation() {
-        var html = doc.documentElement;
-        registerImmediate = function(handle) {
-            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
-            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
-            var script = doc.createElement("script");
-            script.onreadystatechange = function () {
-                runIfPresent(handle);
-                script.onreadystatechange = null;
-                html.removeChild(script);
-                script = null;
-            };
-            html.appendChild(script);
-        };
-    }
-
-    function installSetTimeoutImplementation() {
-        registerImmediate = function(handle) {
-            setTimeout(runIfPresent, 0, handle);
-        };
-    }
-
-    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
-    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
-    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
-
-    // Don't get fooled by e.g. browserify environments.
-    if ({}.toString.call(global.process) === "[object process]") {
-        // For Node.js before 0.9
-        installNextTickImplementation();
-
-    } else if (canUsePostMessage()) {
-        // For non-IE10 modern browsers
-        installPostMessageImplementation();
-
-    } else if (global.MessageChannel) {
-        // For web workers, where supported
-        installMessageChannelImplementation();
-
-    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
-        // For IE 6–8
-        installReadyStateChangeImplementation();
-
-    } else {
-        // For older browsers
-        installSetTimeoutImplementation();
-    }
-
-    attachTo.setImmediate = setImmediate;
-    attachTo.clearImmediate = clearImmediate;
-}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(20), __webpack_require__(26)))
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_ActionSheet_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_ActionSheet_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_ActionSheet_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_ActionSheet_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Dialog_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Dialog_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Dialog_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Dialog_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 29 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_style_index_0_id_4245a560_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_style_index_0_id_4245a560_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_style_index_0_id_4245a560_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_style_index_0_id_4245a560_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 30 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_style_index_0_id_be65e294_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(11);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_style_index_0_id_be65e294_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_style_index_0_id_be65e294_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_style_index_0_id_be65e294_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 31 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Popup_vue_vue_type_style_index_0_id_8b0b5200_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(12);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Popup_vue_vue_type_style_index_0_id_8b0b5200_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Popup_vue_vue_type_style_index_0_id_8b0b5200_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Popup_vue_vue_type_style_index_0_id_8b0b5200_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 32 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PopCurtain_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(13);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PopCurtain_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PopCurtain_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PopCurtain_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 33 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_CarouselNotice_vue_vue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_CarouselNotice_vue_vue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_CarouselNotice_vue_vue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_CarouselNotice_vue_vue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 34 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PullRefresh_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(15);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PullRefresh_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PullRefresh_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PullRefresh_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 35 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PickerSlot_vue_vue_type_style_index_0_id_6726e444_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(16);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PickerSlot_vue_vue_type_style_index_0_id_6726e444_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PickerSlot_vue_vue_type_style_index_0_id_6726e444_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_PickerSlot_vue_vue_type_style_index_0_id_6726e444_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 36 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Picker_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(17);
-/* harmony import */ var _node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Picker_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Picker_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_0_5_0_mini_css_extract_plugin_dist_loader_js_node_modules_css_loader_2_1_1_css_loader_dist_cjs_js_ref_5_1_node_modules_vue_loader_15_7_1_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_3_0_0_postcss_loader_src_index_js_ref_5_2_node_modules_sass_loader_7_3_1_sass_loader_dist_cjs_js_ref_5_3_node_modules_sass_resources_loader_2_0_1_sass_resources_loader_lib_loader_js_ref_5_4_node_modules_vue_loader_15_7_1_vue_loader_lib_index_js_vue_loader_options_Picker_vue_vue_type_style_index_0_lang_scss_scope_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-/* 37 */,
-/* 38 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-var packages_namespaceObject = {};
-__webpack_require__.r(packages_namespaceObject);
-__webpack_require__.d(packages_namespaceObject, "ActionSheet", function() { return packages_ActionSheet; });
-__webpack_require__.d(packages_namespaceObject, "Dialog", function() { return packages_Dialog; });
-__webpack_require__.d(packages_namespaceObject, "Loading", function() { return packages_Loading; });
-__webpack_require__.d(packages_namespaceObject, "Toast", function() { return packages_Toast; });
-__webpack_require__.d(packages_namespaceObject, "Popup", function() { return packages_Popup; });
-__webpack_require__.d(packages_namespaceObject, "PreLoad", function() { return PreLoad; });
-__webpack_require__.d(packages_namespaceObject, "PopCurtain", function() { return packages_PopCurtain; });
-__webpack_require__.d(packages_namespaceObject, "CarouselNotice", function() { return packages_CarouselNotice; });
-__webpack_require__.d(packages_namespaceObject, "PullRefresh", function() { return packages_PullRefresh; });
-__webpack_require__.d(packages_namespaceObject, "Picker", function() { return packages_Picker; });
-__webpack_require__.d(packages_namespaceObject, "PopupPicker", function() { return packages_PopupPicker; });
-__webpack_require__.d(packages_namespaceObject, "DatetimePicker", function() { return packages_DatetimePicker; });
-
-// EXTERNAL MODULE: ./node_modules/_vue@2.6.10@vue/dist/vue.esm.js
-var vue_esm = __webpack_require__(3);
-
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=template&id=7ba5bd90&
-var Appvue_type_template_id_7ba5bd90_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { attrs: { id: "app" } },
-    [_c("router-view", { key: _vm.$route.fullPath, staticClass: "app-view" })],
-    1
-  )
-}
-var staticRenderFns = []
-Appvue_type_template_id_7ba5bd90_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/App.vue?vue&type=template&id=7ba5bd90&
-
-// EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(0);
-var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
-
-// EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/helpers/asyncToGenerator.js
-var asyncToGenerator = __webpack_require__(2);
-var asyncToGenerator_default = /*#__PURE__*/__webpack_require__.n(asyncToGenerator);
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/App.vue?vue&type=script&lang=js&
-
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ var Appvue_type_script_lang_js_ = ({
-  name: 'app',
-  data: function data() {
-    return {
-      msg: 'Welcome to Your Vue.js App',
-      navActionSheet: {
-        isShow: false,
-        cancelTxt: '取消',
-        menuItems: [{
-          'name': '百度地图',
-          'value': 'baidu'
-        }, {
-          'name': '高德地图',
-          'value': 'gaode'
-        }, {
-          'name': '腾讯地图',
-          'value': 'tengxun'
-        }]
-      }
-    };
-  },
-  created: function () {
-    var _created = asyncToGenerator_default()(
-    /*#__PURE__*/
-    regenerator_default.a.mark(function _callee() {
-      return regenerator_default.a.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    }));
-
-    function created() {
-      return _created.apply(this, arguments);
-    }
-
-    return created;
-  }()
-});
-// CONCATENATED MODULE: ./src/App.vue?vue&type=script&lang=js&
- /* harmony default export */ var src_Appvue_type_script_lang_js_ = (Appvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/App.vue?vue&type=style&index=0&lang=scss&
-var Appvue_type_style_index_0_lang_scss_ = __webpack_require__(23);
-
-// EXTERNAL MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/runtime/componentNormalizer.js
-var componentNormalizer = __webpack_require__(1);
-
-// CONCATENATED MODULE: ./src/App.vue
-
-
-
-
-
-
-/* normalize component */
-
-var component = Object(componentNormalizer["a" /* default */])(
-  src_Appvue_type_script_lang_js_,
-  Appvue_type_template_id_7ba5bd90_render,
-  staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "src/App.vue"
-/* harmony default export */ var App = (component.exports);
-// CONCATENATED MODULE: ./src/utils/rem.js
-/*
- * base on clientWidth,then transform to rem,default 320px == 20rem
- */
-function setRem(doc, win) {
-  var docEl = doc.documentElement;
-  var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
-
-  var reCaculate = function reCaculate() {
-    var clientWidth = docEl.clientWidth; // console.log(clientWidth)
-
-    if (!clientWidth) return;
-    var fontSize = 75 * (clientWidth / 750);
-    fontSize = Math.min(fontSize, 75);
-    docEl.style.fontSize = fontSize + 'px';
-  };
-
-  if (!doc.addEventListener) return;
-  win.addEventListener(resizeEvt, reCaculate, false);
-  doc.addEventListener('DOMContentLoaded', reCaculate, false);
-}
-/**
- * 自适应rem。首先判断用vw，没有支持vw再用js动态改变html的font-size
- *
- * @param {*} docEl
- * @param {*} padBaseSize
- */
-
-var autoRem = function autoRem(docEl, padBaseSize) {
-  var width;
-
-  var resize = function resize() {
-    var widthDynamic = Math.min(docEl.getBoundingClientRect().width, docEl.clientWidth, padBaseSize);
-
-    if (width !== widthDynamic) {
-      width = widthDynamic;
-      docEl.style.fontSize = "".concat(width / 10, "px");
-    }
-  };
-
-  var el = document.createElement('div');
-  el.setAttribute('style', 'width: 1vw');
-
-  if (!el.style.width) {
-    window.addEventListener && window.addEventListener('orientationchange' in window ? 'orientationchange' : 'resize', resize, false);
-    window.addEventListener('DOMContentLoaded', resize, false);
-  } else {
-    docEl.style.fontSize = '10vw';
-  }
-};
-// CONCATENATED MODULE: ./node_modules/_vue-router@3.1.3@vue-router/dist/vue-router.esm.js
 /*!
-  * vue-router v3.1.3
+  * vue-router v3.0.6
   * (c) 2019 Evan You
   * @license MIT
   */
@@ -12975,14 +11302,6 @@ function warn (condition, message) {
 
 function isError (err) {
   return Object.prototype.toString.call(err).indexOf('Error') > -1
-}
-
-function isExtendedError (constructor, err) {
-  return (
-    err instanceof constructor ||
-    // _name is to support IE9 too
-    (err && (err.name === constructor.name || err._name === constructor._name))
-  )
 }
 
 function extend (a, b) {
@@ -13096,7 +11415,7 @@ var View = {
 
     return h(component, data, children)
   }
-};
+}
 
 function resolveProps (route, config) {
   switch (typeof config) {
@@ -13219,7 +11538,7 @@ function createRoute (
   redirectedFrom,
   router
 ) {
-  var stringifyQuery = router && router.options.stringifyQuery;
+  var stringifyQuery$$1 = router && router.options.stringifyQuery;
 
   var query = location.query || {};
   try {
@@ -13233,11 +11552,11 @@ function createRoute (
     hash: location.hash || '',
     query: query,
     params: location.params || {},
-    fullPath: getFullPath(location, stringifyQuery),
+    fullPath: getFullPath(location, stringifyQuery$$1),
     matched: record ? formatMatch(record) : []
   };
   if (redirectedFrom) {
-    route.redirectedFrom = getFullPath(redirectedFrom, stringifyQuery);
+    route.redirectedFrom = getFullPath(redirectedFrom, stringifyQuery$$1);
   }
   return Object.freeze(route)
 }
@@ -13345,6 +11664,200 @@ function queryIncludes (current, target) {
   }
   return true
 }
+
+/*  */
+
+// work around weird flow bug
+var toTypes = [String, Object];
+var eventTypes = [String, Array];
+
+var Link = {
+  name: 'RouterLink',
+  props: {
+    to: {
+      type: toTypes,
+      required: true
+    },
+    tag: {
+      type: String,
+      default: 'a'
+    },
+    exact: Boolean,
+    append: Boolean,
+    replace: Boolean,
+    activeClass: String,
+    exactActiveClass: String,
+    event: {
+      type: eventTypes,
+      default: 'click'
+    }
+  },
+  render: function render (h) {
+    var this$1 = this;
+
+    var router = this.$router;
+    var current = this.$route;
+    var ref = router.resolve(this.to, current, this.append);
+    var location = ref.location;
+    var route = ref.route;
+    var href = ref.href;
+
+    var classes = {};
+    var globalActiveClass = router.options.linkActiveClass;
+    var globalExactActiveClass = router.options.linkExactActiveClass;
+    // Support global empty active class
+    var activeClassFallback = globalActiveClass == null
+      ? 'router-link-active'
+      : globalActiveClass;
+    var exactActiveClassFallback = globalExactActiveClass == null
+      ? 'router-link-exact-active'
+      : globalExactActiveClass;
+    var activeClass = this.activeClass == null
+      ? activeClassFallback
+      : this.activeClass;
+    var exactActiveClass = this.exactActiveClass == null
+      ? exactActiveClassFallback
+      : this.exactActiveClass;
+    var compareTarget = location.path
+      ? createRoute(null, location, null, router)
+      : route;
+
+    classes[exactActiveClass] = isSameRoute(current, compareTarget);
+    classes[activeClass] = this.exact
+      ? classes[exactActiveClass]
+      : isIncludedRoute(current, compareTarget);
+
+    var handler = function (e) {
+      if (guardEvent(e)) {
+        if (this$1.replace) {
+          router.replace(location);
+        } else {
+          router.push(location);
+        }
+      }
+    };
+
+    var on = { click: guardEvent };
+    if (Array.isArray(this.event)) {
+      this.event.forEach(function (e) { on[e] = handler; });
+    } else {
+      on[this.event] = handler;
+    }
+
+    var data = {
+      class: classes
+    };
+
+    if (this.tag === 'a') {
+      data.on = on;
+      data.attrs = { href: href };
+    } else {
+      // find the first <a> child and apply listener and href
+      var a = findAnchor(this.$slots.default);
+      if (a) {
+        // in case the <a> is a static node
+        a.isStatic = false;
+        var aData = a.data = extend({}, a.data);
+        aData.on = on;
+        var aAttrs = a.data.attrs = extend({}, a.data.attrs);
+        aAttrs.href = href;
+      } else {
+        // doesn't have <a> child, apply listener to self
+        data.on = on;
+      }
+    }
+
+    return h(this.tag, data, this.$slots.default)
+  }
+}
+
+function guardEvent (e) {
+  // don't redirect with control keys
+  if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) { return }
+  // don't redirect when preventDefault called
+  if (e.defaultPrevented) { return }
+  // don't redirect on right click
+  if (e.button !== undefined && e.button !== 0) { return }
+  // don't redirect if `target="_blank"`
+  if (e.currentTarget && e.currentTarget.getAttribute) {
+    var target = e.currentTarget.getAttribute('target');
+    if (/\b_blank\b/i.test(target)) { return }
+  }
+  // this may be a Weex event which doesn't have this method
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
+  return true
+}
+
+function findAnchor (children) {
+  if (children) {
+    var child;
+    for (var i = 0; i < children.length; i++) {
+      child = children[i];
+      if (child.tag === 'a') {
+        return child
+      }
+      if (child.children && (child = findAnchor(child.children))) {
+        return child
+      }
+    }
+  }
+}
+
+var _Vue;
+
+function install (Vue) {
+  if (install.installed && _Vue === Vue) { return }
+  install.installed = true;
+
+  _Vue = Vue;
+
+  var isDef = function (v) { return v !== undefined; };
+
+  var registerInstance = function (vm, callVal) {
+    var i = vm.$options._parentVnode;
+    if (isDef(i) && isDef(i = i.data) && isDef(i = i.registerRouteInstance)) {
+      i(vm, callVal);
+    }
+  };
+
+  Vue.mixin({
+    beforeCreate: function beforeCreate () {
+      if (isDef(this.$options.router)) {
+        this._routerRoot = this;
+        this._router = this.$options.router;
+        this._router.init(this);
+        Vue.util.defineReactive(this, '_route', this._router.history.current);
+      } else {
+        this._routerRoot = (this.$parent && this.$parent._routerRoot) || this;
+      }
+      registerInstance(this, this);
+    },
+    destroyed: function destroyed () {
+      registerInstance(this);
+    }
+  });
+
+  Object.defineProperty(Vue.prototype, '$router', {
+    get: function get () { return this._routerRoot._router }
+  });
+
+  Object.defineProperty(Vue.prototype, '$route', {
+    get: function get () { return this._routerRoot._route }
+  });
+
+  Vue.component('RouterView', View);
+  Vue.component('RouterLink', Link);
+
+  var strats = Vue.config.optionMergeStrategies;
+  // use the same hook merging strategy for route hooks
+  strats.beforeRouteEnter = strats.beforeRouteLeave = strats.beforeRouteUpdate = strats.created;
+}
+
+/*  */
+
+var inBrowser = typeof window !== 'undefined';
 
 /*  */
 
@@ -13881,6 +12394,141 @@ function fillParams (
 
 /*  */
 
+function createRouteMap (
+  routes,
+  oldPathList,
+  oldPathMap,
+  oldNameMap
+) {
+  // the path list is used to control path matching priority
+  var pathList = oldPathList || [];
+  // $flow-disable-line
+  var pathMap = oldPathMap || Object.create(null);
+  // $flow-disable-line
+  var nameMap = oldNameMap || Object.create(null);
+
+  routes.forEach(function (route) {
+    addRouteRecord(pathList, pathMap, nameMap, route);
+  });
+
+  // ensure wildcard routes are always at the end
+  for (var i = 0, l = pathList.length; i < l; i++) {
+    if (pathList[i] === '*') {
+      pathList.push(pathList.splice(i, 1)[0]);
+      l--;
+      i--;
+    }
+  }
+
+  return {
+    pathList: pathList,
+    pathMap: pathMap,
+    nameMap: nameMap
+  }
+}
+
+function addRouteRecord (
+  pathList,
+  pathMap,
+  nameMap,
+  route,
+  parent,
+  matchAs
+) {
+  var path = route.path;
+  var name = route.name;
+  if (false) {}
+
+  var pathToRegexpOptions = route.pathToRegexpOptions || {};
+  var normalizedPath = normalizePath(
+    path,
+    parent,
+    pathToRegexpOptions.strict
+  );
+
+  if (typeof route.caseSensitive === 'boolean') {
+    pathToRegexpOptions.sensitive = route.caseSensitive;
+  }
+
+  var record = {
+    path: normalizedPath,
+    regex: compileRouteRegex(normalizedPath, pathToRegexpOptions),
+    components: route.components || { default: route.component },
+    instances: {},
+    name: name,
+    parent: parent,
+    matchAs: matchAs,
+    redirect: route.redirect,
+    beforeEnter: route.beforeEnter,
+    meta: route.meta || {},
+    props: route.props == null
+      ? {}
+      : route.components
+        ? route.props
+        : { default: route.props }
+  };
+
+  if (route.children) {
+    // Warn if route is named, does not redirect and has a default child route.
+    // If users navigate to this route by name, the default child will
+    // not be rendered (GH Issue #629)
+    if (false) {}
+    route.children.forEach(function (child) {
+      var childMatchAs = matchAs
+        ? cleanPath((matchAs + "/" + (child.path)))
+        : undefined;
+      addRouteRecord(pathList, pathMap, nameMap, child, record, childMatchAs);
+    });
+  }
+
+  if (route.alias !== undefined) {
+    var aliases = Array.isArray(route.alias)
+      ? route.alias
+      : [route.alias];
+
+    aliases.forEach(function (alias) {
+      var aliasRoute = {
+        path: alias,
+        children: route.children
+      };
+      addRouteRecord(
+        pathList,
+        pathMap,
+        nameMap,
+        aliasRoute,
+        parent,
+        record.path || '/' // matchAs
+      );
+    });
+  }
+
+  if (!pathMap[record.path]) {
+    pathList.push(record.path);
+    pathMap[record.path] = record;
+  }
+
+  if (name) {
+    if (!nameMap[name]) {
+      nameMap[name] = record;
+    } else if (false) {}
+  }
+}
+
+function compileRouteRegex (path, pathToRegexpOptions) {
+  var regex = pathToRegexp_1(path, [], pathToRegexpOptions);
+  if (false) { var keys; }
+  return regex
+}
+
+function normalizePath (path, parent, strict) {
+  if (!strict) { path = path.replace(/\/$/, ''); }
+  if (path[0] === '/') { return path }
+  if (parent == null) { return path }
+  return cleanPath(((parent.path) + "/" + path))
+}
+
+/*  */
+
 function normalizeLocation (
   raw,
   current,
@@ -13937,386 +12585,6 @@ function normalizeLocation (
 
 /*  */
 
-// work around weird flow bug
-var toTypes = [String, Object];
-var eventTypes = [String, Array];
-
-var noop = function () {};
-
-var Link = {
-  name: 'RouterLink',
-  props: {
-    to: {
-      type: toTypes,
-      required: true
-    },
-    tag: {
-      type: String,
-      default: 'a'
-    },
-    exact: Boolean,
-    append: Boolean,
-    replace: Boolean,
-    activeClass: String,
-    exactActiveClass: String,
-    event: {
-      type: eventTypes,
-      default: 'click'
-    }
-  },
-  render: function render (h) {
-    var this$1 = this;
-
-    var router = this.$router;
-    var current = this.$route;
-    var ref = router.resolve(
-      this.to,
-      current,
-      this.append
-    );
-    var location = ref.location;
-    var route = ref.route;
-    var href = ref.href;
-
-    var classes = {};
-    var globalActiveClass = router.options.linkActiveClass;
-    var globalExactActiveClass = router.options.linkExactActiveClass;
-    // Support global empty active class
-    var activeClassFallback =
-      globalActiveClass == null ? 'router-link-active' : globalActiveClass;
-    var exactActiveClassFallback =
-      globalExactActiveClass == null
-        ? 'router-link-exact-active'
-        : globalExactActiveClass;
-    var activeClass =
-      this.activeClass == null ? activeClassFallback : this.activeClass;
-    var exactActiveClass =
-      this.exactActiveClass == null
-        ? exactActiveClassFallback
-        : this.exactActiveClass;
-
-    var compareTarget = route.redirectedFrom
-      ? createRoute(null, normalizeLocation(route.redirectedFrom), null, router)
-      : route;
-
-    classes[exactActiveClass] = isSameRoute(current, compareTarget);
-    classes[activeClass] = this.exact
-      ? classes[exactActiveClass]
-      : isIncludedRoute(current, compareTarget);
-
-    var handler = function (e) {
-      if (guardEvent(e)) {
-        if (this$1.replace) {
-          router.replace(location, noop);
-        } else {
-          router.push(location, noop);
-        }
-      }
-    };
-
-    var on = { click: guardEvent };
-    if (Array.isArray(this.event)) {
-      this.event.forEach(function (e) {
-        on[e] = handler;
-      });
-    } else {
-      on[this.event] = handler;
-    }
-
-    var data = { class: classes };
-
-    var scopedSlot =
-      !this.$scopedSlots.$hasNormal &&
-      this.$scopedSlots.default &&
-      this.$scopedSlots.default({
-        href: href,
-        route: route,
-        navigate: handler,
-        isActive: classes[activeClass],
-        isExactActive: classes[exactActiveClass]
-      });
-
-    if (scopedSlot) {
-      if (scopedSlot.length === 1) {
-        return scopedSlot[0]
-      } else if (scopedSlot.length > 1 || !scopedSlot.length) {
-        if (false) {}
-        return scopedSlot.length === 0 ? h() : h('span', {}, scopedSlot)
-      }
-    }
-
-    if (this.tag === 'a') {
-      data.on = on;
-      data.attrs = { href: href };
-    } else {
-      // find the first <a> child and apply listener and href
-      var a = findAnchor(this.$slots.default);
-      if (a) {
-        // in case the <a> is a static node
-        a.isStatic = false;
-        var aData = (a.data = extend({}, a.data));
-        aData.on = aData.on || {};
-        // transform existing events in both objects into arrays so we can push later
-        for (var event in aData.on) {
-          var handler$1 = aData.on[event];
-          if (event in on) {
-            aData.on[event] = Array.isArray(handler$1) ? handler$1 : [handler$1];
-          }
-        }
-        // append new listeners for router-link
-        for (var event$1 in on) {
-          if (event$1 in aData.on) {
-            // on[event] is always a function
-            aData.on[event$1].push(on[event$1]);
-          } else {
-            aData.on[event$1] = handler;
-          }
-        }
-
-        var aAttrs = (a.data.attrs = extend({}, a.data.attrs));
-        aAttrs.href = href;
-      } else {
-        // doesn't have <a> child, apply listener to self
-        data.on = on;
-      }
-    }
-
-    return h(this.tag, data, this.$slots.default)
-  }
-};
-
-function guardEvent (e) {
-  // don't redirect with control keys
-  if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) { return }
-  // don't redirect when preventDefault called
-  if (e.defaultPrevented) { return }
-  // don't redirect on right click
-  if (e.button !== undefined && e.button !== 0) { return }
-  // don't redirect if `target="_blank"`
-  if (e.currentTarget && e.currentTarget.getAttribute) {
-    var target = e.currentTarget.getAttribute('target');
-    if (/\b_blank\b/i.test(target)) { return }
-  }
-  // this may be a Weex event which doesn't have this method
-  if (e.preventDefault) {
-    e.preventDefault();
-  }
-  return true
-}
-
-function findAnchor (children) {
-  if (children) {
-    var child;
-    for (var i = 0; i < children.length; i++) {
-      child = children[i];
-      if (child.tag === 'a') {
-        return child
-      }
-      if (child.children && (child = findAnchor(child.children))) {
-        return child
-      }
-    }
-  }
-}
-
-var _Vue;
-
-function vue_router_esm_install (Vue) {
-  if (vue_router_esm_install.installed && _Vue === Vue) { return }
-  vue_router_esm_install.installed = true;
-
-  _Vue = Vue;
-
-  var isDef = function (v) { return v !== undefined; };
-
-  var registerInstance = function (vm, callVal) {
-    var i = vm.$options._parentVnode;
-    if (isDef(i) && isDef(i = i.data) && isDef(i = i.registerRouteInstance)) {
-      i(vm, callVal);
-    }
-  };
-
-  Vue.mixin({
-    beforeCreate: function beforeCreate () {
-      if (isDef(this.$options.router)) {
-        this._routerRoot = this;
-        this._router = this.$options.router;
-        this._router.init(this);
-        Vue.util.defineReactive(this, '_route', this._router.history.current);
-      } else {
-        this._routerRoot = (this.$parent && this.$parent._routerRoot) || this;
-      }
-      registerInstance(this, this);
-    },
-    destroyed: function destroyed () {
-      registerInstance(this);
-    }
-  });
-
-  Object.defineProperty(Vue.prototype, '$router', {
-    get: function get () { return this._routerRoot._router }
-  });
-
-  Object.defineProperty(Vue.prototype, '$route', {
-    get: function get () { return this._routerRoot._route }
-  });
-
-  Vue.component('RouterView', View);
-  Vue.component('RouterLink', Link);
-
-  var strats = Vue.config.optionMergeStrategies;
-  // use the same hook merging strategy for route hooks
-  strats.beforeRouteEnter = strats.beforeRouteLeave = strats.beforeRouteUpdate = strats.created;
-}
-
-/*  */
-
-var inBrowser = typeof window !== 'undefined';
-
-/*  */
-
-function createRouteMap (
-  routes,
-  oldPathList,
-  oldPathMap,
-  oldNameMap
-) {
-  // the path list is used to control path matching priority
-  var pathList = oldPathList || [];
-  // $flow-disable-line
-  var pathMap = oldPathMap || Object.create(null);
-  // $flow-disable-line
-  var nameMap = oldNameMap || Object.create(null);
-
-  routes.forEach(function (route) {
-    addRouteRecord(pathList, pathMap, nameMap, route);
-  });
-
-  // ensure wildcard routes are always at the end
-  for (var i = 0, l = pathList.length; i < l; i++) {
-    if (pathList[i] === '*') {
-      pathList.push(pathList.splice(i, 1)[0]);
-      l--;
-      i--;
-    }
-  }
-
-  if (false) { var pathNames, found; }
-
-  return {
-    pathList: pathList,
-    pathMap: pathMap,
-    nameMap: nameMap
-  }
-}
-
-function addRouteRecord (
-  pathList,
-  pathMap,
-  nameMap,
-  route,
-  parent,
-  matchAs
-) {
-  var path = route.path;
-  var name = route.name;
-  if (false) {}
-
-  var pathToRegexpOptions =
-    route.pathToRegexpOptions || {};
-  var normalizedPath = normalizePath(path, parent, pathToRegexpOptions.strict);
-
-  if (typeof route.caseSensitive === 'boolean') {
-    pathToRegexpOptions.sensitive = route.caseSensitive;
-  }
-
-  var record = {
-    path: normalizedPath,
-    regex: compileRouteRegex(normalizedPath, pathToRegexpOptions),
-    components: route.components || { default: route.component },
-    instances: {},
-    name: name,
-    parent: parent,
-    matchAs: matchAs,
-    redirect: route.redirect,
-    beforeEnter: route.beforeEnter,
-    meta: route.meta || {},
-    props:
-      route.props == null
-        ? {}
-        : route.components
-          ? route.props
-          : { default: route.props }
-  };
-
-  if (route.children) {
-    // Warn if route is named, does not redirect and has a default child route.
-    // If users navigate to this route by name, the default child will
-    // not be rendered (GH Issue #629)
-    if (false) {}
-    route.children.forEach(function (child) {
-      var childMatchAs = matchAs
-        ? cleanPath((matchAs + "/" + (child.path)))
-        : undefined;
-      addRouteRecord(pathList, pathMap, nameMap, child, record, childMatchAs);
-    });
-  }
-
-  if (!pathMap[record.path]) {
-    pathList.push(record.path);
-    pathMap[record.path] = record;
-  }
-
-  if (route.alias !== undefined) {
-    var aliases = Array.isArray(route.alias) ? route.alias : [route.alias];
-    for (var i = 0; i < aliases.length; ++i) {
-      var alias = aliases[i];
-      if (false) {}
-
-      var aliasRoute = {
-        path: alias,
-        children: route.children
-      };
-      addRouteRecord(
-        pathList,
-        pathMap,
-        nameMap,
-        aliasRoute,
-        parent,
-        record.path || '/' // matchAs
-      );
-    }
-  }
-
-  if (name) {
-    if (!nameMap[name]) {
-      nameMap[name] = record;
-    } else if (false) {}
-  }
-}
-
-function compileRouteRegex (
-  path,
-  pathToRegexpOptions
-) {
-  var regex = pathToRegexp_1(path, [], pathToRegexpOptions);
-  if (false) { var keys; }
-  return regex
-}
-
-function normalizePath (
-  path,
-  parent,
-  strict
-) {
-  if (!strict) { path = path.replace(/\/$/, ''); }
-  if (path[0] === '/') { return path }
-  if (parent == null) { return path }
-  return cleanPath(((parent.path) + "/" + path))
-}
-
-/*  */
-
 
 
 function createMatcher (
@@ -14360,8 +12628,10 @@ function createMatcher (
         }
       }
 
-      location.path = fillParams(record.path, location.params, ("named route \"" + name + "\""));
-      return _createRoute(record, location, redirectedFrom)
+      if (record) {
+        location.path = fillParams(record.path, location.params, ("named route \"" + name + "\""));
+        return _createRoute(record, location, redirectedFrom)
+      }
     } else if (location.path) {
       location.params = {};
       for (var i = 0; i < pathList.length; i++) {
@@ -14503,39 +12773,12 @@ function resolveRecordPath (path, record) {
 
 /*  */
 
-// use User Timing api (if present) for more accurate key precision
-var vue_router_esm_Time =
-  inBrowser && window.performance && window.performance.now
-    ? window.performance
-    : Date;
-
-function genStateKey () {
-  return vue_router_esm_Time.now().toFixed(3)
-}
-
-var _key = genStateKey();
-
-function getStateKey () {
-  return _key
-}
-
-function setStateKey (key) {
-  return (_key = key)
-}
-
-/*  */
-
 var positionStore = Object.create(null);
 
 function setupScroll () {
   // Fix for #1585 for Firefox
   // Fix for #2195 Add optional third attribute to workaround a bug in safari https://bugs.webkit.org/show_bug.cgi?id=182678
-  // Fix for #2774 Support for apps loaded from Windows file shares not mapped to network drives: replaced location.origin with
-  // window.location.protocol + '//' + window.location.host
-  // location.host contains the port and location.hostname doesn't
-  var protocolAndPath = window.location.protocol + '//' + window.location.host;
-  var absolutePath = window.location.href.replace(protocolAndPath, '');
-  window.history.replaceState({ key: getStateKey() }, '', absolutePath);
+  window.history.replaceState({ key: getStateKey() }, '', window.location.href.replace(window.location.origin, ''));
   window.addEventListener('popstate', function (e) {
     saveScrollPosition();
     if (e.state && e.state.key) {
@@ -14564,25 +12807,18 @@ function handleScroll (
   // wait until re-render finishes before scrolling
   router.app.$nextTick(function () {
     var position = getScrollPosition();
-    var shouldScroll = behavior.call(
-      router,
-      to,
-      from,
-      isPop ? position : null
-    );
+    var shouldScroll = behavior.call(router, to, from, isPop ? position : null);
 
     if (!shouldScroll) {
       return
     }
 
     if (typeof shouldScroll.then === 'function') {
-      shouldScroll
-        .then(function (shouldScroll) {
-          scrollToPosition((shouldScroll), position);
-        })
-        .catch(function (err) {
-          if (false) {}
-        });
+      shouldScroll.then(function (shouldScroll) {
+        scrollToPosition((shouldScroll), position);
+      }).catch(function (err) {
+        if (false) {}
+      });
     } else {
       scrollToPosition(shouldScroll, position);
     }
@@ -14638,22 +12874,12 @@ function isNumber (v) {
   return typeof v === 'number'
 }
 
-var hashStartsWithNumberRE = /^#\d/;
-
 function scrollToPosition (shouldScroll, position) {
   var isObject = typeof shouldScroll === 'object';
   if (isObject && typeof shouldScroll.selector === 'string') {
-    // getElementById would still fail if the selector contains a more complicated query like #main[data-attr]
-    // but at the same time, it doesn't make much sense to select an element with an id and an extra selector
-    var el = hashStartsWithNumberRE.test(shouldScroll.selector) // $flow-disable-line
-      ? document.getElementById(shouldScroll.selector.slice(1)) // $flow-disable-line
-      : document.querySelector(shouldScroll.selector);
-
+    var el = document.querySelector(shouldScroll.selector);
     if (el) {
-      var offset =
-        shouldScroll.offset && typeof shouldScroll.offset === 'object'
-          ? shouldScroll.offset
-          : {};
+      var offset = shouldScroll.offset && typeof shouldScroll.offset === 'object' ? shouldScroll.offset : {};
       offset = normalizeOffset(offset);
       position = getElementPosition(el, offset);
     } else if (isValidPosition(shouldScroll)) {
@@ -14670,22 +12896,39 @@ function scrollToPosition (shouldScroll, position) {
 
 /*  */
 
-var supportsPushState =
-  inBrowser &&
-  (function () {
-    var ua = window.navigator.userAgent;
+var supportsPushState = inBrowser && (function () {
+  var ua = window.navigator.userAgent;
 
-    if (
-      (ua.indexOf('Android 2.') !== -1 || ua.indexOf('Android 4.0') !== -1) &&
-      ua.indexOf('Mobile Safari') !== -1 &&
-      ua.indexOf('Chrome') === -1 &&
-      ua.indexOf('Windows Phone') === -1
-    ) {
-      return false
-    }
+  if (
+    (ua.indexOf('Android 2.') !== -1 || ua.indexOf('Android 4.0') !== -1) &&
+    ua.indexOf('Mobile Safari') !== -1 &&
+    ua.indexOf('Chrome') === -1 &&
+    ua.indexOf('Windows Phone') === -1
+  ) {
+    return false
+  }
 
-    return window.history && 'pushState' in window.history
-  })();
+  return window.history && 'pushState' in window.history
+})();
+
+// use User Timing api (if present) for more accurate key precision
+var Time = inBrowser && window.performance && window.performance.now
+  ? window.performance
+  : Date;
+
+var _key = genKey();
+
+function genKey () {
+  return Time.now().toFixed(3)
+}
+
+function getStateKey () {
+  return _key
+}
+
+function setStateKey (key) {
+  _key = key;
+}
 
 function pushState (url, replace) {
   saveScrollPosition();
@@ -14694,9 +12937,10 @@ function pushState (url, replace) {
   var history = window.history;
   try {
     if (replace) {
-      history.replaceState({ key: getStateKey() }, '', url);
+      history.replaceState({ key: _key }, '', url);
     } else {
-      history.pushState({ key: setStateKey(genStateKey()) }, '', url);
+      _key = genKey();
+      history.pushState({ key: _key }, '', url);
     }
   } catch (e) {
     window.location[replace ? 'replace' : 'assign'](url);
@@ -14835,33 +13079,6 @@ function once (fn) {
   }
 }
 
-var NavigationDuplicated = /*@__PURE__*/(function (Error) {
-  function NavigationDuplicated (normalizedLocation) {
-    Error.call(this);
-    this.name = this._name = 'NavigationDuplicated';
-    // passing the message to super() doesn't seem to work in the transpiled version
-    this.message = "Navigating to current location (\"" + (normalizedLocation.fullPath) + "\") is not allowed";
-    // add a stack property so services like Sentry can correctly display it
-    Object.defineProperty(this, 'stack', {
-      value: new Error().stack,
-      writable: true,
-      configurable: true
-    });
-    // we could also have used
-    // Error.captureStackTrace(this, this.constructor)
-    // but it only exists on node and chrome
-  }
-
-  if ( Error ) NavigationDuplicated.__proto__ = Error;
-  NavigationDuplicated.prototype = Object.create( Error && Error.prototype );
-  NavigationDuplicated.prototype.constructor = NavigationDuplicated;
-
-  return NavigationDuplicated;
-}(Error));
-
-// support IE9
-NavigationDuplicated._name = 'NavigationDuplicated';
-
 /*  */
 
 var History = function History (router, base) {
@@ -14895,41 +13112,29 @@ History.prototype.onError = function onError (errorCb) {
   this.errorCbs.push(errorCb);
 };
 
-History.prototype.transitionTo = function transitionTo (
-  location,
-  onComplete,
-  onAbort
-) {
+History.prototype.transitionTo = function transitionTo (location, onComplete, onAbort) {
     var this$1 = this;
 
   var route = this.router.match(location, this.current);
-  this.confirmTransition(
-    route,
-    function () {
-      this$1.updateRoute(route);
-      onComplete && onComplete(route);
-      this$1.ensureURL();
+  this.confirmTransition(route, function () {
+    this$1.updateRoute(route);
+    onComplete && onComplete(route);
+    this$1.ensureURL();
 
-      // fire ready cbs once
-      if (!this$1.ready) {
-        this$1.ready = true;
-        this$1.readyCbs.forEach(function (cb) {
-          cb(route);
-        });
-      }
-    },
-    function (err) {
-      if (onAbort) {
-        onAbort(err);
-      }
-      if (err && !this$1.ready) {
-        this$1.ready = true;
-        this$1.readyErrorCbs.forEach(function (cb) {
-          cb(err);
-        });
-      }
+    // fire ready cbs once
+    if (!this$1.ready) {
+      this$1.ready = true;
+      this$1.readyCbs.forEach(function (cb) { cb(route); });
     }
-  );
+  }, function (err) {
+    if (onAbort) {
+      onAbort(err);
+    }
+    if (err && !this$1.ready) {
+      this$1.ready = true;
+      this$1.readyErrorCbs.forEach(function (cb) { cb(err); });
+    }
+  });
 };
 
 History.prototype.confirmTransition = function confirmTransition (route, onComplete, onAbort) {
@@ -14937,15 +13142,9 @@ History.prototype.confirmTransition = function confirmTransition (route, onCompl
 
   var current = this.current;
   var abort = function (err) {
-    // after merging https://github.com/vuejs/vue-router/pull/2771 we
-    // When the user navigates through history through back/forward buttons
-    // we do not want to throw the error. We only throw it if directly calling
-    // push/replace. That's why it's not included in isError
-    if (!isExtendedError(NavigationDuplicated, err) && isError(err)) {
+    if (isError(err)) {
       if (this$1.errorCbs.length) {
-        this$1.errorCbs.forEach(function (cb) {
-          cb(err);
-        });
+        this$1.errorCbs.forEach(function (cb) { cb(err); });
       } else {
         warn(false, 'uncaught error during route navigation:');
         console.error(err);
@@ -14959,13 +13158,10 @@ History.prototype.confirmTransition = function confirmTransition (route, onCompl
     route.matched.length === current.matched.length
   ) {
     this.ensureURL();
-    return abort(new NavigationDuplicated(route))
+    return abort()
   }
 
-  var ref = resolveQueue(
-    this.current.matched,
-    route.matched
-  );
+  var ref = resolveQueue(this.current.matched, route.matched);
     var updated = ref.updated;
     var deactivated = ref.deactivated;
     var activated = ref.activated;
@@ -14996,8 +13192,10 @@ History.prototype.confirmTransition = function confirmTransition (route, onCompl
           abort(to);
         } else if (
           typeof to === 'string' ||
-          (typeof to === 'object' &&
-            (typeof to.path === 'string' || typeof to.name === 'string'))
+          (typeof to === 'object' && (
+            typeof to.path === 'string' ||
+            typeof to.name === 'string'
+          ))
         ) {
           // next('/') or next({ path: '/' }) -> redirect
           abort();
@@ -15031,9 +13229,7 @@ History.prototype.confirmTransition = function confirmTransition (route, onCompl
       onComplete(route);
       if (this$1.router.app) {
         this$1.router.app.$nextTick(function () {
-          postEnterCbs.forEach(function (cb) {
-            cb();
-          });
+          postEnterCbs.forEach(function (cb) { cb(); });
         });
       }
     });
@@ -15136,13 +13332,9 @@ function extractEnterGuards (
   cbs,
   isValid
 ) {
-  return extractGuards(
-    activated,
-    'beforeRouteEnter',
-    function (guard, _, match, key) {
-      return bindEnterGuard(guard, match, key, cbs, isValid)
-    }
-  )
+  return extractGuards(activated, 'beforeRouteEnter', function (guard, _, match, key) {
+    return bindEnterGuard(guard, match, key, cbs, isValid)
+  })
 }
 
 function bindEnterGuard (
@@ -15154,6 +13346,7 @@ function bindEnterGuard (
 ) {
   return function routeEnterGuard (to, from, next) {
     return guard(to, from, function (cb) {
+      next(cb);
       if (typeof cb === 'function') {
         cbs.push(function () {
           // #750
@@ -15164,7 +13357,6 @@ function bindEnterGuard (
           poll(cb, match.instances, key, isValid);
         });
       }
-      next(cb);
     })
   }
 }
@@ -15189,11 +13381,11 @@ function poll (
 
 /*  */
 
-var HTML5History = /*@__PURE__*/(function (History) {
+var HTML5History = /*@__PURE__*/(function (History$$1) {
   function HTML5History (router, base) {
     var this$1 = this;
 
-    History.call(this, router, base);
+    History$$1.call(this, router, base);
 
     var expectScroll = router.options.scrollBehavior;
     var supportsScroll = supportsPushState && expectScroll;
@@ -15221,8 +13413,8 @@ var HTML5History = /*@__PURE__*/(function (History) {
     });
   }
 
-  if ( History ) HTML5History.__proto__ = History;
-  HTML5History.prototype = Object.create( History && History.prototype );
+  if ( History$$1 ) HTML5History.__proto__ = History$$1;
+  HTML5History.prototype = Object.create( History$$1 && History$$1.prototype );
   HTML5History.prototype.constructor = HTML5History;
 
   HTML5History.prototype.go = function go (n) {
@@ -15277,9 +13469,9 @@ function getLocation (base) {
 
 /*  */
 
-var HashHistory = /*@__PURE__*/(function (History) {
+var HashHistory = /*@__PURE__*/(function (History$$1) {
   function HashHistory (router, base, fallback) {
-    History.call(this, router, base);
+    History$$1.call(this, router, base);
     // check history fallback deeplinking
     if (fallback && checkFallback(this.base)) {
       return
@@ -15287,8 +13479,8 @@ var HashHistory = /*@__PURE__*/(function (History) {
     ensureSlash();
   }
 
-  if ( History ) HashHistory.__proto__ = History;
-  HashHistory.prototype = Object.create( History && History.prototype );
+  if ( History$$1 ) HashHistory.__proto__ = History$$1;
+  HashHistory.prototype = Object.create( History$$1 && History$$1.prototype );
   HashHistory.prototype.constructor = HashHistory;
 
   // this is delayed until the app mounts
@@ -15304,23 +13496,20 @@ var HashHistory = /*@__PURE__*/(function (History) {
       setupScroll();
     }
 
-    window.addEventListener(
-      supportsPushState ? 'popstate' : 'hashchange',
-      function () {
-        var current = this$1.current;
-        if (!ensureSlash()) {
-          return
-        }
-        this$1.transitionTo(getHash(), function (route) {
-          if (supportsScroll) {
-            handleScroll(this$1.router, route, current, true);
-          }
-          if (!supportsPushState) {
-            replaceHash(route.fullPath);
-          }
-        });
+    window.addEventListener(supportsPushState ? 'popstate' : 'hashchange', function () {
+      var current = this$1.current;
+      if (!ensureSlash()) {
+        return
       }
-    );
+      this$1.transitionTo(getHash(), function (route) {
+        if (supportsScroll) {
+          handleScroll(this$1.router, route, current, true);
+        }
+        if (!supportsPushState) {
+          replaceHash(route.fullPath);
+        }
+      });
+    });
   };
 
   HashHistory.prototype.push = function push (location, onComplete, onAbort) {
@@ -15328,15 +13517,11 @@ var HashHistory = /*@__PURE__*/(function (History) {
 
     var ref = this;
     var fromRoute = ref.current;
-    this.transitionTo(
-      location,
-      function (route) {
-        pushHash(route.fullPath);
-        handleScroll(this$1.router, route, fromRoute, false);
-        onComplete && onComplete(route);
-      },
-      onAbort
-    );
+    this.transitionTo(location, function (route) {
+      pushHash(route.fullPath);
+      handleScroll(this$1.router, route, fromRoute, false);
+      onComplete && onComplete(route);
+    }, onAbort);
   };
 
   HashHistory.prototype.replace = function replace (location, onComplete, onAbort) {
@@ -15344,15 +13529,11 @@ var HashHistory = /*@__PURE__*/(function (History) {
 
     var ref = this;
     var fromRoute = ref.current;
-    this.transitionTo(
-      location,
-      function (route) {
-        replaceHash(route.fullPath);
-        handleScroll(this$1.router, route, fromRoute, false);
-        onComplete && onComplete(route);
-      },
-      onAbort
-    );
+    this.transitionTo(location, function (route) {
+      replaceHash(route.fullPath);
+      handleScroll(this$1.router, route, fromRoute, false);
+      onComplete && onComplete(route);
+    }, onAbort);
   };
 
   HashHistory.prototype.go = function go (n) {
@@ -15376,7 +13557,9 @@ var HashHistory = /*@__PURE__*/(function (History) {
 function checkFallback (base) {
   var location = getLocation(base);
   if (!/^\/#/.test(location)) {
-    window.location.replace(cleanPath(base + '/#' + location));
+    window.location.replace(
+      cleanPath(base + '/#' + location)
+    );
     return true
   }
 }
@@ -15405,13 +13588,10 @@ function getHash () {
   var searchIndex = href.indexOf('?');
   if (searchIndex < 0) {
     var hashIndex = href.indexOf('#');
-    if (hashIndex > -1) {
-      href = decodeURI(href.slice(0, hashIndex)) + href.slice(hashIndex);
-    } else { href = decodeURI(href); }
+    if (hashIndex > -1) { href = decodeURI(href.slice(0, hashIndex)) + href.slice(hashIndex); }
+    else { href = decodeURI(href); }
   } else {
-    if (searchIndex > -1) {
-      href = decodeURI(href.slice(0, searchIndex)) + href.slice(searchIndex);
-    }
+    if (searchIndex > -1) { href = decodeURI(href.slice(0, searchIndex)) + href.slice(searchIndex); }
   }
 
   return href
@@ -15442,42 +13622,34 @@ function replaceHash (path) {
 
 /*  */
 
-var AbstractHistory = /*@__PURE__*/(function (History) {
+var AbstractHistory = /*@__PURE__*/(function (History$$1) {
   function AbstractHistory (router, base) {
-    History.call(this, router, base);
+    History$$1.call(this, router, base);
     this.stack = [];
     this.index = -1;
   }
 
-  if ( History ) AbstractHistory.__proto__ = History;
-  AbstractHistory.prototype = Object.create( History && History.prototype );
+  if ( History$$1 ) AbstractHistory.__proto__ = History$$1;
+  AbstractHistory.prototype = Object.create( History$$1 && History$$1.prototype );
   AbstractHistory.prototype.constructor = AbstractHistory;
 
   AbstractHistory.prototype.push = function push (location, onComplete, onAbort) {
     var this$1 = this;
 
-    this.transitionTo(
-      location,
-      function (route) {
-        this$1.stack = this$1.stack.slice(0, this$1.index + 1).concat(route);
-        this$1.index++;
-        onComplete && onComplete(route);
-      },
-      onAbort
-    );
+    this.transitionTo(location, function (route) {
+      this$1.stack = this$1.stack.slice(0, this$1.index + 1).concat(route);
+      this$1.index++;
+      onComplete && onComplete(route);
+    }, onAbort);
   };
 
   AbstractHistory.prototype.replace = function replace (location, onComplete, onAbort) {
     var this$1 = this;
 
-    this.transitionTo(
-      location,
-      function (route) {
-        this$1.stack = this$1.stack.slice(0, this$1.index).concat(route);
-        onComplete && onComplete(route);
-      },
-      onAbort
-    );
+    this.transitionTo(location, function (route) {
+      this$1.stack = this$1.stack.slice(0, this$1.index).concat(route);
+      onComplete && onComplete(route);
+    }, onAbort);
   };
 
   AbstractHistory.prototype.go = function go (n) {
@@ -15488,18 +13660,10 @@ var AbstractHistory = /*@__PURE__*/(function (History) {
       return
     }
     var route = this.stack[targetIndex];
-    this.confirmTransition(
-      route,
-      function () {
-        this$1.index = targetIndex;
-        this$1.updateRoute(route);
-      },
-      function (err) {
-        if (isExtendedError(NavigationDuplicated, err)) {
-          this$1.index = targetIndex;
-        }
-      }
-    );
+    this.confirmTransition(route, function () {
+      this$1.index = targetIndex;
+      this$1.updateRoute(route);
+    });
   };
 
   AbstractHistory.prototype.getCurrentLocation = function getCurrentLocation () {
@@ -15637,29 +13801,11 @@ VueRouter.prototype.onError = function onError (errorCb) {
 };
 
 VueRouter.prototype.push = function push (location, onComplete, onAbort) {
-    var this$1 = this;
-
-  // $flow-disable-line
-  if (!onComplete && !onAbort && typeof Promise !== 'undefined') {
-    return new Promise(function (resolve, reject) {
-      this$1.history.push(location, resolve, reject);
-    })
-  } else {
-    this.history.push(location, onComplete, onAbort);
-  }
+  this.history.push(location, onComplete, onAbort);
 };
 
 VueRouter.prototype.replace = function replace (location, onComplete, onAbort) {
-    var this$1 = this;
-
-  // $flow-disable-line
-  if (!onComplete && !onAbort && typeof Promise !== 'undefined') {
-    return new Promise(function (resolve, reject) {
-      this$1.history.replace(location, resolve, reject);
-    })
-  } else {
-    this.history.replace(location, onComplete, onAbort);
-  }
+  this.history.replace(location, onComplete, onAbort);
 };
 
 VueRouter.prototype.go = function go (n) {
@@ -15738,4600 +13884,1240 @@ function createHref (base, fullPath, mode) {
   return base ? cleanPath(base + '/' + path) : path
 }
 
-VueRouter.install = vue_router_esm_install;
-VueRouter.version = '3.1.3';
+VueRouter.install = install;
+VueRouter.version = '3.0.6';
 
 if (inBrowser && window.Vue) {
   window.Vue.use(VueRouter);
 }
 
-/* harmony default export */ var vue_router_esm = (VueRouter);
-
-// EXTERNAL MODULE: ./src/config.js
-var config = __webpack_require__(7);
-
-// CONCATENATED MODULE: ./src/router/routes.js
-
-var demoChildrenRoutes = []; // demo路由
-
-config["a" /* default */].packages.map(function (item) {
-  var name = item.name;
-  demoChildrenRoutes.push({
-    path: name,
-    component: function component(resolve) {
-      __webpack_require__.e(/* AMD require */ 3).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(81)("./".concat(name, "/demo"))]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
-    }
-  });
-});
-/* harmony default export */ var routes = ([{
-  path: '/',
-  redirect: '/index'
-}, {
-  path: '/index',
-  name: '首页',
-  component: function component(resolve) {
-    __webpack_require__.e(/* AMD require */ 4).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(82)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
-  },
-  meta: {
-    keepAlive: false
-  }
-}, {
-  path: '/demo',
-  name: '示例',
-  component: function component(resolve) {
-    __webpack_require__.e(/* AMD require */ 5).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(83)]; (resolve).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this)).catch(__webpack_require__.oe);
-  },
-  children: [].concat(demoChildrenRoutes),
-  meta: {
-    keepAlive: false
-  }
-}]);
-// CONCATENATED MODULE: ./src/router/index.js
+/* harmony default export */ __webpack_exports__["a"] = (VueRouter);
 
 
-
-
-
-vue_esm["a" /* default */].use(vue_router_esm);
-function createRouter() {
-  var router = new vue_router_esm({
-    routes: routes
-  });
-  router.afterEach(
-  /*#__PURE__*/
-  function () {
-    var _ref = asyncToGenerator_default()(
-    /*#__PURE__*/
-    regenerator_default.a.mark(function _callee(to, from) {
-      return regenerator_default.a.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (to.meta.needScrollTop) {
-                setTimeout(function () {
-                  window.scrollTo(0, 0);
-                }, 300);
-              }
-
-            case 1:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee);
-    }));
-
-    return function (_x, _x2) {
-      return _ref.apply(this, arguments);
-    };
-  }());
-  return router;
-}
-// EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/helpers/defineProperty.js
-var defineProperty = __webpack_require__(4);
-var defineProperty_default = /*#__PURE__*/__webpack_require__.n(defineProperty);
-
-// EXTERNAL MODULE: ./package.json
-var package_0 = __webpack_require__(21);
-
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/ActionSheet/ActionSheet.vue?vue&type=template&id=5a47430c&
-var ActionSheetvue_type_template_id_5a47430c_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "lina-actionsheet" },
-    [
-      _c("transition", { attrs: { name: "f-fade" } }, [
-        _c("div", {
-          directives: [
-            {
-              name: "show",
-              rawName: "v-show",
-              value: _vm.isShow,
-              expression: "isShow"
-            }
-          ],
-          staticClass: "lina-actionsheet-mask",
-          on: { click: _vm.clickActionSheetMask }
-        })
-      ]),
-      _vm._v(" "),
-      _c("transition", { attrs: { name: "f-slide-up" } }, [
-        _c(
-          "div",
-          {
-            directives: [
-              {
-                name: "show",
-                rawName: "v-show",
-                value: _vm.isShow,
-                expression: "isShow"
-              }
-            ],
-            staticClass: "lina-actionsheet-panel"
-          },
-          [
-            _vm.$slots.custom
-              ? _c(
-                  "div",
-                  { staticClass: "lina-actionsheet-custom" },
-                  [_vm._t("custom")],
-                  2
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _vm.$slots.title || _vm.$slots.subTitle
-              ? _c("dl", { staticClass: "lina-actionsheet-modal" }, [
-                  _c(
-                    "dt",
-                    { staticClass: "lina-actionsheet-title" },
-                    [_vm._t("title")],
-                    2
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "dd",
-                    { staticClass: "lina-actionsheet-sub-title" },
-                    [_vm._t("sub-title")],
-                    2
-                  )
-                ])
-              : _vm._e(),
-            _vm._v(" "),
-            _c(
-              "ul",
-              { staticClass: "lina-actionsheet-menu" },
-              _vm._l(_vm.menuItems, function(item, index) {
-                return _c(
-                  "li",
-                  {
-                    key: index,
-                    staticClass: "lina-actionsheet-item",
-                    class: {
-                      "lina-actionsheet-item-active": _vm.isHighlight(item)
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.chooseItem(item)
-                      }
-                    }
-                  },
-                  [_vm._v(_vm._s(item[_vm.optionTag]))]
-                )
-              }),
-              0
-            ),
-            _vm._v(" "),
-            _vm.cancelText
-              ? _c(
-                  "div",
-                  {
-                    staticClass: "lina-actionsheet-cancel",
-                    on: { click: _vm.closeActionSheet }
-                  },
-                  [_vm._v(_vm._s(_vm.cancelText))]
-                )
-              : _vm._e()
-          ]
-        )
-      ])
-    ],
-    1
-  )
-}
-var ActionSheetvue_type_template_id_5a47430c_staticRenderFns = []
-ActionSheetvue_type_template_id_5a47430c_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/ActionSheet/ActionSheet.vue?vue&type=template&id=5a47430c&
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/ActionSheet/ActionSheet.vue?vue&type=script&lang=js&
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ var ActionSheetvue_type_script_lang_js_ = ({
-  name: 'lina-action-sheet',
-  props: {
-    isShow: {
-      type: Boolean,
-      default: false
-    },
-    preventMaskClose: {
-      type: Boolean,
-      default: false
-    },
-    cancelText: {
-      type: String,
-      default: ''
-    },
-    optionTag: {
-      type: String,
-      default: 'name'
-    },
-    chooseTagValue: {
-      type: String,
-      default: ''
-    },
-    menuItems: {
-      type: Array,
-      default: function _default() {
-        return [];
-      }
-    }
-  },
-  data: function data() {
-    return {};
-  },
-  watch: {
-    isShow: function isShow(value) {
-      !!value && this.$emit('open');
-    }
-  },
-  methods: {
-    isHighlight: function isHighlight(item) {
-      return this.chooseTagValue && this.chooseTagValue === item[this.optionTag] || this.chooseTagValue === 0;
-    },
-
-    /**
-     * 关闭事件
-     */
-    closeActionSheet: function closeActionSheet() {
-      this.$emit('close');
-      this.$emit('update:isShow', false);
-    },
-
-    /**
-     * 点击蒙层
-     */
-    clickActionSheetMask: function clickActionSheetMask() {
-      !this.preventMaskClose && this.closeActionSheet();
-    },
-
-    /**
-     * 选中
-     */
-    chooseItem: function chooseItem(item) {
-      this.$emit('choose', item);
-      this.$emit('update:isShow', false); // this.closeActionSheet()
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/ActionSheet/ActionSheet.vue?vue&type=script&lang=js&
- /* harmony default export */ var ActionSheet_ActionSheetvue_type_script_lang_js_ = (ActionSheetvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/ActionSheet/ActionSheet.vue?vue&type=style&index=0&lang=scss&scope=true&
-var ActionSheetvue_type_style_index_0_lang_scss_scope_true_ = __webpack_require__(27);
-
-// CONCATENATED MODULE: ./src/packages/ActionSheet/ActionSheet.vue
-
-
-
-
-
-
-/* normalize component */
-
-var ActionSheet_component = Object(componentNormalizer["a" /* default */])(
-  ActionSheet_ActionSheetvue_type_script_lang_js_,
-  ActionSheetvue_type_template_id_5a47430c_render,
-  ActionSheetvue_type_template_id_5a47430c_staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var ActionSheet_api; }
-ActionSheet_component.options.__file = "src/packages/ActionSheet/ActionSheet.vue"
-/* harmony default export */ var ActionSheet = (ActionSheet_component.exports);
-// CONCATENATED MODULE: ./src/packages/ActionSheet/index.js
-
-
-ActionSheet.install = function (Vue) {
-  Vue.component(ActionSheet.name, ActionSheet);
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_ActionSheet = ({
-  component: ActionSheet
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Dialog/Dialog.vue?vue&type=template&id=96b01234&
-var Dialogvue_type_template_id_96b01234_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("transition", { attrs: { name: "f-fade" } }, [
-    _c(
-      "div",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.dialog && _vm.dialog.isShow,
-            expression: "dialog && dialog.isShow"
-          }
-        ],
-        staticClass: "lina-dialog",
-        class: ["e-theme-" + _vm.dialog.theme],
-        attrs: { id: _vm.dialog.id }
-      },
-      [
-        _c("div", {
-          staticClass: "pop-mask",
-          on: {
-            click: function($event) {
-              if ($event.target !== $event.currentTarget) {
-                return null
-              }
-              $event.stopPropagation()
-              !_vm.dialog.preventMaskClose &&
-                !!_vm.closeDialog &&
-                _vm.closeDialog("mask")
-            },
-            touchmove: function($event) {
-              $event.preventDefault()
-            }
-          }
-        }),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "pop-content" },
-          [
-            _vm._t("header", [
-              !!_vm.dialog.title && _vm.dialog.title !== ""
-                ? _c("header", { staticClass: "pop-header" }, [
-                    _vm._v(_vm._s(_vm.dialog.title))
-                  ])
-                : _vm._e()
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass: "content",
-                class: [{ "e-unlimited-height": _vm.dialog.isUnlimitedHeight }]
-              },
-              [
-                _vm._t("default", [
-                  _c("div", {
-                    staticClass: "pop-message",
-                    domProps: { innerHTML: _vm._s(_vm.dialog.message) }
-                  })
-                ])
-              ],
-              2
-            ),
-            _vm._v(" "),
-            !_vm.dialog.isHideFooter
-              ? _c(
-                  "div",
-                  { staticClass: "pop-footer", attrs: { name: "footer" } },
-                  [
-                    _vm._t(
-                      "footer",
-                      _vm._l(_vm.dialog.footer, function(item, key) {
-                        return _c(
-                          "a",
-                          {
-                            key: "btn-" + key,
-                            staticClass: "btn hardline",
-                            attrs: { href: "javascript:;" },
-                            on: {
-                              click: function($event) {
-                                return _vm.handleBtnClick(item, key)
-                              }
-                            }
-                          },
-                          [_vm._v(_vm._s(item.text))]
-                        )
-                      })
-                    )
-                  ],
-                  2
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            !_vm.dialog.isHideClose
-              ? _c("div", {
-                  staticClass: "pop-close",
-                  on: {
-                    click: function($event) {
-                      !!_vm.closeDialog && _vm.closeDialog("icon-close")
-                    }
-                  }
-                })
-              : _vm._e()
-          ],
-          2
-        )
-      ]
-    )
-  ])
-}
-var Dialogvue_type_template_id_96b01234_staticRenderFns = []
-Dialogvue_type_template_id_96b01234_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/Dialog/Dialog.vue?vue&type=template&id=96b01234&
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Dialog/Dialog.vue?vue&type=script&lang=js&
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+/***/ }),
+/* 25 */,
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
 
 /**
- * useage
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * 方法一：
-<Dialog :dialog="dialog">
-  自定义的内容dom
-  <div slot="footer">
-    自定义按钮的dom以及事件
-  </div>
-</Dialog>
-
- * 方法二：
- *  传入dialog属性，如果有slot，则优先显示方法一的slot内容
- * dialog: { //对话框的基本信息
-      title: '标题',
-      message: '内容',
-      isShow: false,
-      isUnlimitedHeight: false,
-      isHideFooter: false,
-      isHideClose: false,
-      preventAutoClose: false,
-      preventMaskClose: false,
-      footer: {
-        confirm: {
-          text: '确认',
-          callBack: function() {} //点击按钮的回调事件
-        },
-        cancel: {
-          text: '取消',
-          callBack: function () { }
-        }
-      }
-    }
-*/
-/* harmony default export */ var Dialogvue_type_script_lang_js_ = ({
-  name: 'lina-dialog',
-  props: {
-    dialog: {
-      type: Object,
-      default: function _default() {
-        return {
-          id: null,
-          footer: {
-            confirm: {
-              text: '确认'
-            },
-            cancel: {
-              text: '取消'
-            }
-          }
-        };
-      }
-    } // 对话框的基本信息
-
-  },
-  data: function data() {
-    return {
-      promiseCallBack: null,
-      // 构造函数生成的弹窗，用于按钮操作唤起promise
-      removeDomCallBack: null // 构造函数生成的弹窗，移除dom的回调函数
-
-    };
-  },
-  methods: {
-    /**
-     * 关闭弹窗
-     */
-    closeDialog: function closeDialog() {
-      var key = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-      this.dialog.isShow = false;
-      this.$emit('update:dialog', this.dialog);
-      this.$emit('close', key);
-      typeof this.removeDomCallBack === 'function' && this.removeDomCallBack();
-      typeof this.promiseCallBack === 'function' && this.promiseCallBack(key); // 返回promise 用于confirm
-    },
-
-    /**
-     * 处理按钮点击
-     */
-    handleBtnClick: function handleBtnClick(footerItem, key) {
-      var callBack = footerItem.callBack;
-      typeof callBack === 'function' && callBack();
-      !this.dialog.preventAutoClose && this.closeDialog(key);
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/Dialog/Dialog.vue?vue&type=script&lang=js&
- /* harmony default export */ var Dialog_Dialogvue_type_script_lang_js_ = (Dialogvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/Dialog/Dialog.vue?vue&type=style&index=0&lang=scss&
-var Dialogvue_type_style_index_0_lang_scss_ = __webpack_require__(28);
-
-// CONCATENATED MODULE: ./src/packages/Dialog/Dialog.vue
-
-
-
-
-
-
-/* normalize component */
-
-var Dialog_component = Object(componentNormalizer["a" /* default */])(
-  Dialog_Dialogvue_type_script_lang_js_,
-  Dialogvue_type_template_id_96b01234_render,
-  Dialogvue_type_template_id_96b01234_staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var Dialog_api; }
-Dialog_component.options.__file = "src/packages/Dialog/Dialog.vue"
-/* harmony default export */ var Dialog = (Dialog_component.exports);
-// CONCATENATED MODULE: ./src/packages/Dialog/_dialog.js
-
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { defineProperty_default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-
-
-var DialogConstructor = vue_esm["a" /* default */].extend(Dialog); // let instance = null
-
-var defaultData = {
-  // 默认属性
-  id: null,
-  footer: {
-    cancel: {
-      text: '取消'
-    },
-    confirm: {
-      text: '确认'
-    }
-  }
-};
-/**
- * 移除dom
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-var removeDom = function removeDom(event) {
-  event.target.parentNode.removeChild(event.target);
-};
-/**
- * 实例构建
- */
+// This method of obtaining a reference to the global object needs to be
+// kept identical to the way it is obtained in runtime.js
+var g = (function() {
+  return this || (typeof self === "object" && self);
+})() || Function("return this")();
 
+// Use `getOwnPropertyNames` because not all browsers support calling
+// `hasOwnProperty` on the global `self` object in a worker. See #183.
+var hadRuntime = g.regeneratorRuntime &&
+  Object.getOwnPropertyNames(g).indexOf("regeneratorRuntime") >= 0;
 
-var _dialog_Dialog = function Dialog() {
-  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  options.id = options.id || 'dialog-default-id'; // 标识符，相同者共享一个实例
+// Save the old regeneratorRuntime in case it needs to be restored later.
+var oldRuntime = hadRuntime && g.regeneratorRuntime;
 
-  if (options.isHideFooter === true) {
-    options.preventMaskClose = true;
-    options.isHideClose = true;
+// Force reevalutation of runtime.js.
+g.regeneratorRuntime = undefined;
+
+module.exports = __webpack_require__(27);
+
+if (hadRuntime) {
+  // Restore the original runtime.
+  g.regeneratorRuntime = oldRuntime;
+} else {
+  // Remove the global property added by runtime.js.
+  try {
+    delete g.regeneratorRuntime;
+  } catch(e) {
+    g.regeneratorRuntime = undefined;
   }
+}
 
-  var instance = new DialogConstructor({
-    propsData: {
-      dialog: _objectSpread({}, defaultData, {}, options, {
-        isShow: false
-      })
-    }
-  }).$mount(document.createElement('div'));
-  /**
-   * 如果不是共用实例的弹窗，关闭后，从dom中移除
-   */
 
-  options.id !== 'dialog-default-id' && (instance.removeDomCallBack = function () {
-    instance.$el.addEventListener('transitionend', removeDom);
-  });
-  var $dialogDom = document.querySelector('#' + options.id);
+/***/ }),
+/* 27 */
+/***/ (function(module, exports) {
 
-  if (options.id && $dialogDom) {
-    $dialogDom.parentNode.replaceChild(instance.$el, $dialogDom);
-  } else {
-    document.body.appendChild(instance.$el);
-  }
-
-  instance.dialog.isShow = true;
-  return instance;
-};
 /**
- * 一个懒人的confirm框
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * @param {*} [options={}]
- * @param {*} [options={
-    title: '提示',
-    message: '此操作将永久删除该文件, 是否继续?',
-    footer: {
-      confirm: {
-        text: '确定'
-      },
-      cancel: {
-        text: '取消'
-      }
-    }
-  }]
- * @returns
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-
-_dialog_Dialog.$confirm = function () {
-  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return new Promise(function (resolve, reject) {
-    var defaultOptions = {
-      id: 'dialog-confirm-default-id',
-      footer: {
-        cancel: {
-          text: '取消'
-        },
-        confirm: {
-          text: '确定'
-        }
-      }
-    };
-    var confirmInstance = _dialog_Dialog(_objectSpread({}, defaultOptions, {}, options));
-
-    confirmInstance.promiseCallBack = function (key) {
-      // 确定返回resolve，取消返回reject
-      if (key === 'confirm') {
-        resolve();
-      } else if (key === 'cancel') {
-        reject('cancel-close'); // eslint-disable-line
-      } else if (key === 'mask') {
-        reject('mask-close'); // eslint-disable-line
-      } else if (key === 'icon-close') {
-        reject('icon-close'); // eslint-disable-line
-      } else {
-        console.warn('footer key wrong');
-      }
-    };
-  });
-};
-
-/* harmony default export */ var _dialog = (_dialog_Dialog);
-// CONCATENATED MODULE: ./src/packages/Dialog/index.js
-
- // 插件必须要有一个install方法
-
-_dialog.install = function (Vue) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  if (_dialog.installed) return;
-  Vue.prototype.$dialog = _dialog;
-  Vue.component(Dialog.name, Dialog);
-  _dialog.installed = true;
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_Dialog = ({
-  method: _dialog,
-  component: Dialog
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Loading/Loading.vue?vue&type=template&id=4245a560&scoped=true&
-var Loadingvue_type_template_id_4245a560_scoped_true_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("transition", { attrs: { name: "f-fade" } }, [
-    _c(
-      "section",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.isVisible,
-            expression: "isVisible"
-          }
-        ],
-        staticClass: "lina-loading"
-      },
-      [
-        _c("div", { staticClass: "loading-inner" }, [
-          _c("div", { staticClass: "icon-loading" }),
-          _vm._v(" "),
-          !_vm.isHideMessage
-            ? _c("div", {
-                staticClass: "loading-toast",
-                domProps: {
-                  innerHTML: _vm._s(_vm.message || _vm.defaultMessage)
-                }
-              })
-            : _vm._e()
-        ])
-      ]
-    )
-  ])
-}
-var Loadingvue_type_template_id_4245a560_scoped_true_staticRenderFns = []
-Loadingvue_type_template_id_4245a560_scoped_true_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/Loading/Loading.vue?vue&type=template&id=4245a560&scoped=true&
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Loading/Loading.vue?vue&type=script&lang=js&
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ var Loadingvue_type_script_lang_js_ = ({
-  name: 'lina-loading',
-  data: function data() {
-    return {
-      time: 0,
-      // 调用次数
-      isVisible: false,
-      defaultMessage: '加载中',
-      message: '',
-      isHideMessage: false
-    };
-  }
-});
-// CONCATENATED MODULE: ./src/packages/Loading/Loading.vue?vue&type=script&lang=js&
- /* harmony default export */ var Loading_Loadingvue_type_script_lang_js_ = (Loadingvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/Loading/Loading.vue?vue&type=style&index=0&id=4245a560&lang=scss&scoped=true&
-var Loadingvue_type_style_index_0_id_4245a560_lang_scss_scoped_true_ = __webpack_require__(29);
-
-// CONCATENATED MODULE: ./src/packages/Loading/Loading.vue
-
-
-
-
-
-
-/* normalize component */
-
-var Loading_component = Object(componentNormalizer["a" /* default */])(
-  Loading_Loadingvue_type_script_lang_js_,
-  Loadingvue_type_template_id_4245a560_scoped_true_render,
-  Loadingvue_type_template_id_4245a560_scoped_true_staticRenderFns,
-  false,
-  null,
-  "4245a560",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var Loading_api; }
-Loading_component.options.__file = "src/packages/Loading/Loading.vue"
-/* harmony default export */ var Loading = (Loading_component.exports);
-// CONCATENATED MODULE: ./src/packages/Loading/_loading.js
-/**
- * Loading
- * usage: this.$loading.show(); this.$loading.hide();
- */
-
-
-var LoadingConstructor = vue_esm["a" /* default */].extend(Loading);
-var _loading_instance = null;
-
-var transitionend = function transitionend() {
-  _loading_instance.message = '';
-  _loading_instance.isHideMessage = false;
-  _loading_instance.$el.removeEventListener('transitionend', transitionend);
-}; // 实现loading的关闭方法
-
-
-LoadingConstructor.prototype.hide = function () {
-  _loading_instance.time--;
-
-  if (_loading_instance.time <= 0) {
-    _loading_instance.isVisible = false;
-    _loading_instance.$el.addEventListener('transitionend', transitionend, false);
-  }
-}; // 实现loading的展示方法
-
-
-LoadingConstructor.prototype.show = function (options) {
-  if (options) {
-    _loading_instance.message = typeof options === 'string' || typeof options === 'number' ? options : options.message;
-    _loading_instance.isHideMessage = options.isHideMessage;
-  }
-
-  _loading_instance.time++;
-  _loading_instance.isVisible = true;
-}; // 实现loading的展示方法
-
-
-LoadingConstructor.prototype.setMessage = function (options) {
-  if (options) {
-    _loading_instance.message = typeof options === 'string' || typeof options === 'number' ? options : options.message;
-    _loading_instance.isHideMessage = false;
-  }
-};
-/**
- * 实例构建
- */
-
-
-var _loading_Loading = function Loading() {
-  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-  if (_loading_instance === null) {
-    _loading_instance = new LoadingConstructor().$mount(document.createElement('div'));
-    document.body.appendChild(_loading_instance.$el);
-  }
-
-  return _loading_instance;
-};
-
-/* harmony default export */ var _loading = (_loading_Loading);
-// CONCATENATED MODULE: ./src/packages/Loading/index.js
- // 插件必须要有一个install方法
-
-_loading.install = function (Vue) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  if (_loading.installed) return;
-  /**
-   * Loading显示
-   */
-
-  Vue.prototype.$loading = _loading();
-  _loading.installed = true;
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_Loading = ({
-  method: _loading()
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Toast/Toast.vue?vue&type=template&id=be65e294&scoped=true&
-var Toastvue_type_template_id_be65e294_scoped_true_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("transition", { attrs: { name: "fade" } }, [
-    _c(
-      "section",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.isVisible,
-            expression: "isVisible"
-          }
-        ],
-        staticClass: "lina-toast",
-        class: ["e-" + _vm.position]
-      },
-      [
-        _c("div", { staticClass: "message" }, [
-          _c("div", {
-            staticClass: "message-inner",
-            domProps: { innerHTML: _vm._s(_vm.message) }
-          })
-        ])
-      ]
-    )
-  ])
-}
-var Toastvue_type_template_id_be65e294_scoped_true_staticRenderFns = []
-Toastvue_type_template_id_be65e294_scoped_true_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/Toast/Toast.vue?vue&type=template&id=be65e294&scoped=true&
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Toast/Toast.vue?vue&type=script&lang=js&
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ var Toastvue_type_script_lang_js_ = ({
-  name: 'lina-toast',
-  data: function data() {
-    return {
-      isVisible: false,
-      message: '',
-      position: ''
-    };
-  }
-});
-// CONCATENATED MODULE: ./src/packages/Toast/Toast.vue?vue&type=script&lang=js&
- /* harmony default export */ var Toast_Toastvue_type_script_lang_js_ = (Toastvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/Toast/Toast.vue?vue&type=style&index=0&id=be65e294&lang=scss&scoped=true&
-var Toastvue_type_style_index_0_id_be65e294_lang_scss_scoped_true_ = __webpack_require__(30);
-
-// CONCATENATED MODULE: ./src/packages/Toast/Toast.vue
-
-
-
-
-
-
-/* normalize component */
-
-var Toast_component = Object(componentNormalizer["a" /* default */])(
-  Toast_Toastvue_type_script_lang_js_,
-  Toastvue_type_template_id_be65e294_scoped_true_render,
-  Toastvue_type_template_id_be65e294_scoped_true_staticRenderFns,
-  false,
-  null,
-  "be65e294",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var Toast_api; }
-Toast_component.options.__file = "src/packages/Toast/Toast.vue"
-/* harmony default export */ var Toast_Toast = (Toast_component.exports);
-// CONCATENATED MODULE: ./src/packages/Toast/_toast.js
-/**
- * Toast
- * usage: this.$toast(option)
- */
-
-
-var ToastConstructor = vue_esm["a" /* default */].extend(Toast_Toast);
-/**
- * 移除dom
- */
-
-var _toast_removeDom = function removeDom(event) {
-  event.target.parentNode.removeChild(event.target);
-};
-/**
- * 实现toast的关闭方法
- */
-
-
-ToastConstructor.prototype.close = function () {
-  this.isVisible = false;
-  this.$el.addEventListener('transitionend', _toast_removeDom);
-};
-/**
- * 实例构建
- */
-
-
-var _toast_Toast = function Toast() {
-  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var instance = new ToastConstructor().$mount();
-  var duration = options.duration || 2500;
-  instance.message = typeof options === 'string' || typeof options === 'number' ? options : options.message;
-  instance.position = options.position || 'middle';
-  document.body.appendChild(instance.$el);
-  vue_esm["a" /* default */].nextTick(function () {
-    instance.isVisible = true;
-    instance.timer = setTimeout(function () {
-      instance.close();
-    }, duration);
-  });
-};
-
-/* harmony default export */ var _toast = (_toast_Toast);
-// CONCATENATED MODULE: ./src/packages/Toast/index.js
- // 插件必须要有一个install方法
-
-_toast.install = function (Vue) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  if (_toast.installed) return;
-  /**
-   * toast显示
-   */
-
-  Vue.prototype.$toast = _toast;
-  _toast.installed = true;
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_Toast = ({
-  method: _toast
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Popup/Popup.vue?vue&type=template&id=8b0b5200&scoped=true&
-var Popupvue_type_template_id_8b0b5200_scoped_true_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("transition", { attrs: { name: "f-fade" } }, [
-    _vm.selfShow
-      ? _c("div", { staticClass: "lina-popup" }, [
-          _c("div", {
-            staticClass: "popup-mask",
-            on: {
-              click: function($event) {
-                if ($event.target !== $event.currentTarget) {
-                  return null
-                }
-                $event.stopPropagation()
-                !_vm.preventMaskClose && _vm.close()
-              },
-              touchmove: function($event) {
-                $event.preventDefault()
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "popup-container" },
-            [
-              _vm._t("default"),
-              _vm._v(" "),
-              !_vm.isHideClose
-                ? _c("div", { staticClass: "close", on: { click: _vm.close } })
-                : _vm._e()
-            ],
-            2
-          )
-        ])
-      : _vm._e()
-  ])
-}
-var Popupvue_type_template_id_8b0b5200_scoped_true_staticRenderFns = []
-Popupvue_type_template_id_8b0b5200_scoped_true_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/Popup/Popup.vue?vue&type=template&id=8b0b5200&scoped=true&
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Popup/Popup.vue?vue&type=script&lang=js&
-
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ var Popupvue_type_script_lang_js_ = ({
-  name: 'lina-popup',
-  data: function data() {
-    return {};
-  },
-  props: {
-    isShow: {
-      type: Boolean,
-      required: true,
-      default: false
-    },
-    isHideClose: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    closeCallBack: {
-      type: Function,
-      required: false
-    },
-    preventMaskClose: {
-      type: Boolean,
-      required: false,
-      default: false
+!(function(global) {
+  "use strict";
+
+  var Op = Object.prototype;
+  var hasOwn = Op.hasOwnProperty;
+  var undefined; // More compressible than void 0.
+  var $Symbol = typeof Symbol === "function" ? Symbol : {};
+  var iteratorSymbol = $Symbol.iterator || "@@iterator";
+  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+
+  var inModule = typeof module === "object";
+  var runtime = global.regeneratorRuntime;
+  if (runtime) {
+    if (inModule) {
+      // If regeneratorRuntime is defined globally and we're in a module,
+      // make the exports object identical to regeneratorRuntime.
+      module.exports = runtime;
     }
-  },
-  computed: {
-    selfShow: {
-      get: function get() {
-        return this.isShow;
-      },
-      set: function set(val) {
-        this.$emit('isShow', val);
-        this.$emit('update:isShow', val);
-      }
-    }
-  },
-  methods: {
-    close: function () {
-      var _close = asyncToGenerator_default()(
-      /*#__PURE__*/
-      regenerator_default.a.mark(function _callee() {
-        return regenerator_default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                this.$emit('closeCallBack');
-
-                if (!this.closeCallBack) {
-                  _context.next = 4;
-                  break;
-                }
-
-                _context.next = 4;
-                return this.closeCallBack();
-
-              case 4:
-                this.selfShow = false;
-
-              case 5:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function close() {
-        return _close.apply(this, arguments);
-      }
-
-      return close;
-    }()
-  }
-});
-// CONCATENATED MODULE: ./src/packages/Popup/Popup.vue?vue&type=script&lang=js&
- /* harmony default export */ var Popup_Popupvue_type_script_lang_js_ = (Popupvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/Popup/Popup.vue?vue&type=style&index=0&id=8b0b5200&lang=scss&scoped=true&
-var Popupvue_type_style_index_0_id_8b0b5200_lang_scss_scoped_true_ = __webpack_require__(31);
-
-// CONCATENATED MODULE: ./src/packages/Popup/Popup.vue
-
-
-
-
-
-
-/* normalize component */
-
-var Popup_component = Object(componentNormalizer["a" /* default */])(
-  Popup_Popupvue_type_script_lang_js_,
-  Popupvue_type_template_id_8b0b5200_scoped_true_render,
-  Popupvue_type_template_id_8b0b5200_scoped_true_staticRenderFns,
-  false,
-  null,
-  "8b0b5200",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var Popup_api; }
-Popup_component.options.__file = "src/packages/Popup/Popup.vue"
-/* harmony default export */ var Popup = (Popup_component.exports);
-// CONCATENATED MODULE: ./src/packages/Popup/index.js
-
-
-Popup.install = function (Vue) {
-  Vue.component(Popup.name, Popup);
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_Popup = ({
-  component: Popup
-});
-// CONCATENATED MODULE: ./src/packages/PreLoad/_preLoad.js
-/**
- * 预加载图片
- * @param {array | object} opts         如果opts是数组，则直接作为opts.urls处理
- * @param {array} opts.urls             图片链接
- * @param {function} opts.eachLoadFunc  每张图片加载完毕的回调，回调参数是percent（加载的百分数，1-100）
- * @param {function} opts.callback      所有图片加载完毕的回调
- * @param {function} opts.maxPercent    加载完毕后最大百分数,默认是100，需要设置的情形是，假如设置80，则先加载完成图片，百分数是80%，然后剩下20%，额外处理，例如加载视频或者其他东西
- * @returns Promise
- */
-var loadImgs = function loadImgs(opts) {
-  return new Promise(function (resolve) {
-    var urls = (Object.prototype.toString.apply(opts) === '[object Array]' ? opts : opts.urls) || []; // 需要预加载的图片队列
-
-    var eachLoadFunc = opts.eachLoadFunc; // 每张图片加载完毕的回调
-
-    var callback = opts.callback; // 所有图片加载完毕的回调
-
-    var imgNumbers = urls.length;
-    var loadImgNumbers = 0; // 已经加载的图片数量
-
-    var percent = 0; // 加载的百分数
-
-    var maxPercent = opts.maxPercent || 100; // 加载完毕后最大百分数，由于还要加载视频，所以设置80
-
-    if (imgNumbers <= 0) {
-      // 如果没有图片 直接调用回调函数
-      _callback();
-
-      return;
-    }
-
-    for (var i = 0; i < urls.length; i++) {
-      var obj = new Image();
-      obj.src = urls[i];
-
-      obj.onload = function () {
-        loadImgNumbers++;
-
-        _onEvent();
-      };
-
-      obj.onerror = function () {
-        imgNumbers--;
-
-        _onEvent();
-      };
-    }
-    /**
-     * 图片每次加载的回调
-     */
-
-
-    function _onEvent() {
-      percent = Math.ceil(loadImgNumbers / imgNumbers * maxPercent);
-      eachLoadFunc && typeof eachLoadFunc === 'function' && eachLoadFunc(percent); // 每一次load完都执行的函数
-
-      if (percent >= maxPercent) {
-        // 加载结束后，隐藏相应的 loading 或遮罩
-        console.log('img all load');
-
-        _callback();
-      }
-    }
-    /**
-     * 图片加载结束的回调
-     */
-
-
-    function _callback() {
-      callback && typeof callback === 'function' && callback();
-      resolve();
-    }
-  });
-};
-/* harmony default export */ var _preLoad = ({
-  loadImgs: loadImgs
-});
-// CONCATENATED MODULE: ./src/packages/PreLoad/index.js
- // 插件必须要有一个install方法
-
-_preLoad.install = function (Vue) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  if (_preLoad.installed) return;
-  Vue.prototype.$preLoad = _preLoad;
-  _preLoad.installed = true;
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var PreLoad = ({
-  method: _preLoad
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PopCurtain/PopCurtain.vue?vue&type=template&id=73830274&
-var PopCurtainvue_type_template_id_73830274_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("transition", { attrs: { name: "f-fade" } }, [
-    _c(
-      "div",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.dialog && _vm.dialog.isShow,
-            expression: "dialog && dialog.isShow"
-          }
-        ],
-        staticClass: "lina-pop-curtain"
-      },
-      [
-        _c("div", { staticClass: "pop-content" }, [
-          _c(
-            "div",
-            { staticClass: "pop-content-inner" },
-            [
-              _vm._t("default", [
-                _c("img", {
-                  attrs: { src: _vm.dialog.image, alt: "" },
-                  on: { click: _vm.clickCurtain }
-                })
-              ]),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass: "pop-close",
-                  class: ["e-" + (_vm.dialog.closeBtnPosition || "bottom")],
-                  on: {
-                    click: function($event) {
-                      return _vm.closeDialog()
-                    }
-                  }
-                },
-                [_vm._v("x")]
-              )
-            ],
-            2
-          )
-        ])
-      ]
-    )
-  ])
-}
-var PopCurtainvue_type_template_id_73830274_staticRenderFns = []
-PopCurtainvue_type_template_id_73830274_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/PopCurtain/PopCurtain.vue?vue&type=template&id=73830274&
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PopCurtain/PopCurtain.vue?vue&type=script&lang=js&
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ var PopCurtainvue_type_script_lang_js_ = ({
-  name: 'lina-pop-curtain',
-  props: {
-    dialog: {
-      type: Object,
-      default: function _default() {
-        return {
-          isShow: false,
-          image: '',
-          closeBtnPosition: 'bottom' // 'top', 'top-left', 'top-right', 'bottom', 'bottom-left', 'bottom-right'
-
-        };
-      }
-    } // 幕帘的基本信息
-
-  },
-  methods: {
-    closeDialog: function closeDialog() {
-      this.dialog.isShow = false;
-      this.$emit('update:dialog', this.dialog);
-    },
-    clickCurtain: function clickCurtain() {
-      this.$emit('clickCurtain', this.dialog);
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/PopCurtain/PopCurtain.vue?vue&type=script&lang=js&
- /* harmony default export */ var PopCurtain_PopCurtainvue_type_script_lang_js_ = (PopCurtainvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/PopCurtain/PopCurtain.vue?vue&type=style&index=0&lang=scss&scope=true&
-var PopCurtainvue_type_style_index_0_lang_scss_scope_true_ = __webpack_require__(32);
-
-// CONCATENATED MODULE: ./src/packages/PopCurtain/PopCurtain.vue
-
-
-
-
-
-
-/* normalize component */
-
-var PopCurtain_component = Object(componentNormalizer["a" /* default */])(
-  PopCurtain_PopCurtainvue_type_script_lang_js_,
-  PopCurtainvue_type_template_id_73830274_render,
-  PopCurtainvue_type_template_id_73830274_staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var PopCurtain_api; }
-PopCurtain_component.options.__file = "src/packages/PopCurtain/PopCurtain.vue"
-/* harmony default export */ var PopCurtain = (PopCurtain_component.exports);
-// CONCATENATED MODULE: ./src/packages/PopCurtain/index.js
-
-
-PopCurtain.install = function (Vue) {
-  Vue.component(PopCurtain.name, PopCurtain);
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_PopCurtain = ({
-  component: PopCurtain
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=template&id=31d35fe6&scoped=true&
-var CarouselNoticevue_type_template_id_31d35fe6_scoped_true_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("transition", { attrs: { name: "f-fade" } }, [
-    _c("div", { staticClass: "lina-carousel-text" }, [
-      _c("section", { staticClass: "u-widget-inner" }, [
-        _c(
-          "div",
-          { staticClass: "carousel-text-outter", style: _vm.boxStyle },
-          [
-            _c(
-              "div",
-              { staticClass: "carousel-text-list" },
-              [
-                _c(
-                  "transition",
-                  {
-                    attrs: { css: false },
-                    on: {
-                      enter: _vm.enter,
-                      leave: _vm.leave,
-                      "before-enter": _vm.beforeEnter,
-                      "after-enter": _vm.afterEnter
-                    }
-                  },
-                  [
-                    _c(
-                      "div",
-                      {
-                        key: _vm.nowIndex,
-                        ref: "contentRef",
-                        staticClass: "carousel-text-item"
-                      },
-                      [
-                        _c(
-                          "a",
-                          {
-                            staticClass: "link",
-                            attrs: { href: "javascript:;" },
-                            on: {
-                              click: function($event) {
-                                return _vm.handleClick(_vm.scrollData)
-                              }
-                            }
-                          },
-                          [
-                            _c("div", { staticClass: "news-tag-box" }, [
-                              _c(
-                                "span",
-                                {
-                                  staticClass: "news-tag",
-                                  style: {
-                                    borderColor:
-                                      _vm.scrollData.tag &&
-                                      _vm.scrollData.tag.color,
-                                    color:
-                                      _vm.scrollData.tag &&
-                                      _vm.scrollData.tag.color
-                                  }
-                                },
-                                [
-                                  _vm._v(
-                                    _vm._s(
-                                      (_vm.scrollData.tag &&
-                                        _vm.scrollData.tag.title) ||
-                                        "消息"
-                                    )
-                                  )
-                                ]
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("h3", { staticClass: "content" }, [
-                              _c("p", {
-                                ref: "contentInnerRef",
-                                staticClass: "content-inner",
-                                style: _vm.textStyle,
-                                domProps: {
-                                  innerHTML: _vm._s(_vm.scrollData.title)
-                                }
-                              })
-                            ])
-                          ]
-                        )
-                      ]
-                    )
-                  ]
-                )
-              ],
-              1
-            )
-          ]
-        ),
-        _vm._v(" "),
-        _vm.isShowClose
-          ? _c("div", {
-              staticClass: "carousel-text-close",
-              on: { click: _vm.close }
-            })
-          : _vm._e()
-      ])
-    ])
-  ])
-}
-var CarouselNoticevue_type_template_id_31d35fe6_scoped_true_staticRenderFns = []
-CarouselNoticevue_type_template_id_31d35fe6_scoped_true_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=template&id=31d35fe6&scoped=true&
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=script&lang=js&
-
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ var CarouselNoticevue_type_script_lang_js_ = ({
-  name: 'lina-carousel-notice',
-  components: {},
-  data: function data() {
-    return {
-      nowIndex: 0 // 当先显示的文字的index
-
-    };
-  },
-  props: {
-    intervals: {
-      // 上下滚动的间隔时间，不包括左右滚动  ms
-      type: Number,
-      default: 3000,
-      validator: function validator(value) {
-        return value > 0;
-      }
-    },
-    duration: {
-      // 上下动画过渡时间 ms
-      type: Number,
-      default: 500,
-      validator: function validator(value) {
-        return value > 0;
-      }
-    },
-    textStyle: {
-      // 文本内容样式
-      type: Object
-    },
-    boxStyle: {
-      // 外框内容样式
-      type: Object
-    },
-    dataList: {
-      // 数据
-      type: Array
-    },
-    isShowClose: {
-      // 是否显示关闭按钮
-      type: Boolean,
-      default: false
-    },
-    isNeedHorizontal: {
-      // 是否需要先横向滚动文字，滚动完毕纵向滚动
-      type: Boolean,
-      default: true
-    },
-    slideSpeed: {
-      // 横向移动的速度 像素/s
-      type: Number,
-      default: 50,
-      validator: function validator(value) {
-        return value > 0;
-      }
-    }
-  },
-  computed: {
-    /**
-     * 从传入的数组中实时获取内容
-     */
-    scrollData: function scrollData() {
-      return this.dataList.length ? this.dataList[this.nowIndex] : '请提供内容';
-    }
-  },
-  mounted: function mounted() {
-    this.$nextTick(function () {
-      this.startScroll(); // 开始轮播
-    });
-  },
-
-  /**
-   * 销毁则停止计时器
-   */
-  destroyed: function destroyed() {
-    console.log('destroyed');
-  },
-  methods: {
-    /**
-     * 阻塞
-     */
-    sleep: function sleep(time) {
-      return new Promise(function (resolve) {
-        setTimeout(function () {
-          resolve();
-        }, time || 0);
-      });
-    },
-
-    /**
-     *  当内容进入轮播框之前执行的操作
-     *  el---> 目标元素
-     */
-    beforeEnter: function beforeEnter(el) {
-      var outHeight = this.$refs.contentRef.offsetHeight; // 获取轮播框的高度
-      // 初始化轮播内容的位置和透明度
-
-      el.style = "transition: all ".concat(this.duration, "ms ease-in; -webkit-transition: all ").concat(this.duration, "ms ease-in;transform: translateY(").concat(outHeight, "px);-webkit-transform: translateY(").concat(outHeight, "px);opactity: 0;");
-    },
-
-    /**
-     * 当内容进入这个轮播框时执行的操作，即一些入场动画
-     * el ---> 目标元素
-     * done 表示进入完成的回调。
-     */
-    enter: function enter(el, done) {
-      el.style = "transition: all ".concat(this.duration, "ms ease-in; -webkit-transition: all ").concat(this.duration, "ms ease-in;transform: translateY(", 0, "px);-webkit-transform: translateY(", 0, "px);opactity: 1;");
-      setTimeout(function () {
-        done();
-      }, this.duration);
-    },
-
-    /**
-     * 当内容离开这个轮播框时执行的操作，即一些出场动画
-     * el ---> 目标元素
-     * done 表示离开完成的回调。
-     */
-    leave: function leave(el, done) {
-      var outHeight = this.$refs.contentRef.offsetHeight; // 获取轮播框的高度
-
-      el.style = "transition: all ".concat(this.duration, "ms ease-in; -webkit-transition: all ").concat(this.duration, "ms ease-in;transform: translateY(-").concat(outHeight, "px);-webkit-transform: translateY(-").concat(outHeight, "px);opactity: 0;");
-      setTimeout(function () {
-        done();
-      }, this.duration);
-    },
-
-    /**
-     * 当内容进入后，执行的操作
-     * el ---> 目标元素
-     */
-    afterEnter: function () {
-      var _afterEnter = asyncToGenerator_default()(
-      /*#__PURE__*/
-      regenerator_default.a.mark(function _callee(el) {
-        var _this = this;
-
-        return regenerator_default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return this.scrollHorizontal();
-
-              case 2:
-                setTimeout(function () {
-                  _this.changeShow();
-                }, this.intervals);
-
-              case 3:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function afterEnter(_x) {
-        return _afterEnter.apply(this, arguments);
-      }
-
-      return afterEnter;
-    }(),
-
-    /**
-     * 开始进行轮播滚动，即入口
-     */
-    startScroll: function () {
-      var _startScroll = asyncToGenerator_default()(
-      /*#__PURE__*/
-      regenerator_default.a.mark(function _callee2() {
-        return regenerator_default.a.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                _context2.next = 2;
-                return this.sleep(this.intervals);
-
-              case 2:
-                _context2.next = 4;
-                return this.scrollHorizontal();
-
-              case 4:
-                this.changeShow();
-
-              case 5:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function startScroll() {
-        return _startScroll.apply(this, arguments);
-      }
-
-      return startScroll;
-    }(),
-
-    /**
-     * 改变显示的内容，这是触发事件
-     */
-    changeShow: function changeShow() {
-      this.nowIndex++;
-      this.nowIndex = this.nowIndex % this.dataList.length;
-    },
-
-    /**
-     * 水平方向单条滚动文字
-     */
-    scrollHorizontal: function scrollHorizontal(index) {
-      var _this2 = this;
-
-      return new Promise(function (resolve, reject) {
-        var self = _this2;
-        var $contentInner = self.$refs.contentInnerRef;
-        var offsetWidth = $contentInner.offsetWidth;
-        var scrollWidth = $contentInner.scrollWidth;
-        /**
-         * 文字回复原位置
-         */
-
-        self.$refs.contentInnerRef.style.transition = "";
-        self.$refs.contentInnerRef.style.transform = "translateX(0)";
-
-        if (scrollWidth > offsetWidth) {
-          // 如果文本超出，则先向左滚动至完全显示
-          var slideDistance = scrollWidth - offsetWidth; // 滚动距离
-
-          slideDistance *= 1.0; // 实际横向滚动的距离，比传进来的内容多10%的距离
-
-          var slideSpeed = self.slideSpeed; // 滚动速率
-
-          var slideTime = +(slideDistance / slideSpeed).toFixed(3); // 滚动时间 = 滚动距离 / 滚动速率
-
-          /**
-           * 1s后开始滚动 同时缓解一个bug
-           */
-
-          setTimeout(function () {
-            $contentInner.style.transition = "transform ".concat(slideTime, "s linear");
-            $contentInner.style.transform = "translateX(".concat(-slideDistance, "px)");
-          }, 1000);
-          /**
-          * 滚动结束，下一条
-          */
-
-          setTimeout(function () {
-            resolve();
-          }, slideTime * 1000);
-        } else {
-          resolve();
-        }
-      });
-    },
-
-    /**
-     * 处理每一个公告点击
-     */
-    handleClick: function handleClick(item) {
-      this.$emit('click');
-    },
-
-    /**
-     * 点击关闭按钮
-     */
-    close: function close() {
-      this.isShowClose && this.$emit('close');
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=script&lang=js&
- /* harmony default export */ var CarouselNotice_CarouselNoticevue_type_script_lang_js_ = (CarouselNoticevue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/CarouselNotice/CarouselNotice.vue?vue&type=style&index=0&id=31d35fe6&lang=scss&scoped=true&
-var CarouselNoticevue_type_style_index_0_id_31d35fe6_lang_scss_scoped_true_ = __webpack_require__(33);
-
-// CONCATENATED MODULE: ./src/packages/CarouselNotice/CarouselNotice.vue
-
-
-
-
-
-
-/* normalize component */
-
-var CarouselNotice_component = Object(componentNormalizer["a" /* default */])(
-  CarouselNotice_CarouselNoticevue_type_script_lang_js_,
-  CarouselNoticevue_type_template_id_31d35fe6_scoped_true_render,
-  CarouselNoticevue_type_template_id_31d35fe6_scoped_true_staticRenderFns,
-  false,
-  null,
-  "31d35fe6",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var CarouselNotice_api; }
-CarouselNotice_component.options.__file = "src/packages/CarouselNotice/CarouselNotice.vue"
-/* harmony default export */ var CarouselNotice = (CarouselNotice_component.exports);
-// CONCATENATED MODULE: ./src/packages/CarouselNotice/index.js
-
-
-CarouselNotice.install = function (Vue) {
-  Vue.component(CarouselNotice.name, CarouselNotice);
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_CarouselNotice = ({
-  component: CarouselNotice
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PullRefresh/PullRefresh.vue?vue&type=template&id=6ed2be14&
-var PullRefreshvue_type_template_id_6ed2be14_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "lina-pull-refresh" }, [
-    _c(
-      "div",
-      {
-        ref: "innerRef",
-        staticClass: "inner",
-        on: {
-          touchstart: _vm.onTouchStart,
-          touchmove: _vm.onTouchMove,
-          touchend: _vm.onTouchEnd,
-          touchcancel: _vm.onTouchEnd
-        }
-      },
-      [
-        _c("div", { staticClass: "head-box" }, [
-          _vm._v(_vm._s(_vm.statusText))
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "pull-content" }, [_vm._t("default")], 2)
-      ]
-    )
-  ])
-}
-var PullRefreshvue_type_template_id_6ed2be14_staticRenderFns = []
-PullRefreshvue_type_template_id_6ed2be14_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/PullRefresh/PullRefresh.vue?vue&type=template&id=6ed2be14&
-
-// CONCATENATED MODULE: ./src/mixins/touch.js
-
-var MIN_DISTANCE = 10;
-
-function getDirection(x, y) {
-  if (x > y && x > MIN_DISTANCE) {
-    return 'horizontal';
-  }
-
-  if (y > x && y > MIN_DISTANCE) {
-    return 'vertical';
-  }
-
-  return '';
-}
-
-var TouchMixin = vue_esm["a" /* default */].extend({
-  data: function data() {
-    return {
-      startX: 0,
-      startY: 0,
-      deltaX: 0,
-      deltaY: 0,
-      offsetX: 0,
-      offsetY: 0,
-      direction: ''
-    };
-  },
-  methods: {
-    touchStart: function touchStart(event) {
-      this.resetTouchStatus();
-      this.startX = event.touches[0].clientX;
-      this.startY = event.touches[0].clientY;
-    },
-    touchMove: function touchMove(event) {
-      var touch = event.touches[0];
-      this.deltaX = touch.clientX - this.startX;
-      this.deltaY = touch.clientY - this.startY;
-      this.offsetX = Math.abs(this.deltaX);
-      this.offsetY = Math.abs(this.deltaY);
-      this.direction = this.direction || getDirection(this.offsetX, this.offsetY);
-    },
-    resetTouchStatus: function resetTouchStatus() {
-      this.direction = '';
-      this.deltaX = 0;
-      this.deltaY = 0;
-      this.offsetX = 0;
-      this.offsetY = 0;
-    }
-  }
-});
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PullRefresh/PullRefresh.vue?vue&type=script&lang=js&
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ var PullRefreshvue_type_script_lang_js_ = ({
-  name: 'lina-pull-refresh',
-  props: {
-    // boxStyle: { // 外框内容样式
-    //   type: Object
-    // },
-    headHeight: {
-      // 顶部内容高度
-      type: Number,
-      default: 50
-    },
-    pullingText: {
-      // 下拉过程文案
-      type: String,
-      default: '下拉即可刷新...'
-    },
-    loosingText: {
-      // 释放过程文案
-      type: String,
-      default: '释放即可刷新...'
-    },
-    loadingText: {
-      // 加载过程文案
-      type: String,
-      default: '加载中...'
-    },
-    disabled: {
-      // 是否禁用
-      type: Boolean,
-      default: false
-    }
-  },
-  mixins: [TouchMixin],
-  data: function data() {
-    return {
-      status: 'normal',
-      // 头部提示文本的状态 normal  pulling  loosing  loading
-      distance: 0 // 最后松开下拉的距离
-
-    };
-  },
-  computed: {
-    /**
-     * 下拉提示
-     */
-    statusText: function statusText() {
-      var text = '';
-
-      switch (this.status) {
-        case 'loading':
-          text = this.loadingText;
-          break;
-
-        case 'normal':
-          text = '';
-          break;
-
-        case 'pulling':
-          text = this.pullingText;
-          break;
-
-        case 'loosing':
-          text = this.loosingText;
-          break;
-
-        default:
-          break;
-      }
-
-      return text;
-    },
-
-    /**
-     * 不可下拉
-     */
-    untouchable: function untouchable() {
-      return this.status === 'loading' || this.disabled;
-    }
-  },
-  watch: {},
-  methods: {
-    /**
-     * touchStart
-     */
-    onTouchStart: function onTouchStart(event) {
-      var self = this;
-      console.log('onTouchStart');
-      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-
-      if (!self.untouchable && scrollTop <= 0) {
-        // 首先判断有没有滚动条，如果有则禁止下拉刷新
-        self.touchStart(event);
-      }
-    },
-
-    /**
-     * touchMove
-     */
-    onTouchMove: function onTouchMove(event) {
-      var self = this;
-
-      if (self.untouchable) {
-        return;
-      }
-
-      console.log('onTouchMove');
-      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop; // 首先判断有没有滚动条，如果有则禁止下拉刷新
-
-      if (scrollTop > 0) {
-        self.$refs.innerRef.style.transition = 'all ease 0s';
-        self.startY = event.touches[0].clientY;
-        self.deltaY = 0;
-        return;
-      }
-
-      self.touchMove(event);
-
-      if (self.deltaY > 0) {
-        event.preventDefault();
-        self.distance = self.ease(self.deltaY);
-        self.setStatus(self.distance);
-        self.$refs.innerRef.style.transition = 'all ease 0s';
-        self.$refs.innerRef.style.transform = "translateY(".concat(self.distance, "px)");
-      }
-    },
-
-    /**
-     * onTouchEnd
-     */
-    onTouchEnd: function onTouchEnd(event) {
-      var self = this;
-
-      if (self.untouchable) {
-        return;
-      }
-
-      self.$refs.innerRef.style.transition = 'all ease 300ms';
-
-      if (self.status === 'loosing') {
-        // 如果是达到可以释放距离，则触发刷新事件
-        self.$nextTick(function () {
-          self.$emit('refresh', {
-            done: self.done
-          });
-        });
-        self.setStatus(self.headHeight, true); // 设置为loading状态
-
-        self.$refs.innerRef.style.transform = "translateY(".concat(self.headHeight, "px)");
-      } else {
-        self.$refs.innerRef.style.transform = 'translateY(0)';
-        self.setStatus(0);
-      }
-      /**
-       * 重置状态
-       */
-
-
-      self.resetTouchStatus();
-    },
-
-    /**
-     * 滑动距离
-     */
-    ease: function ease(distance) {
-      var headHeight = this.headHeight;
-      return Math.round(distance < headHeight ? distance : distance < headHeight * 2 ? headHeight + (distance - headHeight) / 2 : headHeight * 1.5 + (distance - headHeight * 2) / 4);
-    },
-
-    /**
-     * 结束refresh之后的回调函数，用以取消loading
-     */
-    done: function done() {
-      var self = this;
-      self.$refs.innerRef.style.transform = 'translateY(0)';
-      setTimeout(function () {
-        // 延迟500ms，等动画过渡
-        self.setStatus(0);
-      }, 500);
-    },
-
-    /**
-     * 设置下拉状态
-     */
-    setStatus: function setStatus(distance, isLoading) {
-      var status = isLoading ? 'loading' : distance === 0 ? 'normal' : distance < this.headHeight ? 'pulling' : 'loosing';
-
-      if (status !== this.status) {
-        this.status = status;
-      }
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/PullRefresh/PullRefresh.vue?vue&type=script&lang=js&
- /* harmony default export */ var PullRefresh_PullRefreshvue_type_script_lang_js_ = (PullRefreshvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/PullRefresh/PullRefresh.vue?vue&type=style&index=0&lang=scss&scope=true&
-var PullRefreshvue_type_style_index_0_lang_scss_scope_true_ = __webpack_require__(34);
-
-// CONCATENATED MODULE: ./src/packages/PullRefresh/PullRefresh.vue
-
-
-
-
-
-
-/* normalize component */
-
-var PullRefresh_component = Object(componentNormalizer["a" /* default */])(
-  PullRefresh_PullRefreshvue_type_script_lang_js_,
-  PullRefreshvue_type_template_id_6ed2be14_render,
-  PullRefreshvue_type_template_id_6ed2be14_staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var PullRefresh_api; }
-PullRefresh_component.options.__file = "src/packages/PullRefresh/PullRefresh.vue"
-/* harmony default export */ var PullRefresh = (PullRefresh_component.exports);
-// CONCATENATED MODULE: ./src/packages/PullRefresh/index.js
-
-
-PullRefresh.install = function (Vue) {
-  Vue.component(PullRefresh.name, PullRefresh);
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_PullRefresh = ({
-  component: PullRefresh
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Picker/Picker.vue?vue&type=template&id=4fd33c26&
-var Pickervue_type_template_id_4fd33c26_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    {
-      staticClass: "lina-picker",
-      on: {
-        touchmove: function($event) {
-          $event.preventDefault()
-        }
-      }
-    },
-    [
-      _vm.head
-        ? _c(
-            "div",
-            {
-              staticClass: "lina-header",
-              style: { lineHeight: _vm.lineHeight, fontSize: _vm.fontSize }
-            },
-            [
-              _c(
-                "div",
-                {
-                  staticClass: "lina-btn",
-                  style: { color: _vm.cancelColor },
-                  on: { click: _vm.handleCance }
-                },
-                [_vm._v(_vm._s(_vm.cancelText))]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "lina-slot-title" },
-                [_vm._t("title")],
-                2
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass: "lina-btn",
-                  style: { color: _vm.confirmColor },
-                  on: { click: _vm.handleConfirm }
-                },
-                [_vm._v(_vm._s(_vm.confirmText))]
-              )
-            ]
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "lina-picker-container", style: { height: _vm.height } },
-        [
-          _c(
-            "div",
-            {
-              staticClass: "lina-picker-box",
-              style: { fontSize: _vm.fontSize }
-            },
-            _vm._l(_vm.slots, function(item, index) {
-              return _c("lina-picker-slot", {
-                key: index,
-                ref: "pickerSlot",
-                refInFor: true,
-                attrs: {
-                  goods: item,
-                  lineHeight: _vm.lineHeight,
-                  slotIndex: index,
-                  maxY: _vm.maxY
-                },
-                on: { change: _vm.handleChange }
-              })
-            }),
-            1
-          ),
-          _vm._v(" "),
-          _c("div", {
-            staticClass: "lina-checked-text",
-            style: { height: _vm.lineHeight }
-          }),
-          _vm._v(" "),
-          _c("div", {
-            staticClass: "lina-mask",
-            style: { backgroundSize: "100% " + _vm.backgroundSizeY }
-          })
-        ]
-      )
-    ]
-  )
-}
-var Pickervue_type_template_id_4fd33c26_staticRenderFns = []
-Pickervue_type_template_id_4fd33c26_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/Picker/Picker.vue?vue&type=template&id=4fd33c26&
-
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Picker/PickerSlot.vue?vue&type=template&id=6726e444&scoped=true&
-var PickerSlotvue_type_template_id_6726e444_scoped_true_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "u-picker-slot" }, [
-    _c(
-      "ul",
-      { ref: "pickerSlot", staticClass: "u-picker-slot-container" },
-      _vm._l(_vm.datas.values, function(item, index) {
-        return _c(
-          "li",
-          {
-            key: index,
-            staticClass: "u-ps-box",
-            style: { lineHeight: _vm.lineHeight, height: _vm.lineHeight }
-          },
-          [
-            _vm._v(
-              "\n      " +
-                _vm._s(_vm._f("getValue")(item, _vm.datas)) +
-                "\n    "
-            )
-          ]
-        )
-      }),
-      0
-    )
-  ])
-}
-var PickerSlotvue_type_template_id_6726e444_scoped_true_staticRenderFns = []
-PickerSlotvue_type_template_id_6726e444_scoped_true_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/Picker/PickerSlot.vue?vue&type=template&id=6726e444&scoped=true&
-
-// EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/helpers/typeof.js
-var helpers_typeof = __webpack_require__(5);
-var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
-
-// EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/helpers/classCallCheck.js
-var classCallCheck = __webpack_require__(18);
-var classCallCheck_default = /*#__PURE__*/__webpack_require__.n(classCallCheck);
-
-// EXTERNAL MODULE: ./node_modules/_@babel_runtime@7.6.0@@babel/runtime/helpers/createClass.js
-var createClass = __webpack_require__(19);
-var createClass_default = /*#__PURE__*/__webpack_require__.n(createClass);
-
-// CONCATENATED MODULE: ./src/packages/Picker/src/drag.js
-
-
-var isMove = 'ontouchstart' in window;
-var eventName = {
-  start: isMove ? 'touchstart' : 'mousedown',
-  move: isMove ? 'touchmove' : 'mousemove',
-  end: isMove ? 'touchend' : 'mouseup',
-  quit: isMove ? 'touchcancel' : 'mouseleave'
-};
-/**
- * @param {HTMLAnchorElement} element
- * @param {Object} options start,move,end
- * @export
- * @class Drag
- */
-
-var drag_Drag =
-/*#__PURE__*/
-function () {
-  function Drag(element, options) {
-    classCallCheck_default()(this, Drag);
-
-    this.element = element;
-    this.options = options;
-    this.startX = 0;
-    this.startY = 0;
-    this.deltaX = 0;
-    this.deltaY = 0;
-    this.offsetX = 0;
-    this.offsetY = 0;
-    this.isDragging = false;
-    this.createEvent();
-    this.onEvent();
-  } // 创建函数
-
-
-  createClass_default()(Drag, [{
-    key: "createEvent",
-    value: function createEvent() {
-      var _this = this;
-
-      this.eventFn = {
-        start: function start(event) {
-          if (_this.isDragging) return;
-
-          _this.resetTouchStatus();
-
-          var site = _this.getSite(event);
-
-          _this.deltaX = _this.startX = site.clientX;
-          _this.deltaY = _this.startY = site.clientY;
-
-          _this.EventListener('add');
-
-          _this.handle('start', event);
-        },
-        move: function move(event) {
-          _this.isDragging = true;
-
-          var site = _this.getSite(event);
-
-          _this.offsetX = site.clientX - _this.deltaX;
-          _this.offsetY = site.clientY - _this.deltaY;
-          _this.deltaX = site.clientX;
-          _this.deltaY = site.clientY;
-
-          _this.handle('move', event);
-        },
-        end: function end(event) {
-          _this.EventListener('remove');
-
-          _this.isDragging = false;
-
-          _this.handle('end', event);
-        }
-      };
-    } // 绑定事件
-
-  }, {
-    key: "onEvent",
-    value: function onEvent() {
-      var eventFn = this.eventFn,
-          element = this.element;
-
-      if (isMove) {
-        Object.keys(eventFn).forEach(function (key) {
-          element.addEventListener(eventName[key], eventFn[key]);
-        });
-      } else {
-        element.addEventListener(eventName.start, eventFn.start);
-      }
-
-      element.addEventListener(eventName.quit, eventFn.end);
-    }
-  }, {
-    key: "handle",
-    value: function handle(name, event) {
-      if (typeof this.options[name] === 'function') this.options[name](event);
-    }
-  }, {
-    key: "EventListener",
-    value: function EventListener(name) {
-      if (!isMove) {
-        this.element[name + 'EventListener']('mousemove', this.eventFn.move);
-        this.element[name + 'EventListener']('mouseup', this.eventFn.end);
-      }
-    }
-  }, {
-    key: "getSite",
-    value: function getSite(event) {
-      return isMove ? event.changedTouches[0] || event.touches[0] : event;
-    } // 重置
-
-  }, {
-    key: "resetTouchStatus",
-    value: function resetTouchStatus() {
-      this.offsetY = this.offsetX = this.deltaY = this.deltaX = 0;
-    }
-  }]);
-
-  return Drag;
-}();
-
-
-// CONCATENATED MODULE: ./src/packages/Picker/src/translate.js
-/**
- * 根据移动距离修改translateY
- * @param {HTMLElement} element dom
- * @param {Number} offsetY 手指每次滑动的距离
- * @returns {Number} element的translateY
- */
-function upTranslate(element, offsetY) {
-  var y = getY(element) + (offsetY > 0 ? Math.ceil(offsetY) : Math.floor(offsetY));
-  setY(element, y);
-  return y;
-}
-/**
- * 获取translateY
- * @param {HTMLElement} element dom
- * @returns {Number}
- */
-
-
-function getY(element) {
-  return Number(element.style.getPropertyValue('transform').replace(/[^-\d]/g, ''));
-}
-/**
- * 修改translateY
- * @param {HTMLElement} element dom
- * @param {Number} y 距离
- */
-
-
-function setY(element, y) {
-  element.style.setProperty('transform', "translateY(".concat(y, "px)"));
-}
-/**
- * ease-out
- * @param {Number} target 目标距离
- * @param {Number} current 当前距离
- * @param {Number} part 系数
- * @returns {Number} 前进距离
- */
-
-
-function easeOut(target, current, part) {
-  var step = (target - current) / part;
-  step = step > 0 ? Math.ceil(step) : Math.floor(step);
-  return step;
-}
-
-/* harmony default export */ var translate = ({
-  upTranslate: upTranslate,
-  getY: getY,
-  setY: setY,
-  easeOut: easeOut
-});
-// CONCATENATED MODULE: ./src/packages/Picker/src/macro.js
-var SHOWNUM = 7;
-var OFFSETY = 3;
-var SHOWNUM_HALF = (SHOWNUM - 1) / 2;
-var MAX_STEP = 800;
-var MIN_STEP = -800;
-/* harmony default export */ var macro = ({
-  SHOWNUM: SHOWNUM,
-  // 展示7列
-  OFFSETY: OFFSETY,
-  // 拖拽差默认最小参数
-  SHOWNUM_HALF: SHOWNUM_HALF,
-  // 展示中间
-  MAX_STEP: MAX_STEP,
-  // 正最大步数
-  MIN_STEP: MIN_STEP // 负最大步数
-
-});
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Picker/PickerSlot.vue?vue&type=script&lang=js&
-
-
-
-
-
-function PickerSlotvue_type_script_lang_js_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function PickerSlotvue_type_script_lang_js_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { PickerSlotvue_type_script_lang_js_ownKeys(source, true).forEach(function (key) { defineProperty_default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { PickerSlotvue_type_script_lang_js_ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
-/* harmony default export */ var PickerSlotvue_type_script_lang_js_ = ({
-  name: 'lina-picker-slot',
-  data: function data() {
-    return {
-      sIndex: '',
-      sValue: '',
-      $time: null
-    };
-  },
-  props: {
-    goods: [Array, Object],
-    lineHeight: String,
-    // 水平位置
-    maxY: Number,
-    slotIndex: Number
-  },
-  computed: {
-    minY: function minY() {
-      return -parseInt(this.lineHeight) * (this.datas.values.length - 1 - macro.SHOWNUM_HALF);
-    },
-    element: function element() {
-      return this.$refs.pickerSlot;
-    },
-    defaultValue: function defaultValue() {
-      return this.datas.values[this.getIndex(this.datas.defaultIndex)];
-    },
-    datas: function datas() {
-      var data = {
-        defaultIndex: 0,
-        content: 'name'
-      };
-
-      if (Array.isArray(this.goods)) {
-        return PickerSlotvue_type_script_lang_js_objectSpread({}, data, {
-          values: this.goods
-        });
-      } else {
-        var obj = {};
-
-        if (this.goods.defaultIndex === -1) {
-          obj.defaultIndex = 0;
-        }
-
-        return PickerSlotvue_type_script_lang_js_objectSpread({}, data, {}, this.goods, {}, obj);
-      }
-    }
-  },
-  filters: {
-    getValue: function getValue(item, datas) {
-      return typeof_default()(item) === 'object' ? item[datas.content] : item;
-    }
-  },
-  mounted: function () {
-    var _mounted = asyncToGenerator_default()(
-    /*#__PURE__*/
-    regenerator_default.a.mark(function _callee() {
-      return regenerator_default.a.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              this.onScrollAnimation();
-              translate.setY(this.element, this.maxY);
-              _context.next = 4;
-              return this.initY();
-
-            case 4:
-              this.getsIndex();
-              this.getsValue();
-              this.$watch('sValue', function () {
-                this.$emit('change', this.sValue, this.slotIndex);
-              });
-
-            case 7:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    function mounted() {
-      return _mounted.apply(this, arguments);
-    }
-
-    return mounted;
-  }(),
-  methods: {
-    // 注册Scroll
-    onScrollAnimation: function onScrollAnimation() {
-      var _this = this;
-
-      var element = this.element;
-      var drag = new drag_Drag(element, {
-        start: function start(event) {
-          cancelAnimationFrame(_this.$time);
-        },
-        move: function move(event) {
-          _this.runBoundary(drag.offsetY);
-        },
-        end: function () {
-          var _end = asyncToGenerator_default()(
-          /*#__PURE__*/
-          regenerator_default.a.mark(function _callee2(event) {
-            var path;
-            return regenerator_default.a.wrap(function _callee2$(_context2) {
-              while (1) {
-                switch (_context2.prev = _context2.next) {
-                  case 0:
-                    if (!(drag.offsetY !== 0)) {
-                      _context2.next = 4;
-                      break;
-                    }
-
-                    _this.exercise(drag.offsetY);
-
-                    _context2.next = 8;
-                    break;
-
-                  case 4:
-                    path = _this.whole(translate.getY(element));
-                    _context2.next = 7;
-                    return _this.requestAnimationFrame(_this.boundary(path));
-
-                  case 7:
-                    _this.getsIndex();
-
-                  case 8:
-                  case "end":
-                    return _context2.stop();
-                }
-              }
-            }, _callee2);
-          }));
-
-          function end(_x) {
-            return _end.apply(this, arguments);
-          }
-
-          return end;
-        }()
-      });
-    },
-    // 设置默认选择位置
-    initY: function () {
-      var _initY = asyncToGenerator_default()(
-      /*#__PURE__*/
-      regenerator_default.a.mark(function _callee3() {
-        var index,
-            y,
-            _args3 = arguments;
-        return regenerator_default.a.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                index = _args3.length > 0 && _args3[0] !== undefined ? _args3[0] : this.datas.defaultIndex;
-                y = this.calculateLocation(this.getIndex(index));
-                _context3.next = 4;
-                return this.requestAnimationFrame(y);
-
-              case 4:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      function initY() {
-        return _initY.apply(this, arguments);
-      }
-
-      return initY;
-    }(),
-
-    /**
-     * 判断是长滚动，还是短滚动
-     * @param {Number} offsetY 手指每次滑动的距离
-     */
-    exercise: function exercise(offsetY) {
-      if (Math.abs(offsetY) > 3) {
-        this.longAnimation(offsetY);
-      } else {
-        this.backAnimation(offsetY);
-      }
-    },
-
-    /**
-     * 长滚动
-     * @param {Number} offsetY 手指每次滑动的距离
-     */
-    longAnimation: function () {
-      var _longAnimation = asyncToGenerator_default()(
-      /*#__PURE__*/
-      regenerator_default.a.mark(function _callee4(offsetY) {
-        var path;
-        return regenerator_default.a.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                path = this.whole(Math.abs(offsetY) * offsetY + translate.getY(this.element));
-                _context4.next = 3;
-                return this.requestAnimationFrame(path, offsetY);
-
-              case 3:
-                this.getsIndex();
-
-              case 4:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      function longAnimation(_x2) {
-        return _longAnimation.apply(this, arguments);
-      }
-
-      return longAnimation;
-    }(),
-
-    /**
-     * 短滚动
-     * @param {Number} offsetY 手指每次滑动的距离
-     */
-    backAnimation: function () {
-      var _backAnimation = asyncToGenerator_default()(
-      /*#__PURE__*/
-      regenerator_default.a.mark(function _callee5(offsetY) {
-        var lineHeight, path;
-        return regenerator_default.a.wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                lineHeight = parseInt(this.lineHeight);
-
-                if (!(offsetY % lineHeight === 0)) {
-                  _context5.next = 3;
-                  break;
-                }
-
-                return _context5.abrupt("return");
-
-              case 3:
-                path = this.whole(offsetY + translate.getY(this.element));
-                _context5.next = 6;
-                return this.requestAnimationFrame(path, offsetY);
-
-              case 6:
-                this.getsIndex();
-
-              case 7:
-              case "end":
-                return _context5.stop();
-            }
-          }
-        }, _callee5, this);
-      }));
-
-      function backAnimation(_x3) {
-        return _backAnimation.apply(this, arguments);
-      }
-
-      return backAnimation;
-    }(),
-
-    /**
-     * 滚动
-     * @param {Number} path 路程
-     * @param {Number} [offsetY = macro.OFFSETY] 手指每次滑动的距离
-     * @returns {Promise}
-     */
-    requestAnimationFrame: function requestAnimationFrame(path) {
-      var _this2 = this;
-
-      var offsetY = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : macro.OFFSETY;
-      offsetY = Math.abs(offsetY);
-      var coefficient = offsetY > 2 ? offsetY : 3;
-      return new Promise(function (resolve) {
-        _this2.running(path, coefficient, resolve);
-      });
-    },
-
-    /**
-     * 滚动逻辑
-     * @param {Number} path 路程
-     * @param {Number} offsetY 手指每次滑动的距离
-     * @param {Function} resolve Promise的resolve
-     */
-    running: function running(path, coefficient, resolve) {
-      var _this3 = this;
-
-      cancelAnimationFrame(this.$time);
-      this.$time = requestAnimationFrame(function () {
-        var currentY = translate.getY(_this3.element);
-
-        if (path === currentY) {
-          _this3.adjustment(currentY, resolve);
-
-          return;
-        }
-
-        var step = translate.easeOut(path, currentY, coefficient);
-
-        var b = _this3.runBoundary(step);
-
-        if (b !== false) {
-          path = b;
-        }
-
-        _this3.running(path, coefficient, resolve);
-      });
-    },
-
-    /**
-     * 滚动的边界
-     * @param {Number} step 速度
-     * @param {Number|Boolean} 判断是否不等于false，为真则代替path
-     */
-    runBoundary: function runBoundary(step) {
-      var y = translate.getY(this.element);
-      step = this.getBoundaryStep(step);
-      var path = step + y;
-      var b = this.elasticBoundary(path);
-
-      if (b !== false) {
-        translate.setY(this.element, b);
-      } else {
-        translate.upTranslate(this.element, step);
-      }
-
-      return b;
-    },
-
-    /**
-     * 用来监控滚动结束，判断是否需要回弹
-     * @param {Number} currentY 当前路程
-     * @param {Function} resolve Promise的resolve
-    */
-    adjustment: function adjustment(currentY, resolve) {
-      cancelAnimationFrame(this.$time); // if (currentY > this.maxY || currentY < this.minY) {
-      //   let path = translate.getY(this.element) > 0 ? this.maxY : this.minY
-      //   this.running(path, macro.OFFSETY, resolve)
-      // } else {
-      //   resolve(currentY)
-      // }
-
-      var path = false;
-
-      if (currentY > this.maxY) {
-        path = this.maxY;
-      } else if (currentY < this.minY) {
-        path = this.minY;
-      }
-
-      if (path === false) {
-        resolve(currentY);
-      } else {
-        this.running(path, macro.OFFSETY, resolve);
-      }
-    },
-
-    /**
-     * 速度边界
-     * @param {Number} step 速度
-     * @returns {Number} 速度
-     */
-    getBoundaryStep: function getBoundaryStep(step) {
-      if (step > macro.MAX_STEP) {
-        step = macro.MAX_STEP;
-      } else if (step < macro.MIN_STEP) {
-        step = macro.MIN_STEP;
-      }
-
-      return step;
-    },
-
-    /**
-     * 滚动路程调整
-     * @param {Number} path 路程
-     * @returns {Number} 路程
-     */
-    whole: function whole(path) {
-      var lineHeight = parseInt(this.lineHeight);
-      var result = path / lineHeight;
-      return Math.round(result) * lineHeight;
-    },
-
-    /**
-     * 边界路程
-     * @param {Number} path 路程
-     * @returns {Number} 路程
-     */
-    boundary: function boundary(path) {
-      if (path > this.maxY) {
-        path = this.maxY;
-      } else if (path < this.minX) {
-        path = this.minX;
-      }
-
-      return path;
-    },
-
-    /**
-     * 弹性边界路程
-     * @param {Number} path 路程
-     * @param {Number|Boolean} 判断是否不等于false，为真则代替path
-     */
-    elasticBoundary: function elasticBoundary(path) {
-      var lineHeight = parseInt(this.lineHeight) / 2;
-      var maxY = this.maxY + lineHeight;
-      var minY = this.minY - lineHeight;
-      var b = false;
-
-      if (path > maxY) {
-        b = maxY;
-      } else if (path < minY) {
-        b = minY;
-      }
-
-      return b;
-    },
-
-    /**
-     * 获取index
-     */
-    getsIndex: function getsIndex() {
-      var y = translate.getY(this.element);
-      var lineHeight = parseInt(this.lineHeight);
-      this.sIndex = -y / lineHeight + 3;
-      this.getsValue();
-    },
-    getsValue: function getsValue() {
-      this.sValue = this.datas.values[this.sIndex];
-    },
-    calculateLocation: function calculateLocation(defaultIndex) {
-      return -defaultIndex * parseInt(this.lineHeight) + this.maxY;
-    },
-    getIndex: function getIndex(index) {
-      var length = this.datas.values.length;
-      var y = 0;
-
-      if (index < length && index >= 0) {
-        y = index;
-      } else if (index >= length) {
-        y = length;
-      }
-
-      return y;
-    },
-
-    /**
-     * 用name去比较，然后定位到该地方。用来给二度封装的组件使用
-     * @param {Object}
-     * * @param {} val 对比的值
-     * * @param {String} [key = 'name'] 对比的key
-     * * @param {Boolean} [b = false] 是否有动画过渡
-     */
-    movePort: function () {
-      var _movePort = asyncToGenerator_default()(
-      /*#__PURE__*/
-      regenerator_default.a.mark(function _callee6(_ref) {
-        var value, _ref$key, key, _ref$b, b, defaultIndex, y;
-
-        return regenerator_default.a.wrap(function _callee6$(_context6) {
-          while (1) {
-            switch (_context6.prev = _context6.next) {
-              case 0:
-                value = _ref.value, _ref$key = _ref.key, key = _ref$key === void 0 ? 'value' : _ref$key, _ref$b = _ref.b, b = _ref$b === void 0 ? false : _ref$b;
-                defaultIndex = this.datas.values.findIndex(function (obj) {
-                  if (typeof_default()(obj) === 'object') {
-                    return obj[key] === value;
-                  } else {
-                    return obj === value;
-                  }
-                });
-                defaultIndex = this.getIndex(defaultIndex);
-
-                if (!b) {
-                  _context6.next = 8;
-                  break;
-                }
-
-                _context6.next = 6;
-                return this.initY(defaultIndex);
-
-              case 6:
-                _context6.next = 10;
-                break;
-
-              case 8:
-                y = this.calculateLocation(defaultIndex);
-                translate.setY(this.element, y);
-
-              case 10:
-                this.getsIndex();
-
-              case 11:
-              case "end":
-                return _context6.stop();
-            }
-          }
-        }, _callee6, this);
-      }));
-
-      function movePort(_x4) {
-        return _movePort.apply(this, arguments);
-      }
-
-      return movePort;
-    }(),
-    getNameIndex: function getNameIndex(name) {
-      return this.datas.values.findIndex(function (obj) {
-        return obj.name === name;
-      });
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/Picker/PickerSlot.vue?vue&type=script&lang=js&
- /* harmony default export */ var Picker_PickerSlotvue_type_script_lang_js_ = (PickerSlotvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/Picker/PickerSlot.vue?vue&type=style&index=0&id=6726e444&lang=scss&scoped=true&
-var PickerSlotvue_type_style_index_0_id_6726e444_lang_scss_scoped_true_ = __webpack_require__(35);
-
-// CONCATENATED MODULE: ./src/packages/Picker/PickerSlot.vue
-
-
-
-
-
-
-/* normalize component */
-
-var PickerSlot_component = Object(componentNormalizer["a" /* default */])(
-  Picker_PickerSlotvue_type_script_lang_js_,
-  PickerSlotvue_type_template_id_6726e444_scoped_true_render,
-  PickerSlotvue_type_template_id_6726e444_scoped_true_staticRenderFns,
-  false,
-  null,
-  "6726e444",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var PickerSlot_api; }
-PickerSlot_component.options.__file = "src/packages/Picker/PickerSlot.vue"
-/* harmony default export */ var PickerSlot = (PickerSlot_component.exports);
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/Picker/Picker.vue?vue&type=script&lang=js&
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-/* harmony default export */ var Pickervue_type_script_lang_js_ = ({
-  name: 'lina-picker',
-  props: {
-    slots: Array,
-    value: {
-      validator: function validator() {
-        return true;
-      }
-    },
-    lineHeight: {
-      type: String,
-      default: '34px'
-    },
-    fontSize: {
-      type: String,
-      default: '16px'
-    },
-    head: Boolean,
-    cancelText: {
-      type: String,
-      default: '取消'
-    },
-    confirmText: {
-      type: String,
-      default: '确认'
-    },
-    cancelColor: String,
-    confirmColor: String
-  },
-  data: function data() {
-    return {
-      values: []
-    };
-  },
-  computed: {
-    height: function height() {
-      return parseInt(this.lineHeight) * macro.SHOWNUM + 'px';
-    },
-    // 上，文字，下
-    backgroundSizeY: function backgroundSizeY() {
-      return parseInt(this.lineHeight) * 3 + 'px';
-    },
-    maxY: function maxY() {
-      return parseInt(this.lineHeight) * macro.SHOWNUM_HALF;
-    }
-  },
-  watch: {
-    slots: {
-      handler: function handler(slots) {
-        var _this = this;
-
-        if (Array.isArray(slots)) {
-          slots.forEach(function (arr, index) {
-            _this.$set(_this.values, index);
-          });
-        }
-      },
-      immediate: true
-    }
-  },
-  components: defineProperty_default()({}, PickerSlot.name, PickerSlot),
-  model: {
-    prop: 'value',
-    event: 'change'
-  },
-  mounted: function mounted() {
-    this.$watch('slots.length', this.getDefaultValue, {
-      immediate: true
-    });
-  },
-  methods: {
-    handleChange: function handleChange(value, i) {
-      this.$set(this.values, i, value);
-      var valuse = JSON.parse(JSON.stringify(this.values));
-      this.$emit('change', valuse);
-      this.$emit('update:value', valuse);
-    },
-    handleConfirm: function handleConfirm() {
-      this.$emit('confirm', JSON.parse(JSON.stringify(this.values)));
-    },
-    handleCance: function handleCance() {
-      this.$emit('cance');
-    },
-    // 默认values
-    getDefaultValue: function getDefaultValue() {
-      var pickerSlot = this.$refs.pickerSlot;
-
-      if (pickerSlot) {
-        var values = this.values;
-
-        for (var i = 0; i < values.length; i++) {
-          if (values[i] === undefined) {
-            this.$set(values, i, pickerSlot[i].defaultValue);
-          }
-        }
-
-        this.$emit('defaultValue', JSON.parse(JSON.stringify(this.values)));
-      }
-    },
-    movePort: function movePort(index, data) {
-      this.$refs.pickerSlot[index].movePort(data);
-    },
-    getNameIndex: function getNameIndex(index, name) {
-      return this.$refs.pickerSlot[index].getNameIndex(name);
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/Picker/Picker.vue?vue&type=script&lang=js&
- /* harmony default export */ var Picker_Pickervue_type_script_lang_js_ = (Pickervue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/packages/Picker/Picker.vue?vue&type=style&index=0&lang=scss&scope=true&
-var Pickervue_type_style_index_0_lang_scss_scope_true_ = __webpack_require__(36);
-
-// CONCATENATED MODULE: ./src/packages/Picker/Picker.vue
-
-
-
-
-
-
-/* normalize component */
-
-var Picker_component = Object(componentNormalizer["a" /* default */])(
-  Picker_Pickervue_type_script_lang_js_,
-  Pickervue_type_template_id_4fd33c26_render,
-  Pickervue_type_template_id_4fd33c26_staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var Picker_api; }
-Picker_component.options.__file = "src/packages/Picker/Picker.vue"
-/* harmony default export */ var Picker = (Picker_component.exports);
-// CONCATENATED MODULE: ./src/packages/Picker/index.js
-
-
-Picker.install = function (Vue) {
-  Vue.component(Picker.name, Picker);
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_Picker = ({
-  component: Picker
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PopupPicker/PopupPicker.vue?vue&type=template&id=a23ed9c8&scoped=true&
-var PopupPickervue_type_template_id_a23ed9c8_scoped_true_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("lina-popup", [_c("lina-picker")], 1)
-}
-var PopupPickervue_type_template_id_a23ed9c8_scoped_true_staticRenderFns = []
-PopupPickervue_type_template_id_a23ed9c8_scoped_true_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/PopupPicker/PopupPicker.vue?vue&type=template&id=a23ed9c8&scoped=true&
-
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/PopupPicker/PopupPicker.vue?vue&type=script&lang=js&
-//
-//
-//
-//
-//
-//
-/* harmony default export */ var PopupPickervue_type_script_lang_js_ = ({
-  name: 'lina-popup-picker',
-  data: function data() {
-    return {};
-  },
-  computed: {},
-  created: function created() {},
-  mounted: function mounted() {},
-  beforeDestroy: function beforeDestroy() {},
-  destroyed: function destroyed() {},
-  methods: {}
-});
-// CONCATENATED MODULE: ./src/packages/PopupPicker/PopupPicker.vue?vue&type=script&lang=js&
- /* harmony default export */ var PopupPicker_PopupPickervue_type_script_lang_js_ = (PopupPickervue_type_script_lang_js_); 
-// CONCATENATED MODULE: ./src/packages/PopupPicker/PopupPicker.vue
-
-
-
-
-
-/* normalize component */
-
-var PopupPicker_component = Object(componentNormalizer["a" /* default */])(
-  PopupPicker_PopupPickervue_type_script_lang_js_,
-  PopupPickervue_type_template_id_a23ed9c8_scoped_true_render,
-  PopupPickervue_type_template_id_a23ed9c8_scoped_true_staticRenderFns,
-  false,
-  null,
-  "a23ed9c8",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var PopupPicker_api; }
-PopupPicker_component.options.__file = "src/packages/PopupPicker/PopupPicker.vue"
-/* harmony default export */ var PopupPicker = (PopupPicker_component.exports);
-// CONCATENATED MODULE: ./src/packages/PopupPicker/index.js
-
-
-PopupPicker.install = function (Vue) {
-  Vue.component(PopupPicker.name, PopupPicker);
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_PopupPicker = ({
-  component: PopupPicker
-});
-// CONCATENATED MODULE: ./node_modules/_vue-loader@15.7.1@vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/DatetimePicker/DatetimePicker.vue?vue&type=template&id=0fc1bbc6&scoped=true&
-var DatetimePickervue_type_template_id_0fc1bbc6_scoped_true_render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "lina-picker",
-    {
-      ref: "picker",
-      attrs: {
-        slots: _vm.time.data,
-        lineHeight: _vm.lineHeight,
-        fontSize: _vm.fontSize,
-        head: _vm.head,
-        cancelText: _vm.cancelText,
-        confirmText: _vm.confirmText,
-        cancelColor: _vm.cancelColor,
-        confirmColor: _vm.confirmColor
-      },
-      on: {
-        change: _vm.handleChange,
-        confirm: _vm.handleConfirm,
-        cance: _vm.handleCance
-      }
-    },
-    [_vm._t("title", null, { slot: "title" })],
-    2
-  )
-}
-var DatetimePickervue_type_template_id_0fc1bbc6_scoped_true_staticRenderFns = []
-DatetimePickervue_type_template_id_0fc1bbc6_scoped_true_render._withStripped = true
-
-
-// CONCATENATED MODULE: ./src/packages/DatetimePicker/DatetimePicker.vue?vue&type=template&id=0fc1bbc6&scoped=true&
-
-// CONCATENATED MODULE: ./src/packages/DatetimePicker/time/time.js
-
-
-
-var time_Time =
-/*#__PURE__*/
-function () {
-  function Time(type, picker, options) {
-    classCallCheck_default()(this, Time);
-
-    this.options = options;
-    this.picker = picker;
-    this.data = [];
-    this.type = type;
-  }
-
-  createClass_default()(Time, [{
-    key: "time",
-    value: function time() {
-      var arr = [{
-        values: []
-      }, {
-        values: []
-      }];
-      var maxHour = this.options.maxHour;
-      var minHour = this.options.minHour;
-      var maxMinute = this.options.maxMinute;
-      var minMinute = this.options.minMinute;
-
-      if (this.type === 'datetime') {
-        maxHour = this.defaultValue.maxHour;
-        minHour = this.defaultValue.minHour;
-        maxMinute = this.defaultValue.maxMinute;
-        minMinute = this.defaultValue.minMinute;
-      }
-
-      arr[0].values = this.getForData(this.options.hourFormat, maxHour, minHour);
-      arr[1].values = this.getForData(this.options.minuteFormat, maxMinute, minMinute);
-      this.addDefaultIndex({
-        arr: arr[0],
-        api: 'getHours'
-      }, {
-        arr: arr[1],
-        api: 'getMinutes'
-      });
-      return arr;
-    }
-  }, {
-    key: "date",
-    value: function date() {
-      var arr = [{
-        values: []
-      }, {
-        values: []
-      }, {
-        values: []
-      }];
-      var getDate = this.getDate;
-      var options = this.options;
-
-      for (var i = getDate.$minYear; i <= getDate.$maxYear; i++) {
-        var minMonth = 0;
-        var maxMonth = 12;
-        var obj = {
-          value: i,
-          name: options.yearFormat.replace(/({value})/g, i),
-          $moth: {},
-          $maxMonth: 12,
-          $maxHour: 23,
-          $maxMinute: 59,
-          $minDate: 1,
-          $minHour: 0,
-          $minMinute: 0
-        };
-
-        for (var j = 1; j <= 12; j++) {
-          obj.$moth[j] = {
-            min: 1,
-            max: this.getMonth(i, j)
-          };
-        }
-
-        if (i === getDate.$maxYear) {
-          obj.$maxMonth = getDate.$maxMonth;
-          obj.$maxDate = getDate.$maxDate;
-          obj.$maxHour = getDate.$maxHour;
-          obj.$maxMinute = getDate.$maxMinute;
-          maxMonth = getDate.$maxMonth;
-          obj.$moth[maxMonth].max = getDate.$maxDate;
-        }
-
-        if (i === getDate.$minYear) {
-          obj.$minMonth = getDate.$minMonth;
-          obj.$minDate = getDate.$minDate;
-          obj.$minHour = getDate.$minHour;
-          obj.$minMinute = getDate.$minMinute;
-          minMonth = getDate.$minMonth;
-          obj.$moth[minMonth].min = getDate.$minDate;
-        } // for (let j = 1; j < minMonth; j++) {
-        //   delete obj.$moth[j]
-        // }
-        // for (let j = 12; j > minMonth; j--) {
-        //   delete obj.$moth[j]
-        // }
-
-
-        arr[0].values.push(obj);
-      }
-
-      this.addDefaultIndex({
-        arr: arr[0],
-        api: 'getFullYear'
-      });
-      return arr;
-    }
-  }, {
-    key: "datetime",
-    value: function datetime() {
-      // 为了defaultValue这个值成功计算出来
-      this.data = this.date();
-      return this.data.concat(this.time());
-    }
-    /**
-     * 生成slot数据
-     * @param {String} format 格式
-     * @param {Number} max
-     * @param {Number} min
-     * @returns {Array}
-     */
-
-  }, {
-    key: "getForData",
-    value: function getForData(format, max) {
-      var min = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
-      var data = [];
-
-      for (var i = min; i <= max; i++) {
-        data.push({
-          value: i,
-          name: this.getFormat(format, i)
-        });
-      }
-
-      return data;
-    }
-  }, {
-    key: "getFormat",
-    value: function getFormat(format, val) {
-      return format.replace(/({value})/g, val.toString().padStart(2, 0));
-    }
-    /**
-     * 为slot添加defaIndex
-     * @param  {...any} apis
-     * * @param {String} api Date的方法
-     * * @param {String} arr slot数组
-     */
-
-  }, {
-    key: "addDefaultIndex",
-    value: function addDefaultIndex() {
-      var _this$options = this.options,
-          defaultDate = _this$options.defaultDate,
-          minDate = _this$options.minDate,
-          maxDate = _this$options.maxDate;
-      var val = 0;
-
-      for (var _len = arguments.length, apis = new Array(_len), _key = 0; _key < _len; _key++) {
-        apis[_key] = arguments[_key];
-      }
-
-      if (defaultDate instanceof Date) {
-        apis.forEach(function (obj) {
-          if (defaultDate > maxDate) {
-            val = obj.arr.values.length - 1;
-          } else if (defaultDate < minDate) {
-            val = 0;
-          } else {
-            val = defaultDate[obj.api]();
-
-            if (obj.api === 'getMonth') {
-              val++;
-            }
-
-            val = obj.arr.values.findIndex(function (o) {
-              return o.value === val;
-            });
-
-            if (val === -1) {
-              val = 0;
-            }
-          }
-
-          obj.arr.defaultIndex = val;
-        });
-      } else {
-        apis.forEach(function (obj) {
-          obj.arr.defaultIndex = val;
-        });
-      }
-    } // 生成默认values
-
-  }, {
-    key: "getDefaultValues",
-    value: function getDefaultValues() {
-      var _this = this;
-
-      this._values = [];
-      this.data.forEach(function (obj, i) {
-        _this._values.push(obj.values[_this.getLimit(obj.defaultIndex, i)]);
-      });
-    }
-    /**
-     * index的界限
-     * @param {Number} index 目前的index
-     * @param {Number} i 第几个数组
-     * @returns {Number} 界限内的index
-     */
-
-  }, {
-    key: "getLimit",
-    value: function getLimit(index, i) {
-      var length = this.data[i].values.length;
-      var y = 0;
-
-      if (index < length && index >= 0) {
-        y = index;
-      } else if (index >= length) {
-        y = length;
-      }
-
-      return y;
-    }
-    /**
-     * 通过value找到index
-     * @param {Number} i 第几个数组
-     * @param {String} value
-     * @returns {Number}
-     */
-
-  }, {
-    key: "getIndex",
-    value: function getIndex(i, value) {
-      var index = this.data[i].values.findIndex(function (obj) {
-        return obj.value === value;
-      });
-      return this.getLimit(index, i);
-    }
-    /**
-     * 闰年2月
-     * @param {Number} y 年
-     * @param {Number} m 月
-     * @returns {Number} 有多少日
-     */
-
-  }, {
-    key: "getMonth",
-    value: function getMonth(y, m) {
-      if (m === 2) {
-        return y % 4 ? 28 : 29;
-      }
-
-      return Time.mObj[m];
-    }
-  }, {
-    key: "type",
-    get: function get() {
-      return this._type;
-    },
-    set: function set(type) {
-      this._type = type;
-      this.data = this[type]();
-
-      if (this.isYear) {
-        this.createMonths();
-        this.createDates();
-        this.addDefaultIndex({
-          arr: this.data[1],
-          api: 'getMonth'
-        }, {
-          arr: this.data[2],
-          api: 'getDate'
-        });
-        this.getDefaultValues();
-      }
-    }
-  }, {
-    key: "values",
-    get: function get() {
-      return this._values;
-    },
-    set: function set(values) {
-      if (this.isYear && values[0]) {
-        this.diffYear(values);
-        this.diffMonth(values);
-        this.diffDate(values);
-        this.diffHour(values);
-        this._values = values;
-      }
-    }
-  }, {
-    key: "defaultValue",
-    get: function get() {
-      var _this2 = this;
-
-      var dataValues = this.data[0].values;
-      var data0 = dataValues[0];
-      var moth = data0.$moth[data0.$maxMonth];
-      var year = dataValues[this.data[0].defaultIndex];
-      var defaultValue = {
-        maxMonth: year.$maxMonth,
-        minMonth: year.$minMonth,
-        maxDate: moth.max,
-        minDate: moth.min,
-        maxHour: 23,
-        minHour: 1,
-        maxMinute: 59,
-        minMinute: 1
-      };
-      var obj = this.data[0].values.find(function (obj) {
-        return obj.value === _this2.defaultDateValue.year;
-      });
-      var objMoth = obj.$moth[this.defaultDateValue.month];
-      var isUnlikeYear = obj.value !== data0.value; // 不同的年 || 或者月份一样
-
-      if (isUnlikeYear || this.defaultDateValue.month === obj.$maxMonth) {
-        defaultValue.maxDate = objMoth.max;
-
-        if (this.type !== 'date' && this.defaultDateValue.date === obj.$maxDate) {
-          defaultValue.maxHour = obj.$maxHour;
-
-          if (this.defaultDateValue.hour === obj.$maxHour) {
-            defaultValue.maxMinute = obj.$maxMinute;
-          }
-        }
-      }
-
-      if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
-        defaultValue.minDate = objMoth.min;
-
-        if (this.type !== 'date' && this.defaultDateValue.date === obj.$minDate) {
-          defaultValue.minHour = obj.$minHour;
-
-          if (this.defaultDateValue.hour === obj.$minHour) {
-            defaultValue.minMinute = obj.$minMinute;
-          }
-        }
-      }
-
-      return defaultValue;
-    } // maxDate和minDate具体时间
-
-  }, {
-    key: "getDate",
-    get: function get() {
-      var options = this.options;
-      return {
-        $maxYear: options.maxDate.getFullYear(),
-        $maxMonth: options.maxDate.getMonth() + 1,
-        $maxDate: options.maxDate.getDate(),
-        $maxHour: options.maxDate.getHours(),
-        $maxMinute: options.maxDate.getMinutes(),
-        $minYear: options.minDate.getFullYear(),
-        $minMonth: options.minDate.getMonth() + 1,
-        $minDate: options.minDate.getDate(),
-        $minHour: options.minDate.getHours(),
-        $minMinute: options.minDate.getMinutes()
-      };
-    } // 默认时间
-
-  }, {
-    key: "defaultDateValue",
-    get: function get() {
-      var _this$options2 = this.options,
-          defaultDate = _this$options2.defaultDate,
-          minDate = _this$options2.minDate,
-          maxDate = _this$options2.maxDate;
-
-      if (!(defaultDate instanceof Date) || defaultDate < minDate) {
-        defaultDate = minDate;
-      } else if (defaultDate > maxDate) {
-        defaultDate = maxDate;
-      }
-
-      return {
-        year: defaultDate.getFullYear(),
-        month: defaultDate.getMonth() + 1,
-        date: defaultDate.getDate(),
-        hour: defaultDate.getHours(),
-        minute: defaultDate.getMinutes()
-      };
-    }
-  }, {
-    key: "isYear",
-    get: function get() {
-      return this.type === 'datetime' || this.type === 'date';
-    }
-  }, {
-    key: "maxHour",
-    get: function get() {
-      return this.type === 'time' ? this.options.maxHour : this.getDate.$maxHour;
-    }
-  }, {
-    key: "minHour",
-    get: function get() {
-      return this.type === 'time' ? this.options.minHour : this.getDate.$minHour;
-    }
-  }, {
-    key: "maxMinute",
-    get: function get() {
-      return this.type === 'time' ? this.options.maxMinute : this.getDate.$maxMinute;
-    }
-  }, {
-    key: "minMinute",
-    get: function get() {
-      return this.type === 'time' ? this.options.minMinute : this.getDate.$minMinute;
-    }
-  }]);
-
-  return Time;
-}();
-
-
-time_Time.mObj = {
-  1: 31,
-  3: 31,
-  4: 30,
-  5: 31,
-  6: 30,
-  7: 31,
-  8: 31,
-  9: 30,
-  10: 31,
-  11: 30,
-  12: 31
-};
-// CONCATENATED MODULE: ./src/packages/DatetimePicker/time/create.js
-// 初始化
-/* harmony default export */ var create = ({
-  // 创建月份
-  createMonths: function createMonths() {
-    this.data[1].values = this.getForData(this.options.monthFormat, this.defaultValue.maxMonth, this.defaultValue.minMonth);
-  },
-  // 创建日期
-  createDates: function createDates() {
-    this.data[2].values = this.getForData(this.options.dateFormat, this.defaultValue.maxDate, this.defaultValue.minDate);
-  }
-});
-// CONCATENATED MODULE: ./src/packages/DatetimePicker/time/diff.js
-// value改变后，触发新旧values对比
-/* harmony default export */ var diff = ({
-  /**
-   * 对比新旧日期,是否一致
-   * @param {Array} values 新日期
-   * @param {Number} max 0年1月如此类推
-   * @returns {Boolean}
-   */
-  diff: function diff(values, max) {
-    var _this = this;
-
-    return values.slice(0, max + 1).every(function (obj, i) {
-      return obj.name === _this._values[i].name;
-    });
-  },
-
-  /**
-   * 对比年份
-   * @param {Array} values
-   */
-  diffYear: function diffYear(values) {
-    var _values$ = values[0],
-        $maxMonth = _values$.$maxMonth,
-        $minMonth = _values$.$minMonth;
-    var _values = this._values; // 年是否不一样
-
-    if (!this.diff(values, 0) && ($maxMonth !== _values[0].$maxMonth || $minMonth !== _values[0].$minMonth)) {
-      this.data[1].values = this.getForData(this.options.monthFormat, $maxMonth, $minMonth);
-      this.changeMove(values, _values, 1);
-    }
-  },
-
-  /**
-   * 对比月份变化
-   * @param {Array} values
-   */
-  diffMonth: function diffMonth(values) {
-    var _values = this._values; // 年月是否一样
-
-    if (!this.diff(values, 1)) {
-      console.log('diffMonth');
-      var _values$0$$moth$value = values[0].$moth[values[1].value],
-          min = _values$0$$moth$value.min,
-          max = _values$0$$moth$value.max;
-      var _values$0$$moth$_valu = _values[0].$moth[_values[1].value],
-          oldMin = _values$0$$moth$_valu.min,
-          oldMax = _values$0$$moth$_valu.max;
-
-      if (max !== oldMax || min !== oldMin) {
-        this.data[2].values = this.getForData(this.options.dateFormat, max, min);
-        this.changeMove(values, _values, 2);
-      }
-    }
-  },
-
-  /**
-   * 对比日期变化
-   * @param {Array} values
-   */
-  diffDate: function diffDate(values) {
-    var _values = this._values; // 年月是否一样
-
-    if (this.type === 'datetime' && !this.diff(values, 2)) {
-      var max = 23;
-      var min = 0;
-      var oldMax = 23;
-      var oldMin = 0;
-
-      if (_values[0].$maxMonth === _values[1].value && _values[0].$maxDate === _values[2].value) {
-        oldMax = _values[0].$maxHour;
-      }
-
-      if (_values[0].$minMonth === _values[1].value && _values[0].$minDate === _values[2].value) {
-        oldMin = _values[0].$minHour;
-      }
-
-      if (values[0].$maxMonth === values[1].value && values[0].$maxDate === values[2].value) {
-        max = values[0].$maxHour;
-      }
-
-      if (values[0].$minMonth === values[1].value && values[0].$minDate === values[2].value) {
-        min = values[0].$minHour;
-      }
-
-      console.log(max, oldMax, min, oldMin);
-
-      if (max !== oldMax || min !== oldMin) {
-        this.data[3].values = this.getForData(this.options.hourFormat, max, min);
-        this.changeMove(values, _values, 3);
-      }
-    }
-  },
-
-  /**
-   * 对比日期变化
-   * @param {Array} values
-   */
-  diffHour: function diffHour(values) {
-    var _values = this._values; // 年月是否一样
-
-    if (this.type === 'datetime' && !this.diff(values, 3)) {
-      var max = 59;
-      var min = 0;
-      var oldMax = 59;
-      var oldMin = 0;
-
-      if (_values[0].$maxMonth === _values[1].value && _values[0].$maxDate === _values[2].value && _values[0].$maxHour === _values[3].value) {
-        oldMax = _values[0].$maxMinute;
-      }
-
-      if (_values[0].$minMonth === _values[1].value && _values[0].$minDate === _values[2].value && _values[0].$minHour === _values[3].value) {
-        oldMin = _values[0].$minMinute;
-      }
-
-      if (values[0].$maxMonth === values[1].value && values[0].$maxDate === values[2].value && values[0].$maxHour === values[3].value) {
-        max = values[0].$maxMinute;
-      }
-
-      if (values[0].$minMonth === values[1].value && values[0].$minDate === values[2].value && values[0].$minHour === values[3].value) {
-        min = values[0].$minMinute;
-      }
-
-      if (max !== oldMax || min !== oldMin) {
-        this.data[4].values = this.getForData(this.options.minuteFormat, max, min);
-        this.changeMove(values, _values, 4);
-      }
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/DatetimePicker/time/move.js
-// 当上一级的时间改变，下一级也有可能改变
-/* harmony default export */ var move = ({
-  /**
-   * 运动
-   * @param {Array} newValue 新的
-   * @param {Array} olbValue 旧的
-   * @param {Number} i 第几组
-   */
-  changeMove: function changeMove(newValue, olbValue, i) {
-    // console.log(i, 'newValue:', JSON.parse(JSON.stringify(newValue)), 'olbValue:', JSON.parse(JSON.stringify(olbValue)))
-    var value = this.changeMoveValue(newValue, olbValue, i); // console.log(value)
-
-    this.picker.movePort(i, {
-      value: value
-    });
-  },
-
-  /**
-   * 获取运动的value
-   * @param {Array} newValue 新的
-   * @param {Array} olbValue 旧的
-   * @param {Number} i 第几组
-   * @returns {String} 新的value
-   */
-  changeMoveValue: function changeMoveValue(newValue, olbValue, i) {
-    var value = olbValue[i].value;
-    var newY = newValue[0];
-
-    if (i === 1) {
-      value = this.changeYear(value, newY);
-    } else if (i === 2) {
-      value = this.changeMonth(value, newY, newValue);
-    } else if (i === 3) {
-      value = this.changeDate(value, newY);
-    } else if (i === 4) {
-      value = this.changeHour(value, newY);
-    }
-
-    return value;
-  },
-
-  /**
-   * 返回运动需要的val
-   * @param {String} value 旧的value
-   * @param {Object} newY 新的年
-   * @returns {String} 新的value
-   */
-  changeYear: function changeYear(value, newY) {
-    if (value <= newY.$minMonth) {
-      value = newY.$minMonth;
-    } else if (value >= newY.$maxMonth) {
-      value = newY.$maxMonth;
-    }
-
-    return value;
-  },
-
-  /**
-   * 返回运动需要的val
-   * @param {String} value 旧的年.value
-   * @param {Object} newY 新的年
-   * @param {Array} newValue 新的
-   * @returns {String} 新的value
-   */
-  changeMonth: function changeMonth(value, newY, newValue) {
-    var moth = newY.$moth[newValue[1].value];
-
-    if (value <= moth.min) {
-      value = moth.min;
-    } else if (value >= moth.max) {
-      value = moth.max;
-    }
-
-    return value;
-  },
-
-  /**
-   * 返回运动需要的val
-   * @param {String} value 旧的年.value
-   * @param {Object} newY 新的年
-   * @returns {String} 新的value
-   */
-  changeDate: function changeDate(value, newY) {
-    if (value <= newY.$minHour) {
-      value = newY.$minHour;
-    } else if (value >= newY.$maxHour) {
-      value = newY.$maxHour;
-    }
-
-    return value;
-  },
-
-  /**
-   * 返回运动需要的val
-   * @param {String} value 旧的年.value
-   * @param {Object} newY 新的年
-   * @returns {String} 新的value
-   */
-  changeHour: function changeHour(value, newY) {
-    if (value <= newY.$minMinute) {
-      value = newY.$minMinute;
-    } else if (value >= newY.$maxMinute) {
-      value = newY.$maxMinute;
-    }
-
-    return value;
-  }
-});
-// CONCATENATED MODULE: ./src/packages/DatetimePicker/time/index.js
-
-
-function time_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function time_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { time_ownKeys(source, true).forEach(function (key) { defineProperty_default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { time_ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-
-
-
-
-var time_prototype = time_Time.prototype;
-
-var time_obj = time_objectSpread({}, create, {}, diff, {}, move);
-
-Object.keys(time_obj).forEach(function (key) {
-  Object.defineProperty(time_prototype, key, {
-    value: time_obj[key]
-  });
-});
-/* harmony default export */ var time = (time_Time);
-// CONCATENATED MODULE: ./node_modules/_babel-loader@8.0.6@babel-loader/lib??ref--1!./node_modules/_vue-loader@15.7.1@vue-loader/lib??vue-loader-options!./src/packages/DatetimePicker/DatetimePicker.vue?vue&type=script&lang=js&
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ var DatetimePickervue_type_script_lang_js_ = ({
-  name: 'lina-datetime-picker',
-  props: {
-    type: {
-      type: String,
-      default: 'datetime' // 'datetime', 'date', 'time'
-
-    },
-    defaultDate: Date,
-    // 当前时间
-    minDate: {
-      type: Date,
-      default: function _default() {
-        return new Date("".concat(new Date().getFullYear() - 10, "/1/1"));
-      }
-    },
-    maxDate: {
-      type: Date,
-      default: function _default() {
-        return new Date("".concat(new Date().getFullYear() + 10, "/12/31"));
-      }
-    },
-    minHour: {
-      type: Number,
-      default: 0
-    },
-    maxHour: {
-      type: Number,
-      default: 23
-    },
-    minMinute: {
-      type: Number,
-      default: 0
-    },
-    maxMinute: {
-      type: Number,
-      default: 59
-    },
-    filterData: Function,
-    yearFormat: {
-      type: String,
-      default: '{value}'
-    },
-    monthFormat: {
-      type: String,
-      default: '{value}'
-    },
-    dateFormat: {
-      type: String,
-      default: '{value}'
-    },
-    hourFormat: {
-      type: String,
-      default: '{value}'
-    },
-    minuteFormat: {
-      type: String,
-      default: '{value}'
-    },
-    value: {
-      validator: function validator() {
-        return true;
-      }
-    },
-    lineHeight: {
-      type: String,
-      default: '34px'
-    },
-    fontSize: {
-      type: String,
-      default: '16px'
-    },
-    head: {
-      type: Boolean,
-      default: true
-    },
-    cancelText: {
-      type: String,
-      default: '取消'
-    },
-    confirmText: {
-      type: String,
-      default: '确认'
-    },
-    cancelColor: String,
-    confirmColor: String
-  },
-  data: function data() {
-    return {
-      time: {}
-    };
-  },
-  computed: {
-    values: function values() {
-      return this.time.values;
-    },
-    isYear: function isYear() {
-      return typeof_default()(this.values[0]) === 'object';
-    },
-    options: function options() {
-      var defaultDate = this.defaultDate,
-          minDate = this.minDate,
-          maxDate = this.maxDate,
-          minHour = this.minHour,
-          maxHour = this.maxHour,
-          minMinute = this.minMinute,
-          maxMinute = this.maxMinute,
-          yearFormat = this.yearFormat,
-          monthFormat = this.monthFormat,
-          dateFormat = this.dateFormat,
-          hourFormat = this.hourFormat,
-          minuteFormat = this.minuteFormat;
-      return {
-        defaultDate: defaultDate,
-        minDate: minDate,
-        maxDate: maxDate,
-        minHour: minHour,
-        maxHour: maxHour,
-        minMinute: minMinute,
-        maxMinute: maxMinute,
-        yearFormat: yearFormat,
-        monthFormat: monthFormat,
-        dateFormat: dateFormat,
-        hourFormat: hourFormat,
-        minuteFormat: minuteFormat
-      };
-    }
-  },
-  mounted: function mounted() {
-    this.$watch('type', this.getDateSlots, {
-      immediate: true
-    });
-  },
-  model: {
-    prop: 'value',
-    event: 'change'
-  },
-  methods: {
-    getDateSlots: function getDateSlots(type) {
-      if (!(this.time instanceof time)) {
-        this.time = new time(type, this.$refs.picker, this.options);
-      } else {
-        this.time.type = type;
-      }
-    },
-    handleChange: function handleChange(values) {
-      this.time.values = values;
-      values = this.filterValue(values);
-      this.$emit('change', values);
-      this.$emit('update:value', values);
-    },
-    handleConfirm: function handleConfirm(values) {
-      values = this.filterValue(values);
-      this.$emit('confirm', values);
-    },
-    handleCance: function handleCance() {
-      this.$emit('cance');
-    },
-    filterValue: function filterValue(values) {
-      var str = '';
-      var date = null;
-      values = JSON.parse(JSON.stringify(values));
-      var arr = values.map(function (obj) {
-        return obj.value.toString().padStart(2, 0);
-      });
-
-      if (this.type === 'time') {
-        str = arr.join(':');
-        date = str;
-      } else {
-        var times = arr.splice(3);
-        str = arr.join('-');
-
-        if (times.length) {
-          str += ' ' + times.join(':');
-        }
-
-        date = new Date(str).getTime();
-      }
-
-      if (typeof this.filterData === 'function') {
-        str = this.filterData(values, date);
-      }
-
-      return str;
-    }
-  }
-});
-// CONCATENATED MODULE: ./src/packages/DatetimePicker/DatetimePicker.vue?vue&type=script&lang=js&
- /* harmony default export */ var DatetimePicker_DatetimePickervue_type_script_lang_js_ = (DatetimePickervue_type_script_lang_js_); 
-// CONCATENATED MODULE: ./src/packages/DatetimePicker/DatetimePicker.vue
-
-
-
-
-
-/* normalize component */
-
-var DatetimePicker_component = Object(componentNormalizer["a" /* default */])(
-  DatetimePicker_DatetimePickervue_type_script_lang_js_,
-  DatetimePickervue_type_template_id_0fc1bbc6_scoped_true_render,
-  DatetimePickervue_type_template_id_0fc1bbc6_scoped_true_staticRenderFns,
-  false,
-  null,
-  "0fc1bbc6",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var DatetimePicker_api; }
-DatetimePicker_component.options.__file = "src/packages/DatetimePicker/DatetimePicker.vue"
-/* harmony default export */ var DatetimePicker = (DatetimePicker_component.exports);
-// CONCATENATED MODULE: ./src/packages/DatetimePicker/index.js
-
-
-DatetimePicker.install = function (Vue) {
-  Vue.component(DatetimePicker.name, DatetimePicker);
-};
-
- // 最后将以上内容导出，即可在其他地方进行使用
-
-/* harmony default export */ var packages_DatetimePicker = ({
-  component: DatetimePicker
-});
-// CONCATENATED MODULE: ./src/packages/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./src/utils/compatibility/requestAnimationFrame.js
-/* harmony default export */ var compatibility_requestAnimationFrame = (function () {
-  var lastTime = 0;
-  var vendors = ['webkit', 'moz'];
-
-  for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
-  }
-
-  if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame = function (callback) {
-      /* 调整时间，让一次动画等待和执行时间在最佳循环时间间隔内完成 */
-      var currTime = new Date().getTime();
-      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-      lastTime = currTime + timeToCall;
-      var id = window.setTimeout(function () {
-        callback(lastTime);
-      }, timeToCall);
-      return id;
-    };
-  }
-
-  if (!window.cancelAnimationFrame) {
-    window.cancelAnimationFrame = function (id) {
-      clearTimeout(id);
-    };
-  }
-});
-// EXTERNAL MODULE: ./src/styles/index.scss
-var styles = __webpack_require__(37);
-
-// CONCATENATED MODULE: ./src/index.js
-
-
-function src_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function src_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { src_ownKeys(source, true).forEach(function (key) { defineProperty_default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { src_ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-
-
-
-
- // 样式
-
-compatibility_requestAnimationFrame();
-var packagesList = config["a" /* default */].packages;
-var components = {}; // 组件
-
-var methods = {}; // 方法 $挂载
-
-packagesList.map(function (item) {
-  var pkg = packages_namespaceObject[item.name];
-
-  if (!pkg) {
+    // Don't bother evaluating the rest of this file if the runtime was
+    // already defined globally.
     return;
   }
 
-  if (/component/.test(item.type)) {
-    // console.log(pkg.component.name)
-    components[pkg.component.name] = pkg.component;
+  // Define the runtime globally (as expected by generated code) as either
+  // module.exports (if we're in a module) or a new, empty object.
+  runtime = global.regeneratorRuntime = inModule ? module.exports : {};
+
+  function wrap(innerFn, outerFn, self, tryLocsList) {
+    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+    var generator = Object.create(protoGenerator.prototype);
+    var context = new Context(tryLocsList || []);
+
+    // The ._invoke method unifies the implementations of the .next,
+    // .throw, and .return methods.
+    generator._invoke = makeInvokeMethod(innerFn, self, context);
+
+    return generator;
+  }
+  runtime.wrap = wrap;
+
+  // Try/catch helper to minimize deoptimizations. Returns a completion
+  // record like context.tryEntries[i].completion. This interface could
+  // have been (and was previously) designed to take a closure to be
+  // invoked without arguments, but in all the cases we care about we
+  // already have an existing method we want to call, so there's no need
+  // to create a new function object. We can even get away with assuming
+  // the method takes exactly one argument, since that happens to be true
+  // in every case, so we don't have to touch the arguments object. The
+  // only additional allocation required is the completion record, which
+  // has a stable shape and so hopefully should be cheap to allocate.
+  function tryCatch(fn, obj, arg) {
+    try {
+      return { type: "normal", arg: fn.call(obj, arg) };
+    } catch (err) {
+      return { type: "throw", arg: err };
+    }
   }
 
-  if (/method/.test(item.type)) {
-    methods[item.name] = pkg.method;
+  var GenStateSuspendedStart = "suspendedStart";
+  var GenStateSuspendedYield = "suspendedYield";
+  var GenStateExecuting = "executing";
+  var GenStateCompleted = "completed";
+
+  // Returning this object from the innerFn has the same effect as
+  // breaking out of the dispatch switch statement.
+  var ContinueSentinel = {};
+
+  // Dummy constructor functions that we use as the .constructor and
+  // .constructor.prototype properties for functions that return Generator
+  // objects. For full spec compliance, you may wish to configure your
+  // minifier not to mangle the names of these two functions.
+  function Generator() {}
+  function GeneratorFunction() {}
+  function GeneratorFunctionPrototype() {}
+
+  // This is a polyfill for %IteratorPrototype% for environments that
+  // don't natively support it.
+  var IteratorPrototype = {};
+  IteratorPrototype[iteratorSymbol] = function () {
+    return this;
+  };
+
+  var getProto = Object.getPrototypeOf;
+  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+  if (NativeIteratorPrototype &&
+      NativeIteratorPrototype !== Op &&
+      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+    // This environment has a native %IteratorPrototype%; use it instead
+    // of the polyfill.
+    IteratorPrototype = NativeIteratorPrototype;
   }
-}); // console.log('components', components)
-// console.log('methods', methods)
 
-var src_install = function install(Vue) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  if (install.installed) return;
-  /**
-   * 安装方法，附加在Vue的原型链，以$ + 名字（小写）暴露出来
-   */
+  var Gp = GeneratorFunctionPrototype.prototype =
+    Generator.prototype = Object.create(IteratorPrototype);
+  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
+  GeneratorFunctionPrototype.constructor = GeneratorFunction;
+  GeneratorFunctionPrototype[toStringTagSymbol] =
+    GeneratorFunction.displayName = "GeneratorFunction";
 
-  for (var methodKey in methods) {
-    Object.defineProperty(Vue.prototype, "$".concat(methodKey.toLowerCase()), {
-      value: methods[methodKey]
+  // Helper for defining the .next, .throw, and .return methods of the
+  // Iterator interface in terms of a single ._invoke method.
+  function defineIteratorMethods(prototype) {
+    ["next", "throw", "return"].forEach(function(method) {
+      prototype[method] = function(arg) {
+        return this._invoke(method, arg);
+      };
     });
   }
-  /**
-   * 安装组件，便于全局直接引用在template中
-   */
-  // console.log(components)
 
+  runtime.isGeneratorFunction = function(genFun) {
+    var ctor = typeof genFun === "function" && genFun.constructor;
+    return ctor
+      ? ctor === GeneratorFunction ||
+        // For the native GeneratorFunction constructor, the best we can
+        // do is to check its .name property.
+        (ctor.displayName || ctor.name) === "GeneratorFunction"
+      : false;
+  };
 
-  for (var componentKey in components) {
-    components[componentKey] && components[componentKey].name && Vue.component(components[componentKey].name, components[componentKey]);
+  runtime.mark = function(genFun) {
+    if (Object.setPrototypeOf) {
+      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+    } else {
+      genFun.__proto__ = GeneratorFunctionPrototype;
+      if (!(toStringTagSymbol in genFun)) {
+        genFun[toStringTagSymbol] = "GeneratorFunction";
+      }
+    }
+    genFun.prototype = Object.create(Gp);
+    return genFun;
+  };
+
+  // Within the body of any async function, `await x` is transformed to
+  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+  // `hasOwn.call(value, "__await")` to determine if the yielded value is
+  // meant to be awaited.
+  runtime.awrap = function(arg) {
+    return { __await: arg };
+  };
+
+  function AsyncIterator(generator) {
+    function invoke(method, arg, resolve, reject) {
+      var record = tryCatch(generator[method], generator, arg);
+      if (record.type === "throw") {
+        reject(record.arg);
+      } else {
+        var result = record.arg;
+        var value = result.value;
+        if (value &&
+            typeof value === "object" &&
+            hasOwn.call(value, "__await")) {
+          return Promise.resolve(value.__await).then(function(value) {
+            invoke("next", value, resolve, reject);
+          }, function(err) {
+            invoke("throw", err, resolve, reject);
+          });
+        }
+
+        return Promise.resolve(value).then(function(unwrapped) {
+          // When a yielded Promise is resolved, its final value becomes
+          // the .value of the Promise<{value,done}> result for the
+          // current iteration.
+          result.value = unwrapped;
+          resolve(result);
+        }, function(error) {
+          // If a rejected Promise was yielded, throw the rejection back
+          // into the async generator function so it can be handled there.
+          return invoke("throw", error, resolve, reject);
+        });
+      }
+    }
+
+    var previousPromise;
+
+    function enqueue(method, arg) {
+      function callInvokeWithMethodAndArg() {
+        return new Promise(function(resolve, reject) {
+          invoke(method, arg, resolve, reject);
+        });
+      }
+
+      return previousPromise =
+        // If enqueue has been called before, then we want to wait until
+        // all previous Promises have been resolved before calling invoke,
+        // so that results are always delivered in the correct order. If
+        // enqueue has not been called before, then it is important to
+        // call invoke immediately, without waiting on a callback to fire,
+        // so that the async generator function has the opportunity to do
+        // any necessary setup in a predictable way. This predictability
+        // is why the Promise constructor synchronously invokes its
+        // executor callback, and why async functions synchronously
+        // execute code before the first await. Since we implement simple
+        // async functions in terms of async generators, it is especially
+        // important to get this right, even though it requires care.
+        previousPromise ? previousPromise.then(
+          callInvokeWithMethodAndArg,
+          // Avoid propagating failures to Promises returned by later
+          // invocations of the iterator.
+          callInvokeWithMethodAndArg
+        ) : callInvokeWithMethodAndArg();
+    }
+
+    // Define the unified helper method that is used to implement .next,
+    // .throw, and .return (see defineIteratorMethods).
+    this._invoke = enqueue;
   }
 
-  console.info("lina-ui has been installed\uFF0C version\uFF1A ".concat(package_0["a" /* version */], " "));
-  install.installed = true;
+  defineIteratorMethods(AsyncIterator.prototype);
+  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
+    return this;
+  };
+  runtime.AsyncIterator = AsyncIterator;
+
+  // Note that simple async functions are implemented on top of
+  // AsyncIterator objects; they just return a Promise for the value of
+  // the final result produced by the iterator.
+  runtime.async = function(innerFn, outerFn, self, tryLocsList) {
+    var iter = new AsyncIterator(
+      wrap(innerFn, outerFn, self, tryLocsList)
+    );
+
+    return runtime.isGeneratorFunction(outerFn)
+      ? iter // If outerFn is a generator, return the full iterator.
+      : iter.next().then(function(result) {
+          return result.done ? result.value : iter.next();
+        });
+  };
+
+  function makeInvokeMethod(innerFn, self, context) {
+    var state = GenStateSuspendedStart;
+
+    return function invoke(method, arg) {
+      if (state === GenStateExecuting) {
+        throw new Error("Generator is already running");
+      }
+
+      if (state === GenStateCompleted) {
+        if (method === "throw") {
+          throw arg;
+        }
+
+        // Be forgiving, per 25.3.3.3.3 of the spec:
+        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+        return doneResult();
+      }
+
+      context.method = method;
+      context.arg = arg;
+
+      while (true) {
+        var delegate = context.delegate;
+        if (delegate) {
+          var delegateResult = maybeInvokeDelegate(delegate, context);
+          if (delegateResult) {
+            if (delegateResult === ContinueSentinel) continue;
+            return delegateResult;
+          }
+        }
+
+        if (context.method === "next") {
+          // Setting context._sent for legacy support of Babel's
+          // function.sent implementation.
+          context.sent = context._sent = context.arg;
+
+        } else if (context.method === "throw") {
+          if (state === GenStateSuspendedStart) {
+            state = GenStateCompleted;
+            throw context.arg;
+          }
+
+          context.dispatchException(context.arg);
+
+        } else if (context.method === "return") {
+          context.abrupt("return", context.arg);
+        }
+
+        state = GenStateExecuting;
+
+        var record = tryCatch(innerFn, self, context);
+        if (record.type === "normal") {
+          // If an exception is thrown from innerFn, we leave state ===
+          // GenStateExecuting and loop back for another invocation.
+          state = context.done
+            ? GenStateCompleted
+            : GenStateSuspendedYield;
+
+          if (record.arg === ContinueSentinel) {
+            continue;
+          }
+
+          return {
+            value: record.arg,
+            done: context.done
+          };
+
+        } else if (record.type === "throw") {
+          state = GenStateCompleted;
+          // Dispatch the exception by looping back around to the
+          // context.dispatchException(context.arg) call above.
+          context.method = "throw";
+          context.arg = record.arg;
+        }
+      }
+    };
+  }
+
+  // Call delegate.iterator[context.method](context.arg) and handle the
+  // result, either by returning a { value, done } result from the
+  // delegate iterator, or by modifying context.method and context.arg,
+  // setting context.delegate to null, and returning the ContinueSentinel.
+  function maybeInvokeDelegate(delegate, context) {
+    var method = delegate.iterator[context.method];
+    if (method === undefined) {
+      // A .throw or .return when the delegate iterator has no .throw
+      // method always terminates the yield* loop.
+      context.delegate = null;
+
+      if (context.method === "throw") {
+        if (delegate.iterator.return) {
+          // If the delegate iterator has a return method, give it a
+          // chance to clean up.
+          context.method = "return";
+          context.arg = undefined;
+          maybeInvokeDelegate(delegate, context);
+
+          if (context.method === "throw") {
+            // If maybeInvokeDelegate(context) changed context.method from
+            // "return" to "throw", let that override the TypeError below.
+            return ContinueSentinel;
+          }
+        }
+
+        context.method = "throw";
+        context.arg = new TypeError(
+          "The iterator does not provide a 'throw' method");
+      }
+
+      return ContinueSentinel;
+    }
+
+    var record = tryCatch(method, delegate.iterator, context.arg);
+
+    if (record.type === "throw") {
+      context.method = "throw";
+      context.arg = record.arg;
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    var info = record.arg;
+
+    if (! info) {
+      context.method = "throw";
+      context.arg = new TypeError("iterator result is not an object");
+      context.delegate = null;
+      return ContinueSentinel;
+    }
+
+    if (info.done) {
+      // Assign the result of the finished delegate to the temporary
+      // variable specified by delegate.resultName (see delegateYield).
+      context[delegate.resultName] = info.value;
+
+      // Resume execution at the desired location (see delegateYield).
+      context.next = delegate.nextLoc;
+
+      // If context.method was "throw" but the delegate handled the
+      // exception, let the outer generator proceed normally. If
+      // context.method was "next", forget context.arg since it has been
+      // "consumed" by the delegate iterator. If context.method was
+      // "return", allow the original .return call to continue in the
+      // outer generator.
+      if (context.method !== "return") {
+        context.method = "next";
+        context.arg = undefined;
+      }
+
+    } else {
+      // Re-yield the result returned by the delegate method.
+      return info;
+    }
+
+    // The delegate iterator is finished, so forget it and continue with
+    // the outer generator.
+    context.delegate = null;
+    return ContinueSentinel;
+  }
+
+  // Define Generator.prototype.{next,throw,return} in terms of the
+  // unified ._invoke helper method.
+  defineIteratorMethods(Gp);
+
+  Gp[toStringTagSymbol] = "Generator";
+
+  // A Generator should always return itself as the iterator object when the
+  // @@iterator function is called on it. Some browsers' implementations of the
+  // iterator prototype chain incorrectly implement this, causing the Generator
+  // object to not be returned from this call. This ensures that doesn't happen.
+  // See https://github.com/facebook/regenerator/issues/274 for more details.
+  Gp[iteratorSymbol] = function() {
+    return this;
+  };
+
+  Gp.toString = function() {
+    return "[object Generator]";
+  };
+
+  function pushTryEntry(locs) {
+    var entry = { tryLoc: locs[0] };
+
+    if (1 in locs) {
+      entry.catchLoc = locs[1];
+    }
+
+    if (2 in locs) {
+      entry.finallyLoc = locs[2];
+      entry.afterLoc = locs[3];
+    }
+
+    this.tryEntries.push(entry);
+  }
+
+  function resetTryEntry(entry) {
+    var record = entry.completion || {};
+    record.type = "normal";
+    delete record.arg;
+    entry.completion = record;
+  }
+
+  function Context(tryLocsList) {
+    // The root entry object (effectively a try statement without a catch
+    // or a finally block) gives us a place to store values thrown from
+    // locations where there is no enclosing try statement.
+    this.tryEntries = [{ tryLoc: "root" }];
+    tryLocsList.forEach(pushTryEntry, this);
+    this.reset(true);
+  }
+
+  runtime.keys = function(object) {
+    var keys = [];
+    for (var key in object) {
+      keys.push(key);
+    }
+    keys.reverse();
+
+    // Rather than returning an object with a next method, we keep
+    // things simple and return the next function itself.
+    return function next() {
+      while (keys.length) {
+        var key = keys.pop();
+        if (key in object) {
+          next.value = key;
+          next.done = false;
+          return next;
+        }
+      }
+
+      // To avoid creating an additional object, we just hang the .value
+      // and .done properties off the next function object itself. This
+      // also ensures that the minifier will not anonymize the function.
+      next.done = true;
+      return next;
+    };
+  };
+
+  function values(iterable) {
+    if (iterable) {
+      var iteratorMethod = iterable[iteratorSymbol];
+      if (iteratorMethod) {
+        return iteratorMethod.call(iterable);
+      }
+
+      if (typeof iterable.next === "function") {
+        return iterable;
+      }
+
+      if (!isNaN(iterable.length)) {
+        var i = -1, next = function next() {
+          while (++i < iterable.length) {
+            if (hasOwn.call(iterable, i)) {
+              next.value = iterable[i];
+              next.done = false;
+              return next;
+            }
+          }
+
+          next.value = undefined;
+          next.done = true;
+
+          return next;
+        };
+
+        return next.next = next;
+      }
+    }
+
+    // Return an iterator with no values.
+    return { next: doneResult };
+  }
+  runtime.values = values;
+
+  function doneResult() {
+    return { value: undefined, done: true };
+  }
+
+  Context.prototype = {
+    constructor: Context,
+
+    reset: function(skipTempReset) {
+      this.prev = 0;
+      this.next = 0;
+      // Resetting context._sent for legacy support of Babel's
+      // function.sent implementation.
+      this.sent = this._sent = undefined;
+      this.done = false;
+      this.delegate = null;
+
+      this.method = "next";
+      this.arg = undefined;
+
+      this.tryEntries.forEach(resetTryEntry);
+
+      if (!skipTempReset) {
+        for (var name in this) {
+          // Not sure about the optimal order of these conditions:
+          if (name.charAt(0) === "t" &&
+              hasOwn.call(this, name) &&
+              !isNaN(+name.slice(1))) {
+            this[name] = undefined;
+          }
+        }
+      }
+    },
+
+    stop: function() {
+      this.done = true;
+
+      var rootEntry = this.tryEntries[0];
+      var rootRecord = rootEntry.completion;
+      if (rootRecord.type === "throw") {
+        throw rootRecord.arg;
+      }
+
+      return this.rval;
+    },
+
+    dispatchException: function(exception) {
+      if (this.done) {
+        throw exception;
+      }
+
+      var context = this;
+      function handle(loc, caught) {
+        record.type = "throw";
+        record.arg = exception;
+        context.next = loc;
+
+        if (caught) {
+          // If the dispatched exception was caught by a catch block,
+          // then let that catch block handle the exception normally.
+          context.method = "next";
+          context.arg = undefined;
+        }
+
+        return !! caught;
+      }
+
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        var record = entry.completion;
+
+        if (entry.tryLoc === "root") {
+          // Exception thrown outside of any try block that could handle
+          // it, so set the completion value of the entire function to
+          // throw the exception.
+          return handle("end");
+        }
+
+        if (entry.tryLoc <= this.prev) {
+          var hasCatch = hasOwn.call(entry, "catchLoc");
+          var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+          if (hasCatch && hasFinally) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            } else if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else if (hasCatch) {
+            if (this.prev < entry.catchLoc) {
+              return handle(entry.catchLoc, true);
+            }
+
+          } else if (hasFinally) {
+            if (this.prev < entry.finallyLoc) {
+              return handle(entry.finallyLoc);
+            }
+
+          } else {
+            throw new Error("try statement without catch or finally");
+          }
+        }
+      }
+    },
+
+    abrupt: function(type, arg) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc <= this.prev &&
+            hasOwn.call(entry, "finallyLoc") &&
+            this.prev < entry.finallyLoc) {
+          var finallyEntry = entry;
+          break;
+        }
+      }
+
+      if (finallyEntry &&
+          (type === "break" ||
+           type === "continue") &&
+          finallyEntry.tryLoc <= arg &&
+          arg <= finallyEntry.finallyLoc) {
+        // Ignore the finally entry if control is not jumping to a
+        // location outside the try/catch block.
+        finallyEntry = null;
+      }
+
+      var record = finallyEntry ? finallyEntry.completion : {};
+      record.type = type;
+      record.arg = arg;
+
+      if (finallyEntry) {
+        this.method = "next";
+        this.next = finallyEntry.finallyLoc;
+        return ContinueSentinel;
+      }
+
+      return this.complete(record);
+    },
+
+    complete: function(record, afterLoc) {
+      if (record.type === "throw") {
+        throw record.arg;
+      }
+
+      if (record.type === "break" ||
+          record.type === "continue") {
+        this.next = record.arg;
+      } else if (record.type === "return") {
+        this.rval = this.arg = record.arg;
+        this.method = "return";
+        this.next = "end";
+      } else if (record.type === "normal" && afterLoc) {
+        this.next = afterLoc;
+      }
+
+      return ContinueSentinel;
+    },
+
+    finish: function(finallyLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.finallyLoc === finallyLoc) {
+          this.complete(entry.completion, entry.afterLoc);
+          resetTryEntry(entry);
+          return ContinueSentinel;
+        }
+      }
+    },
+
+    "catch": function(tryLoc) {
+      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+        var entry = this.tryEntries[i];
+        if (entry.tryLoc === tryLoc) {
+          var record = entry.completion;
+          if (record.type === "throw") {
+            var thrown = record.arg;
+            resetTryEntry(entry);
+          }
+          return thrown;
+        }
+      }
+
+      // The context.catch method must only be called with a location
+      // argument that corresponds to a known catch block.
+      throw new Error("illegal catch attempt");
+    },
+
+    delegateYield: function(iterable, resultName, nextLoc) {
+      this.delegate = {
+        iterator: values(iterable),
+        resultName: resultName,
+        nextLoc: nextLoc
+      };
+
+      if (this.method === "next") {
+        // Deliberately forget the last sent value so that we don't
+        // accidentally pass it on to the delegate.
+        this.arg = undefined;
+      }
+
+      return ContinueSentinel;
+    }
+  };
+})(
+  // In sloppy mode, unbound `this` refers to the global object, fallback to
+  // Function constructor if we're in global strict mode. That is sadly a form
+  // of indirect eval which violates Content Security Policy.
+  (function() {
+    return this || (typeof self === "object" && self);
+  })() || Function("return this")()
+);
+
+
+/***/ }),
+/* 28 */,
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
+            (typeof self !== "undefined" && self) ||
+            window;
+var apply = Function.prototype.apply;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) {
+  if (timeout) {
+    timeout.close();
+  }
 };
 
-typeof window !== 'undefined' && window.Vue && src_install(window.Vue);
-/* harmony default export */ var src = (src_objectSpread({
-  version: package_0["a" /* version */],
-  install: src_install,
-  // ...components,
-  components: src_objectSpread({}, components)
-}, methods));
-// CONCATENATED MODULE: ./src/main.js
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(scope, this._id);
+};
 
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
 
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
 
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
 
-
-setRem(document, window);
-/* router & 历史栈 */
-
-var main_router = createRouter();
-console.log(src);
-vue_esm["a" /* default */].use(src);
-new vue_esm["a" /* default */]({
-  el: '#app',
-  router: main_router,
-  render: function render(h) {
-    return h(App);
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
   }
-});
+};
+
+// setimmediate attaches itself to the global object
+__webpack_require__(30);
+// On some exotic environments, it's not clear which object `setimmediate` was
+// able to install onto.  Search each possibility in the same order as the
+// `setimmediate` library.
+exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
+                       (typeof global !== "undefined" && global.setImmediate) ||
+                       (this && this.setImmediate);
+exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
+                         (typeof global !== "undefined" && global.clearImmediate) ||
+                         (this && this.clearImmediate);
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(22)))
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
+    "use strict";
+
+    if (global.setImmediate) {
+        return;
+    }
+
+    var nextHandle = 1; // Spec says greater than zero
+    var tasksByHandle = {};
+    var currentlyRunningATask = false;
+    var doc = global.document;
+    var registerImmediate;
+
+    function setImmediate(callback) {
+      // Callback can either be a function or a string
+      if (typeof callback !== "function") {
+        callback = new Function("" + callback);
+      }
+      // Copy function arguments
+      var args = new Array(arguments.length - 1);
+      for (var i = 0; i < args.length; i++) {
+          args[i] = arguments[i + 1];
+      }
+      // Store and register the task
+      var task = { callback: callback, args: args };
+      tasksByHandle[nextHandle] = task;
+      registerImmediate(nextHandle);
+      return nextHandle++;
+    }
+
+    function clearImmediate(handle) {
+        delete tasksByHandle[handle];
+    }
+
+    function run(task) {
+        var callback = task.callback;
+        var args = task.args;
+        switch (args.length) {
+        case 0:
+            callback();
+            break;
+        case 1:
+            callback(args[0]);
+            break;
+        case 2:
+            callback(args[0], args[1]);
+            break;
+        case 3:
+            callback(args[0], args[1], args[2]);
+            break;
+        default:
+            callback.apply(undefined, args);
+            break;
+        }
+    }
+
+    function runIfPresent(handle) {
+        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // "too much recursion" error.
+            setTimeout(runIfPresent, 0, handle);
+        } else {
+            var task = tasksByHandle[handle];
+            if (task) {
+                currentlyRunningATask = true;
+                try {
+                    run(task);
+                } finally {
+                    clearImmediate(handle);
+                    currentlyRunningATask = false;
+                }
+            }
+        }
+    }
+
+    function installNextTickImplementation() {
+        registerImmediate = function(handle) {
+            process.nextTick(function () { runIfPresent(handle); });
+        };
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+        if (global.postMessage && !global.importScripts) {
+            var postMessageIsAsynchronous = true;
+            var oldOnMessage = global.onmessage;
+            global.onmessage = function() {
+                postMessageIsAsynchronous = false;
+            };
+            global.postMessage("", "*");
+            global.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous;
+        }
+    }
+
+    function installPostMessageImplementation() {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var messagePrefix = "setImmediate$" + Math.random() + "$";
+        var onGlobalMessage = function(event) {
+            if (event.source === global &&
+                typeof event.data === "string" &&
+                event.data.indexOf(messagePrefix) === 0) {
+                runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        registerImmediate = function(handle) {
+            global.postMessage(messagePrefix + handle, "*");
+        };
+    }
+
+    function installMessageChannelImplementation() {
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function(event) {
+            var handle = event.data;
+            runIfPresent(handle);
+        };
+
+        registerImmediate = function(handle) {
+            channel.port2.postMessage(handle);
+        };
+    }
+
+    function installReadyStateChangeImplementation() {
+        var html = doc.documentElement;
+        registerImmediate = function(handle) {
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement("script");
+            script.onreadystatechange = function () {
+                runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+        };
+    }
+
+    function installSetTimeoutImplementation() {
+        registerImmediate = function(handle) {
+            setTimeout(runIfPresent, 0, handle);
+        };
+    }
+
+    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+    // Don't get fooled by e.g. browserify environments.
+    if ({}.toString.call(global.process) === "[object process]") {
+        // For Node.js before 0.9
+        installNextTickImplementation();
+
+    } else if (canUsePostMessage()) {
+        // For non-IE10 modern browsers
+        installPostMessageImplementation();
+
+    } else if (global.MessageChannel) {
+        // For web workers, where supported
+        installMessageChannelImplementation();
+
+    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+        // For IE 6–8
+        installReadyStateChangeImplementation();
+
+    } else {
+        // For older browsers
+        installSetTimeoutImplementation();
+    }
+
+    attachTo.setImmediate = setImmediate;
+    attachTo.clearImmediate = clearImmediate;
+}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(22), __webpack_require__(31)))
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
 
 /***/ })
-],[[38,1,2]]]);
+]]);

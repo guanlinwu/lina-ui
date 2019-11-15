@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import config from '@/config'
+import config from '@/config.json'
 
 export default {
   name: 'index',
@@ -29,7 +29,6 @@ export default {
     }
   },
   created () {
-    console.log('create')
     let foldStatus = JSON.parse(sessionStorage.getItem('foldStatus'))
     this.foldStore = foldStatus || []
 

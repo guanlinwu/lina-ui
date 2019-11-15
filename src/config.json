@@ -1,0 +1,165 @@
+{
+  "packagesTypes": [
+      {
+          "typeName": "操作反馈",
+          "typeEnName": "operate feedback"
+      },
+      {
+          "typeName": "视图组件",
+          "typeEnName": "view component"
+      },
+      {
+          "typeName": "通用函数",
+          "typeEnName": "general function"
+      },
+      {
+          "typeName": "指令",
+          "typeEnName": "directive"
+      }
+  ],
+  "packages": [
+      {
+          "version": "1.0.0",
+          "name": "Toast",
+          "chnName": "轻提示",
+          "desc": "轻提示。",
+          "type": "method",
+          "belong": "operate feedback",
+          "author": [
+              "lin"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "Loading",
+          "chnName": "加载圈",
+          "desc": "loading",
+          "type": "method",
+          "belong": "operate feedback",
+          "author": [
+              "lin"
+          ]
+      },
+      {
+          "version": "1.0.1",
+          "name": "Dialog",
+          "chnName": "对话框",
+          "desc": "Dialog",
+          "type": "method|component",
+          "belong": "operate feedback",
+          "author": [
+              "lin"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "ActionSheet",
+          "chnName": "动作面板",
+          "desc": "ActionSheet",
+          "type": "component",
+          "belong": "operate feedback",
+          "author": [
+              "lin"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "Popup",
+          "chnName": "弹出蒙层",
+          "desc": "Popup",
+          "type": "component",
+          "belong": "operate feedback",
+          "author": [
+              "lin"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "PopCurtain",
+          "chnName": "广告图弹窗",
+          "desc": "PopCurtain",
+          "type": "component",
+          "belong": "view component",
+          "author": [
+              "lin"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "PreLoad",
+          "chnName": "预加载",
+          "desc": "PreLoad",
+          "type": "method",
+          "belong": "general function",
+          "author": [
+              "lin"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "CarouselNotice",
+          "chnName": "滚动公告",
+          "desc": "滚动公告",
+          "type": "component",
+          "belong": "view component",
+          "author": [
+              "lin"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "PullRefresh",
+          "chnName": "下拉刷新",
+          "desc": "PullRefresh",
+          "type": "component",
+          "belong": "operate feedback",
+          "author": [
+              "lin"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "Picker",
+          "chnName": "选择器",
+          "desc": "Picker",
+          "type": "component",
+          "belong": "view component",
+          "author": [
+              "mwc"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "DatetimePicker",
+          "chnName": "时间选择器",
+          "desc": "DatetimePicker",
+          "type": "component",
+          "belong": "view component",
+          "author": [
+              "mwc"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "Tabs",
+          "chnName": "标签页",
+          "desc": "Tabs",
+          "type": "component",
+          "belong": "view component",
+          "author": [
+              "lgn"
+          ]
+      },
+      {
+          "version": "1.0.0",
+          "name": "lazyLoadImg",
+          "chnName": "图片懒加载",
+          "desc": "lazyload images",
+          "type": "directive",
+          "belong": "directive",
+          "author": [
+              "lgn"
+          ]
+      }
+  ]
+}
