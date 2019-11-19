@@ -1,6 +1,11 @@
 <template>
   <div class="page-demo-total">
-    <h3 class="nav"><router-link class="back-btn" to="/">返回</router-link></h3>
+    <!-- <h3 class="nav"><router-link class="back-btn" to="/">返回</router-link></h3> -->
+     <lina-nav-bar
+        :zIndex=50
+        leftText="返回"
+         @click-left="$router.replace('/')"
+      />
     <router-view></router-view>
   </div>
 </template>

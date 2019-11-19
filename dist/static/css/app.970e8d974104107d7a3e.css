@@ -1202,3 +1202,85 @@ html {
   width: 100%;
 }
 
+@charset "UTF-8";
+/* define mixin */
+/**
+* 1px细线
+* border-width-1px(top,right,bottom,left, border-color, border-radius);
+* top,right,bottom,left 值为 1 或者 0;
+* @include border-width-1px(0, 0, 2, 0, #f57c38);
+*/
+.lina-nav-bar {
+  position: relative;
+  width: 100%;
+  height: 1.17333rem;
+  line-height: 1.17333rem;
+  text-align: center;
+  background-color: #fff;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.lina-nav-bar .left {
+    position: absolute;
+    top: 50%;
+    left: 0.53333rem;
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+    min-width: 1.06667rem;
+    text-align: left;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+       -moz-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+}
+.lina-nav-bar .left .icon-left-arrow {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 0.13333rem;
+      height: 0.33333rem;
+      width: 0.33333rem;
+      border-width: 0.01333rem;
+      border-style: solid;
+      border-color: transparent transparent #000 #000;
+      -webkit-transform-origin: 50% 50%;
+              transform-origin: 50% 50%;
+      -webkit-transform: rotate(45deg);
+              transform: rotate(45deg);
+}
+.lina-nav-bar .right {
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+    right: 0.53333rem;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+       -moz-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+}
+.lina-nav-bar .nav-text {
+    margin: 0 -0.53333rem;
+    padding: 0 0.53333rem;
+    font-size: 0.4rem;
+}
+.lina-nav-bar .moddle {
+    max-width: 60%;
+    margin: 0 auto;
+}
+.lina-nav-bar .moddle .title {
+      font-size: 0.48rem;
+      font-family: PingFang SC;
+      font-weight: 500;
+      color: black;
+}
+
