@@ -171,7 +171,7 @@ export default {
         self.$refs.contentInnerRef[index].style.transform = `translateX(0)`
         if (scrollWidth > offsetWidth) { // 如果文本超出，则先向左滚动至完全显示
           let slideDistance = scrollWidth - offsetWidth // 滚动距离
-          slideDistance *= 1.0 // 实际横向滚动的距离，比传进来的内容多10%的距离
+          slideDistance *= 1.1 // 实际横向滚动的距离，比传进来的内容多10%的距离
           const slideSpeed = self.slideSpeed // 滚动速率
           const slideTime = +(slideDistance / slideSpeed).toFixed(3) // 滚动时间 = 滚动距离 / 滚动速率
           /**

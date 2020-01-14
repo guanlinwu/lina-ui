@@ -40,14 +40,14 @@ export default {
         isShow: false
       },
       dialog3: {
-        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
+        image: 'https://dummyimage.com/600x400/ff45ff/fffffe',
         isShow: false
       },
       dialog2: {
         isShow: false
       },
       dialog4: {
-        image: 'https://dummyimage.com/600x400/ff45ff/ffffff',
+        image: 'https://dummyimage.com/600x400/ff45ff/fffffa',
         link: 'http://www.baidu.com',
         isShow: false
       }
