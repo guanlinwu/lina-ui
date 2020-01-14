@@ -52,29 +52,50 @@ export default class Time {
       minMinute: 1
     }
     let obj = this.data[0].values.find(obj => obj.value === this.defaultDateValue.year)
-    let objMoth = obj.$moth[this.defaultDateValue.month]
     let isUnlikeYear = obj.value !== data0.value
-    // 不同的年 || 或者月份一样
-    if (isUnlikeYear || this.defaultDateValue.month === obj.$maxMonth) {
-      defaultValue.maxDate = objMoth.max
-      if (this.type !== 'date' && this.defaultDateValue.date === obj.$maxDate) {
-        defaultValue.maxHour = obj.$maxHour
-        if (this.defaultDateValue.hour === obj.$maxHour) {
-          defaultValue.maxMinute = obj.$maxMinute
-        }
-      }
-    }
-    if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
-      defaultValue.minDate = objMoth.min
-      if (this.type !== 'date' && this.defaultDateValue.date === obj.$minDate) {
-        defaultValue.minHour = obj.$minHour
-        if (this.defaultDateValue.hour === obj.$minHour) {
-          defaultValue.minMinute = obj.$minMinute
-        }
-      }
-    }
-
+    this.setDefaultValue('max', { defaultValue, obj, isUnlikeYear })
+    this.setDefaultValue('min', { defaultValue, obj, isUnlikeYear })
+    // // 不同的年 || 或者月份一样
+    // if (isUnlikeYear || this.defaultDateValue.month === obj.$maxMonth) {
+    //   defaultValue.maxDate = objMoth.max
+    //   if (this.type !== 'date' && this.defaultDateValue.date === obj.$maxDate) {
+    //     defaultValue.maxHour = obj.$maxHour
+    //     if (this.defaultDateValue.hour === obj.$maxHour) {
+    //       defaultValue.maxMinute = obj.$maxMinute
+    //     }
+    //   }
+    // }
+    // if (isUnlikeYear || this.defaultDateValue.month === obj.$minMonth) {
+    //   defaultValue.minDate = objMoth.min
+    //   if (this.type !== 'date' && this.defaultDateValue.date === obj.$minDate) {
+    //     defaultValue.minHour = obj.$minHour
+    //     if (this.defaultDateValue.hour === obj.$minHour) {
+    //       defaultValue.minMinute = obj.$minMinute
+    //     }
+    //   }
+    // }
     return defaultValue
+  }
+  /**
+   * defaultValue: max和min的抽离
+   * @param {String} key max || min
+   * @param {*} param1
+   */
+  setDefaultValue (key, { defaultValue, obj, isUnlikeYear }) {
+    let objMoth = obj.$moth[this.defaultDateValue.month]
+    // 不同的年 || 或者月份一样
+    if (isUnlikeYear || this.defaultDateValue.month === obj[`$${key}Month`]) {
+      let k = key + 'Date'
+      defaultValue[k] = objMoth[key]
+      if (this.type !== 'date' && this.defaultDateValue.date === obj['$' + k]) {
+        k = key + 'Hour'
+        defaultValue[k] = obj['$' + k]
+        if (this.defaultDateValue.hour === obj['$' + k]) {
+          k = key + 'Minute'
+          defaultValue[k] = obj['$' + k]
+        }
+      }
+    }
   }
   // maxDate和minDate具体时间
   get getDate () {
