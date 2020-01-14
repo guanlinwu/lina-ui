@@ -160,6 +160,17 @@
           "author": [
               "lgn"
           ]
+      },
+      {
+        "version": "1.0.0",
+        "name": "NavBar",
+        "chnName": "导航栏",
+        "desc": "NavBar",
+        "type": "component",
+        "belong": "view component",
+        "author": [
+            "lin"
+        ]
       }
   ]
 }

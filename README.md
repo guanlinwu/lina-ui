@@ -961,6 +961,87 @@ export default {
 | hourFormat | 	小时模板 | String | '{value}' |
 | minuteFormat | 分钟模板 | String | '{value}' |
 
+## <font color=#cf3e8e>NavBar</font>
+
+> 基本用法
+
+```html
+<!-- 普通用法 -->
+<lina-nav-bar
+  title="标题"
+  leftText="返回"
+  rightText="按钮"
+  @click-left="onClickLeft"
+  @click-right="onClickRight"
+/>
+
+<lina-nav-bar
+  title="标题"
+  @click-left="onClickLeft"
+/>
+<!-- 内嵌slot -->
+<lina-nav-bar
+  @click-left="onClickLeft"
+  @click-right="onClickRight"
+  >
+  <template v-slot:title>
+    <h1 style="font-size: 20px;">自定义标题</h1>
+  </template>
+  <template v-slot:left>
+    <h1 style="font-size: 14px;">自定义左边</h1>
+  </template>
+  <template v-slot:right>
+    <h1 style="font-size: 14px;">自定义右边</h1>
+  </template>
+</lina-nav-bar>
+```
+
+```javascript
+export default {
+  name: 'demo-navbar',
+  data () {
+    return {
+
+    }
+  },
+  methods: {
+    handle1 () {
+    },
+    onClickLeft () {
+      this.$toast('left')
+    },
+    onClickRight () {
+      this.$toast('right')
+    }
+  }
+}
+```
+
+> Prop
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| title    | 标题	 |   String  |  |
+| left-text	    | 左侧文案		 |   String  |  |
+| right-text		    | 右侧文案		 |   String  |  |
+| isHideLeftArrow		    | 是否隐藏左侧箭头			 |   Boolean  | false |
+| zIndex			    | 元素 z-index				 |   Number  | 1 |
+
+> Slots
+
+| 名称        | 说明   |
+| --------   | -----:  |
+| title    | 自定义标题	 |
+| left	    | 自定义左侧区域内容	 |
+| right		    | 自定义右侧区域内容		 |
+
+> Event
+
+| 名称        | 说明   |  回调函数  |
+| --------   | -----:  | :----:  |
+| click-left	     |  点击左侧按钮时触发	 | - |
+| click-right	     |  点击右侧按钮时触发	 | - |
+
 ## 类型：通用函数
 
 ## <font color=#cf3e8e>Preload</font>
