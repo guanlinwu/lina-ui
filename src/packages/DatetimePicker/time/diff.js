@@ -59,40 +59,39 @@ export default {
   diffDate (values) {
     let _values = this._values
     // 年月是否一样
-    if (this.type === 'datetime' && !this.diff(values, 2)) {
-      let max = 23
-      let min = 0
-      let oldMax = 23
-      let oldMin = 0
-      if (
-        _values[0].$maxMonth === _values[1].value &&
-        _values[0].$maxDate === _values[2].value
-      ) {
-        oldMax = _values[0].$maxHour
-      }
-      if (
-        _values[0].$minMonth === _values[1].value &&
-        _values[0].$minDate === _values[2].value
-      ) {
-        oldMin = _values[0].$minHour
-      }
-      if (
-        values[0].$maxMonth === values[1].value &&
-        values[0].$maxDate === values[2].value
-      ) {
-        max = values[0].$maxHour
-      }
-      if (
-        values[0].$minMonth === values[1].value &&
-        values[0].$minDate === values[2].value
-      ) {
-        min = values[0].$minHour
-      }
-      console.log(max, oldMax, min, oldMin)
-      if (max !== oldMax || min !== oldMin) {
-        this.data[3].values = this.getForData(this.options.hourFormat, max, min)
-        this.changeMove(values, _values, 3)
-      }
+    if (this.type !== 'datetime' && this.diff(values, 2)) return
+    let max = 23
+    let min = 0
+    let oldMax = 23
+    let oldMin = 0
+    if (
+      _values[0].$maxMonth === _values[1].value &&
+      _values[0].$maxDate === _values[2].value
+    ) {
+      oldMax = _values[0].$maxHour
+    }
+    if (
+      _values[0].$minMonth === _values[1].value &&
+      _values[0].$minDate === _values[2].value
+    ) {
+      oldMin = _values[0].$minHour
+    }
+    if (
+      values[0].$maxMonth === values[1].value &&
+      values[0].$maxDate === values[2].value
+    ) {
+      max = values[0].$maxHour
+    }
+    if (
+      values[0].$minMonth === values[1].value &&
+      values[0].$minDate === values[2].value
+    ) {
+      min = values[0].$minHour
+    }
+    console.log(max, oldMax, min, oldMin)
+    if (max !== oldMax || min !== oldMin) {
+      this.data[3].values = this.getForData(this.options.hourFormat, max, min)
+      this.changeMove(values, _values, 3)
     }
   },
   /**
@@ -102,43 +101,42 @@ export default {
   diffHour (values) {
     let _values = this._values
     // 年月是否一样
-    if (this.type === 'datetime' && !this.diff(values, 3)) {
-      let max = 59
-      let min = 0
-      let oldMax = 59
-      let oldMin = 0
-      if (
-        _values[0].$maxMonth === _values[1].value &&
-        _values[0].$maxDate === _values[2].value &&
-        _values[0].$maxHour === _values[3].value
-      ) {
-        oldMax = _values[0].$maxMinute
-      }
-      if (
-        _values[0].$minMonth === _values[1].value &&
-        _values[0].$minDate === _values[2].value &&
-        _values[0].$minHour === _values[3].value
-      ) {
-        oldMin = _values[0].$minMinute
-      }
-      if (
-        values[0].$maxMonth === values[1].value &&
-        values[0].$maxDate === values[2].value &&
-        values[0].$maxHour === values[3].value
-      ) {
-        max = values[0].$maxMinute
-      }
-      if (
-        values[0].$minMonth === values[1].value &&
-        values[0].$minDate === values[2].value &&
-        values[0].$minHour === values[3].value
-      ) {
-        min = values[0].$minMinute
-      }
-      if (max !== oldMax || min !== oldMin) {
-        this.data[4].values = this.getForData(this.options.minuteFormat, max, min)
-        this.changeMove(values, _values, 4)
-      }
+    if (this.type !== 'datetime' && this.diff(values, 3)) return
+    let max = 59
+    let min = 0
+    let oldMax = 59
+    let oldMin = 0
+    if (
+      _values[0].$maxMonth === _values[1].value &&
+      _values[0].$maxDate === _values[2].value &&
+      _values[0].$maxHour === _values[3].value
+    ) {
+      oldMax = _values[0].$maxMinute
+    }
+    if (
+      _values[0].$minMonth === _values[1].value &&
+      _values[0].$minDate === _values[2].value &&
+      _values[0].$minHour === _values[3].value
+    ) {
+      oldMin = _values[0].$minMinute
+    }
+    if (
+      values[0].$maxMonth === values[1].value &&
+      values[0].$maxDate === values[2].value &&
+      values[0].$maxHour === values[3].value
+    ) {
+      max = values[0].$maxMinute
+    }
+    if (
+      values[0].$minMonth === values[1].value &&
+      values[0].$minDate === values[2].value &&
+      values[0].$minHour === values[3].value
+    ) {
+      min = values[0].$minMinute
+    }
+    if (max !== oldMax || min !== oldMin) {
+      this.data[4].values = this.getForData(this.options.minuteFormat, max, min)
+      this.changeMove(values, _values, 4)
     }
   }
 }
