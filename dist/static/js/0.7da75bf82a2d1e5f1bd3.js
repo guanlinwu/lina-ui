@@ -11931,7 +11931,6 @@ time_Time.mObj = {
     var _values = this._values; // 年月是否一样
 
     if (!this.diff(values, 1)) {
-      console.log('diffMonth');
       var _values$0$$moth$value = values[0].$moth[values[1].value],
           min = _values$0$$moth$value.min,
           max = _values$0$$moth$value.max;
@@ -11953,7 +11952,7 @@ time_Time.mObj = {
   diffDate: function diffDate(values) {
     var _values = this._values; // 年月是否一样
 
-    if (this.type !== 'datetime' && this.diff(values, 2)) return;
+    if (!(this.type === 'datetime' && !this.diff(values, 3))) return;
     var max = 23;
     var min = 0;
     var oldMax = 23;
@@ -11975,8 +11974,6 @@ time_Time.mObj = {
       min = values[0].$minHour;
     }
 
-    console.log(max, oldMax, min, oldMin);
-
     if (max !== oldMax || min !== oldMin) {
       this.data[3].values = this.getForData(this.options.hourFormat, max, min);
       this.changeMove(values, _values, 3);
@@ -11990,7 +11987,7 @@ time_Time.mObj = {
   diffHour: function diffHour(values) {
     var _values = this._values; // 年月是否一样
 
-    if (this.type !== 'datetime' && this.diff(values, 3)) return;
+    if (!(this.type === 'datetime' && !this.diff(values, 3))) return;
     var max = 59;
     var min = 0;
     var oldMax = 59;
