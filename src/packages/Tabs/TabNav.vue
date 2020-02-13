@@ -1,8 +1,21 @@
+<template>
+    <ul :class="[fixedTabsFlag ? 'lina-tabs-lists e-fixed' : 'lina-tabs-lists']"
+    :style="{ ...tabsConfig.customStyle, color: '#000' }"
+    ref="tabsListsRef"
+    >
+    <li v-for="(el, idx) of tabsConfig.navData"
+      :class="[currentSelectIndex === idx ? 'e-active nav-item' : 'nav-item']"
+      :style="{color: (currentSelectIndex === idx &&  tabsConfig.customStyle.color) || 'currentColor'}"
+      :key="`tabsNav${idx}`"
+      @click="handleInnerSelectTabs(el,idx, $event)"
+    >
+    {{typeof el === 'string' ? el : el.title}}
+    </li>
+      <i class="icon-bar" ref="iconBarRef" :style="{ background: tabsConfig.customStyle.color }"/>
+    </ul>
+</template>
 <script>
 import throttleFn from '../../utils/throttle'
-function noop () {
-  // 搞个空操作,防止未传处理函数而报错
-}
 export default {
   name: 'TabNav',
   data () {
@@ -12,19 +25,20 @@ export default {
       currentSelectIndex: 0 // 默认选中第一个
     }
   },
-  props: {
-    navData: Array,
-    onTabClick: {
-      type: Function,
-      default: noop
-    },
-    customStyle: {},
-    isFixed: Boolean,
-    highlightTab: {
-      type: Number,
-      default: -1
-    }
-  },
+  // props: {
+  //   navData: Array,
+  //   onTabClick: {
+  //     type: Function,
+  //     default: noop
+  //   },
+  //   customStyle: {},
+  //   isFixed: Boolean,
+  //   highlightTab: {
+  //     type: Number,
+  //     default: -1
+  //   },
+  //   slots: Object
+  // },
   watch: {
     highlightTab (n, o) {
       try {
@@ -38,51 +52,11 @@ export default {
       }
     }
   },
-  inject: ['tabsWrapperInstance'], // 父组件实例
-  render (h) {
-    let {
-      onTabClick,
-      navData,
-      currentSelectIndex,
-      handleInnerSelectTabs, // 内部切换时使用的处理函数，不开放，只暴露onTabClick 😄
-      fixedTabsFlag,
-      customStyle
-    } = this
-    return (
-      <ul
-        class={ fixedTabsFlag ? 'lina-tabs-lists e-fixed' : 'lina-tabs-lists'}
-        style={{ ...customStyle, color: '#000' }}
-        ref='tabsListsRef'
-      >
-        {
-          navData.map((el, idx) => (
-            <li class={currentSelectIndex === idx ? 'e-active nav-item' : 'nav-item'}
-              style={currentSelectIndex === idx && ({ color: customStyle && customStyle.color })}
-              key={`tabsNav${idx}`}
-              on-click={e => {
-                e.target.tagName === 'LI' && onTabClick(el, idx, e)
-                handleInnerSelectTabs(idx, e)
-              }}
-            >
-              {typeof el === 'string' ? el : el.title}
-              {
-                /*
-                * 更多功能后续添加
-                */
-              }
-            </li>
-          )).concat(
-            <i class="icon-bar" ref="iconBarRef"
-              style={{ background: customStyle && customStyle.color }}/>
-          )
-        }
-      </ul>
-    )
-  },
+  inject: ['tabsConfig'], // 父组件实例
   methods: {
     listenScroll: function () { // 监听滚动然后固定在顶部
       // console.count('listeningScrollTimes')
-      const { tabsRef } = this.tabsWrapperInstance.$refs
+      const { tabsRef } = this.tabsConfig.$refs
       const tabsTop = tabsRef.getBoundingClientRect().top
       const ulNode = this.$refs.tabsListsRef
       if (!tabsRef || !ulNode) return undefined
@@ -92,8 +66,9 @@ export default {
       this.calculateTransform(liNodeArr[this.currentSelectIndex]) // 固定之后重新计算
       // console.timeEnd('calculateTranslateXaxis')
     },
-    handleInnerSelectTabs (index, e) {
+    handleInnerSelectTabs (item, index, e) {
       if (e.target.classList.contains('e-active')) return undefined
+      this.$emit('onTabClick', item, index, e)
       this.currentSelectIndex = index
       try {
         this.calculateTransform(e)

@@ -28,7 +28,9 @@
     }
     </pre>
 
-    <lina-tabs :config="config" @tabClick="onTabClick"></lina-tabs>
+    <lina-tabs :config="config" @tabClick="onTabClick">
+       <p>内容{{currentIndex}}</p>
+    </lina-tabs>
 
     <p style="text-align: center">-----</p>
     <p style="text-align: center">-----</p>
@@ -64,6 +66,7 @@ export default {
   name: 'page-demo',
   data () {
     return {
+      currentIndex: 1,
       config: {
 
         // 标签标题
@@ -83,6 +86,7 @@ export default {
   },
   methods: {
     onTabClick (tab, index, event) {
+      this.currentIndex = index + 1
       console.log('🐴标签标题:', tab, '\n🐮索引:', index, '\n🐅事件对象:', event)
     }
   },
