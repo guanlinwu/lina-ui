@@ -1,121 +1,157 @@
 <template>
   <div class="page-demo-tabs">
     <br>
-    <h1 class="title">标签选择栏</h1>
+    <h2 class="title">标签选择栏</h2>
     <br>
-    <pre style="font-size:16px;color: greenyellow;background:black;border-radius:10px;padding: 10px;overflow-x: scroll">config: {// 标签标题
-   // navData: new [].constructor(4).fill('root', 0, 5),
-    <code>navData:</code>'root,trunk,stem,leaves'.split(','),
+    <article class="wrap">
+      <br>
+      <section class="example">
+        <h1 style="font-size: 28px">固定在顶部</h1>
 
-    // 自定义样式比如颜色，字体大小等等，
-    // 因为自定义太多，加上内敛样式的局限性，
-    // 不建议➕太多样式
-    <code>customStyle:</code> {
-    color: 'deepskyblue',
-    fontSize: '.5rem'
-    },
+        <lina-tabs :config="config3" @tabClick="onTabClick3">
+          <p>内容{{currentIndex3}}</p>
+        </lina-tabs>
+      </section>
+      <pre>
+        <code class="code">navData: '固定1,固定2,固定3,固定4'.split(','),
+          // 是否固定到顶部
+          isFixed: true,
 
-    // 是否固定到顶部
-    <code>isFixed:</code> !0,
+        // 选中的tab,可以在监听滚动的时候改变该值，从而高亮选中该tab
+        highlightTab: -1
+        </code>
+      </pre>
+    </article>
 
-    // 选中的tab,可以在监听滚动的时候改变该值，
-    // 从而高亮选中该tab
-    <code>highlightTab:</code> -1
-    },
-    methods: {
-    <code>onTabClick (tab, index, event)</code> {
-      console.log('🐴标签标题:', tab, '\n🐮索引:', index, '\n🐅事件对象:', event)
-    }
-    </pre>
+    <article class="wrap">
+      <h1 style="font-size: 28px">自定义样式</h1>
+      <br>
+      <section class="example">
+        <lina-tabs :config="config2" @tabClick="onTabClick2">
+          <p>内容{{currentIndex2}}</p>
+        </lina-tabs>
+      </section>
+      <pre>
+        <code class="code">navData: '标签1,标签2,标签3,标签4'.split(','),
 
-    <lina-tabs :config="config" @tabClick="onTabClick">
-       <p>内容{{currentIndex}}</p>
-    </lina-tabs>
+        // 自定义样式比如颜色，字体大小等等，因为自定义太多，加上内敛样式的局限性，不建议➕太多样式
+        customStyle: { color: 'pink', fontSize: '.7rem' }
+        </code>
+      </pre>
+    </article>
 
-    <p style="text-align: center">-----</p>
-    <p style="text-align: center">-----</p>
-    <p style="text-align: center">----------</p>
-    <p style="text-align: center">----------</p>
-    <p style="text-align: center">----------</p>
-    <br>
-    <p>What the cynics fail to understand is that the ground has shifted beneath them - that the stale political arguments that have consumed us for so long no longer apply.</p>
-    <p>The question we ask today is not whether our government is too big or too small,</p>
-    <p>but whether it works - whether it helps families find jobs at a decent wage,</p>
-    <p>care they can afford, a retirement that is dignified. Where the answer is yes,</p>
-    <p>we intend to move forward. Where the answer is no,</p>
-    <p>programs will end. And those of us who manage the public's dollars will be held to account - to spend wisely,</p>
-    <p>reform bad habits and do our business in the light of day - because only then can we restore the vital trust between a people and their government.
-    </p>
+    <article class="wrap">
+      <h1 style="font-size: 28px">内容超过4个自动滚动</h1>
 
-    <p>repeat above paragraph</p>
-
-    <p>What the cynics fail to understand is that the ground has shifted beneath them - that the stale political arguments that have consumed us for so long no longer apply.</p>
-    <p>The question we ask today is not whether our government is too big or too small,</p>
-    <p>but whether it works - whether it helps families find jobs at a decent wage,</p>
-    <p>care they can afford, a retirement that is dignified. Where the answer is yes,</p>
-    <p>we intend to move forward. Where the answer is no,</p>
-    <p>programs will end. And those of us who manage the public's dollars will be held to account - to spend wisely,</p>
-    <p>reform bad habits and do our business in the light of day - because only then can we restore the vital trust between a people and their government.
-    </p>
-    <blockquote>----from Obama speech</blockquote>
+      <br>
+      <section class="example">
+        <lina-tabs :config="config1" @tabClick="onTabClick1">
+          <p>内容{{currentIndex1}}</p>
+        </lina-tabs>
+      </section>
+      <pre>
+        <code class="code">navData: '标签1,标签2,标签3,标签4'.split(','),
+             默认选项
+        </code>
+      </pre>
+    </article>
+    <br v-for="n in 50" :key="n">
   </div>
 </template>
 
 <script>
 export default {
   name: 'page-demo',
-  data () {
+  data() {
     return {
-      currentIndex: 1,
-      config: {
+      currentIndex1: 1,
+      currentIndex2: 1,
+      currentIndex3: 1,
+      config1: {
 
         // 标签标题
         // navData: new [].constructor(4).fill('root', 0, 5),
-        navData: 'root,trunk,stem,leaves'.split(','),
+        navData: '标签1,标签2,标签3,标签4,超过4个,会自动滚'.split(',')
+      },
+      config2: {
+
+        // 标签标题
+        // navData: new [].constructor(4).fill('root', 0, 5),
+        navData: '标签1,标签2,标签3,标签4'.split(','),
 
         // 自定义样式比如颜色，字体大小等等，因为自定义太多，加上内敛样式的局限性，不建议➕太多样式
-        customStyle: { color: 'deepskyblue', fontSize: '.5rem' },
+        customStyle: { color: 'pink', fontSize: '.7rem' }
+      },
+      config3: {
+
+        // 标签标题
+        // navData: new [].constructor(4).fill('root', 0, 5),
+        navData: '固定1,固定2,固定3,固定4'.split(','),
 
         // 是否固定到顶部
-        isFixed: !0,
+        isFixed: true,
 
         // 选中的tab,可以在监听滚动的时候改变该值，从而高亮选中该tab
         highlightTab: -1
+
       }
     }
   },
   methods: {
-    onTabClick (tab, index, event) {
-      this.currentIndex = index + 1
+    onTabClick1(tab, index, event) {
+      this.currentIndex1 = index + 1
+      console.log('🐴标签标题:', tab, '\n🐮索引:', index, '\n🐅事件对象:', event)
+    },
+    onTabClick2(tab, index, event) {
+      this.currentIndex2 = index + 1
+      console.log('🐴标签标题:', tab, '\n🐮索引:', index, '\n🐅事件对象:', event)
+    },
+    onTabClick3(tab, index, event) {
+      this.currentIndex3 = index + 1
       console.log('🐴标签标题:', tab, '\n🐮索引:', index, '\n🐅事件对象:', event)
     }
   },
-  mounted () {
+  mounted() {
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .page-demo-tabs{
-    code{
-      color: deeppink;
-    }
-    .title{
-      padding-bottom: 20px;
+  .page-demo-tabs {
+    .title {
+      padding-bottom: 10px;
       line-height: 1.5;
       color: #04bbfa;
       text-align: center;
       font-size: 35px;
     }
-    >p{
-      padding:0 1em;
-      font-size: 30px;
-      color: #ff9923;
-      text-align: left;
-      text-indent: 2em;
-      &:nth-of-type(odd){
-        color: #64a5ff;
-      }
+
+    .wrap {
+      padding: 20px;
+      min-height: 500px;
+      width: 95%;
+      margin: 30px auto 0;
+      text-align: justify;
+      border-radius: 20px;
+      box-shadow: inset 0 0 30px #616465;
+      background-color: #fff;
+
+    }
+
+    .example {
+      background-color: #efefef;
+      height: 200px;
+    }
+
+    pre {
+      background: #000;
+      padding: 10px;
+    }
+
+    .code {
+      color: chartreuse;
+      white-space: pre-wrap;
+      font-size: 25px;
     }
   }
 </style>
