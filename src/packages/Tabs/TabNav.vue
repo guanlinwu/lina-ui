@@ -11,11 +11,7 @@
       :key="`tabsNav${idx}`"
       ref="titles"
       @click="handleInnerSelectTabs(el,idx, $event)"
-    >
-      <p v-if="tabsVm.$slots.title" class="slot">
-        <slot name="title"></slot>
-      </p>
-      <p v-else>{{typeof el === 'string' ? el : el.title}}</p>
+    >{{typeof el === 'string' ? el : el.title}}
     </li>
     <i class="icon-bar" ref="iconBarRef" :style="{ background: tabsConfig.customStyle && tabsConfig.customStyle.color || 'currentColor' }"/>
   </ul>
