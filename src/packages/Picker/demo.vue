@@ -1,5 +1,5 @@
 <template>
-  <div class="page-demo-pull-refresh">
+  <div class="page-demo-container">
     <section>
       <lina-picker :slots="slots1" @change="handleChange1"></lina-picker>
       <div class="content">
@@ -157,7 +157,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page-demo-pull-refresh {
+.page-demo-container {
   section {
     .content {
       margin: 20px;
