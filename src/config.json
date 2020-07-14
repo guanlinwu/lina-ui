@@ -171,6 +171,17 @@
         "author": [
             "lin"
         ]
+      },
+      {
+        "version": "1.0.0",
+        "name": "More",
+        "chnName": "更多",
+        "desc": "More",
+        "type": "component",
+        "belong": "view component",
+        "author": [
+            "mwc"
+        ]
       }
   ]
 }

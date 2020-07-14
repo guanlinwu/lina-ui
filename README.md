@@ -893,6 +893,7 @@ slots数组对象得情况下
 | content        |    values是对象数组时，作为内容展示的key	    |  String  | name |
 
 > slot
+
 | 名称        | 说明   |
 | --------   | -----:  |
 | title     |  标题插槽 |
@@ -1041,6 +1042,75 @@ export default {
 | --------   | -----:  | :----:  |
 | click-left	     |  点击左侧按钮时触发	 | - |
 | click-right	     |  点击右侧按钮时触发	 | - |
+
+## <font color=#cf3e8e>More</font>
+如果是异步的话，建议v-if="内容"
+> 基本用法
+
+```html
+<!-- 普通用法 -->
+<lina-more pack-height="1rem">
+  <template v-slot:content>
+    <p>{{new Array(30).fill('使用centent插槽').join()}}</p>
+  </template>
+</lina-more>
+<!-- 内嵌slot -->
+<lina-more pack-height="2rem">
+  <template v-slot:content>
+    <p>{{new Array(30).fill('使用centent、pack、more插槽').join()}}</p>
+  </template>
+  <template v-slot:pack>
+    <span class="more-span more-shou">收起</span>
+  </template>
+  <template v-slot:more>
+    <span class="more-span more-kai">展开</span>
+  </template>
+</lina-more>
+<lina-more pack-height="2rem" ref="more">
+  <template v-slot:content>
+    <p>{{new Array(30).fill('使用centent、toggle插槽').join()}}</p>
+  </template>
+  <template v-slot:toggle="{ isMore }">
+    <p @click="handleToggle" class="toggle">
+      <span class="more-span more-shou" :class="isMore ? 'more-shou' : 'more-kai'">{{isMore ? '收起' : '更多'}}</span>
+    </p>
+  </template>
+</lina-more>
+```
+
+```javascript
+export default {
+  name: 'demo-more',
+  methods: {
+    handleToggle () {
+      this.$refs.more.toggle()
+    }
+  }
+}
+```
+
+> Prop
+
+| 名称        | 说明   |  类型  | 默认值 |
+| --------   | -----:  | :----:  | :----:  |
+| packHeight    | 收起的高度（必填），当自身的内容少于packHeight，则底部栏不会出现	 |   String  |  |
+| moreHeight	    | 展开的高度，没有则自适应		 |   String  |  |
+| linearGradient	 | more插槽的linear-gradient	 |   String  |  |
+
+> Slots
+
+| 名称        | 说明   |
+| --------   | -----:  |
+| content    | 内容	 |
+| toggle    | 底部栏	 |
+| pack	    | 收起	 |
+| more		  | 展开		 |
+
+> Function
+
+| 名称        | 说明   |  回调函数  |
+| --------   | -----:  | :----:  |
+| toggle	     |  点击左侧按钮时触发	 | - |
 
 ## 类型：通用函数
 
