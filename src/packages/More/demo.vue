@@ -3,7 +3,7 @@
     <lina-more pack-height="4rem" more-height="10rem" class="demo-lina-more">
         <template v-slot:content>
           <div>
-            <lina-more pack-height="2rem">
+            <lina-more pack-height="2rem" linear-gradient="rgba(222, 211, 255,1), rgba(255,255,255,.7)">
               <template v-slot:content>
                 <p>{{new Array(30).fill('使用centent、pack、more插槽').join()}}</p>
               </template>

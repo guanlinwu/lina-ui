@@ -5,15 +5,19 @@
         <slot name="content"></slot>
       </div>
     </div>
-    <div class="lina-operation" @click="toggle" v-if="isBottomUi && !(slots.toggle && slots.toggle.length)">
-      <div v-show="isMore" class="lina-btn-more">
-        <slot name="pack"><span class="lina-more-text">收起</span></slot>
+    <template v-if="isBottomUi">
+      <div ref="toggle" v-if="isToggleSlot">
+        <slot name="toggle" :is-more="isMore"></slot>
       </div>
-      <div v-show="!isMore" class="lina-btn-no-more" :style="{marginTop: `-${noMoreHeight}px`}" ref="moreSlot">
-        <slot name="more"><span class="lina-more-text">展开</span></slot>
+      <div class="lina-operation" @click="toggle" v-else>
+        <div v-show="isMore" class="lina-btn-more">
+          <slot name="pack"><span class="lina-more-text">收起</span></slot>
+        </div>
+        <div v-show="!isMore" class="lina-btn-no-more" :style="{marginTop: `-${noMoreHeight}px`, background: `linear-gradient(${linearGradient})`}" ref="moreSlot">
+          <slot name="more"><span class="lina-more-text">展开</span></slot>
+        </div>
       </div>
-    </div>
-    <slot name="toggle" :is-more="isMore" v-if="isBottomUi"></slot>
+    </template>
   </div>
 </template>
 
@@ -21,8 +25,12 @@
 export default {
   name: 'lina-more',
   props: {
-    packHeight: String,
-    moreHeight: String
+    packHeight: { // 收起高度
+      type: String,
+      required: true
+    },
+    moreHeight: String, // 展开高度，没有得话自适应
+    linearGradient: String // 收起渐变颜色
   },
   data () {
     return {
@@ -30,7 +38,8 @@ export default {
       isBottomUi: true,
       height: '',
       noMoreHeight: 0,
-      slots: []
+      slots: {},
+      scopedSlots: []
     }
   },
   computed: {
@@ -40,10 +49,12 @@ export default {
       } else {
         return this.packHeight
       }
+    },
+    isToggleSlot () {
+      return (this.slots.toggle && this.slots.toggle.length) || this.$scopedSlots.toggle
     }
   },
   mounted () {
-    this.slots = this.$slots
     this.$watch('packHeight', function () {
       this.needMore()
       this.setMarginTop()
@@ -65,7 +76,11 @@ export default {
     // 获得height
     setMarginTop () {
       if (this.isBottomUi) {
-        this.noMoreHeight = this.$refs.moreSlot.getBoundingClientRect().height
+        let ref = this.$refs.moreSlot
+        if (this.isToggleSlot) {
+          ref = this.$refs.toggle
+        }
+        this.noMoreHeight = ref.getBoundingClientRect().height
       }
     },
     setHeight () {
@@ -106,7 +121,7 @@ export default {
       font-size: 26px;
     }
     .lina-btn-no-more {
-      background: linear-gradient(rgba(255,255,255,1), rgba(255,255,255,.9))
+      background: linear-gradient(rgba(255,255,255,1), rgba(255,255,255,.75))
     }
     .lina-btn-more {
       margin-top: 10px;
