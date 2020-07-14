@@ -16,7 +16,7 @@
             </lina-more>
             <lina-more pack-height="2rem" ref="more">
               <template v-slot:content>
-                <p>{{new Array(30).fill('使用centent、pack、more插槽').join()}}</p>
+                <p>{{new Array(30).fill('使用centent、toggle插槽').join()}}</p>
               </template>
               <template v-slot:toggle="{ isMore }">
                 <p @click="handleToggle" class="toggle">
