@@ -1,11 +1,9 @@
 <template>
-  <transition name="f-fade">
+  <lina-popup :isShow="dialog && dialog.isShow" @isShow="closeDialog('mask')" :is-hide-close="true" :prevent-mask-close="dialog.preventMaskClose && !!closeDialog">
     <div
       class="lina-dialog" :class="[`e-theme-${dialog.theme}`]"
       :id="dialog.id"
-      v-show="dialog && dialog.isShow"
     >
-      <div class="pop-mask" @click.self.stop="!dialog.preventMaskClose && !!closeDialog && closeDialog('mask')" @touchmove.prevent></div>
       <div class="pop-content">
         <slot name="header">
           <header v-if="!!dialog.title && dialog.title !== ''" class="pop-header">{{dialog.title}}</header>
@@ -29,7 +27,7 @@
         <div class="pop-close" v-if="!dialog.isHideClose" @click="!!closeDialog && closeDialog('icon-close')"></div>
       </div>
     </div>
-  </transition>
+  </lina-popup>
 </template>
 
 <script>
@@ -121,31 +119,8 @@ export default {
 <style lang="scss">
 //弹窗
 .lina-dialog {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  // background: rgba(0, 0, 0, 0.8);
   text-align: center;
-  z-index: 30;
-
-  .pop-mask {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, .7);
-    z-index: 1;
-  }
-
   .pop-content {
-    position: absolute;
-    top: 20%;
-    left: 50%;
-    transform: translate(-50%);
     width: 670px;
     background: rgba(255, 255, 255, 1);
     border-radius: 10px;
