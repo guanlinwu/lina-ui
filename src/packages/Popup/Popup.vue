@@ -74,7 +74,7 @@ export default {
 @import 'animation';
 .layer {
   position: fixed;
-  z-index: 100;
+  z-index: 10;
 }
 .lina-pop-up {
   position: absolute;
