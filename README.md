@@ -1106,11 +1106,19 @@ export default {
 | pack	    | 收起	 |
 | more		  | 展开		 |
 
+> Scoped Slots
+
+toggle
+
+| 名称        | 说明   | 类型  |
+| --------   | -----:  |  :----:  |
+| isMore	     |  true为展开状态，false为收起	 | Boolean |
+
 > Function
 
 | 名称        | 说明   |  回调函数  |
 | --------   | -----:  | :----:  |
-| toggle	     |  点击左侧按钮时触发	 | - |
+| toggle	     |  切换isMore	 | - |
 
 ## 类型：通用函数
 

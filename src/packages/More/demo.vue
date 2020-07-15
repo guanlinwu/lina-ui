@@ -5,7 +5,7 @@
           <div>
             <lina-more pack-height="2rem" linear-gradient="rgba(222, 211, 255,1), rgba(255,255,255,.7)">
               <template v-slot:content>
-                <p>{{new Array(30).fill('使用centent、pack、more插槽').join()}}</p>
+                <p>{{new Array(30).fill('使用centent、pack、more插槽，props：linear-gradient').join()}}</p>
               </template>
               <template v-slot:pack>
                 <span class="more-span more-shou">收起</span>
@@ -16,7 +16,7 @@
             </lina-more>
             <lina-more pack-height="2rem" ref="more">
               <template v-slot:content>
-                <p>{{new Array(30).fill('使用centent、toggle插槽').join()}}</p>
+                <p>{{new Array(30).fill('使用centent、toggle插槽，使用作用域插槽和toggle方法').join()}}</p>
               </template>
               <template v-slot:toggle="{ isMore }">
                 <p @click="handleToggle" class="toggle">
