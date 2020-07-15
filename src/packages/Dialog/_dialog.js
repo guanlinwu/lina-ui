@@ -19,7 +19,7 @@ const defaultData = { // 默认属性
  * 移除dom
  */
 let removeDom = event => {
-  event.target.parentNode.removeChild(event.target)
+  event.target.parentNode.parentNode.removeChild(event.target.parentNode)
 }
 
 /**
@@ -46,11 +46,11 @@ let Dialog = (options = {}) => {
    * 如果不是共用实例的弹窗，关闭后，从dom中移除
    */
   options.id !== 'dialog-default-id' && (instance.removeDomCallBack = () => {
-    instance.$el.addEventListener('transitionend', removeDom)
+    instance.$el.lastElementChild.addEventListener('animation', removeDom)
   })
   let $dialogDom = document.querySelector('#' + options.id)
   if (options.id && $dialogDom) {
-    $dialogDom.parentNode.replaceChild(instance.$el, $dialogDom)
+    $dialogDom.parentNode.parentNode.parentNode.replaceChild(instance.$el, $dialogDom.parentNode.parentNode)
   } else {
     document.body.appendChild(instance.$el)
   }
