@@ -19,7 +19,6 @@ const defaultData = { // 默认属性
  * 移除dom
  */
 let removeDom = event => {
-  console.log(event.target.parentNode)
   event.target.parentNode.parentNode.removeChild(event.target.parentNode)
 }
 
@@ -46,15 +45,12 @@ let Dialog = (options = {}) => {
   /**
    * 如果不是共用实例的弹窗，关闭后，从dom中移除
    */
-  console.log(options.id)
   options.id !== 'dialog-default-id' && (instance.removeDomCallBack = () => {
-    console.log(instance.$el.lastElementChild)
     instance.$el.lastElementChild.addEventListener('animation', removeDom)
   })
   let $dialogDom = document.querySelector('#' + options.id)
-  console.log($dialogDom)
   if (options.id && $dialogDom) {
-    $dialogDom.parentNode.replaceChild(instance.$el, $dialogDom)
+    $dialogDom.parentNode.parentNode.parentNode.replaceChild(instance.$el, $dialogDom.parentNode.parentNode)
   } else {
     document.body.appendChild(instance.$el)
   }
