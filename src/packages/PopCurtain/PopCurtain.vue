@@ -1,16 +1,16 @@
 <template>
-  <transition name='f-fade'>
-    <div class="lina-pop-curtain" v-show="dialog && dialog.isShow">
+  <lina-popup :isShow="dialog && dialog.isShow" :is-hide-close="true">
+    <div class="lina-pop-curtain">
       <div class="pop-content">
         <div class="pop-content-inner">
           <slot>
-            <img @click="clickCurtain" :src="dialog.image" alt="">
+            <img @click="clickCurtain" :src="dialog.image" alt="" class="pop-content-img">
           </slot>
           <div @click="closeDialog()" class="pop-close" :class="['e-' + (dialog.closeBtnPosition || 'bottom')]">x</div>
         </div>
       </div>
     </div>
-  </transition>
+  </lina-popup>
 </template>
 
 <script>
@@ -44,28 +44,23 @@ export default {
 <style lang="scss" scope>
 //弹层幕帘
 .lina-pop-curtain {
+  transform: translateY(-50%);
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 30;
+  width: 100vw;
+  height: 100vh;
   text-align: center;
-
   .pop-content {
     position: absolute;
+    transform: translateX(-50%);
     top: 110px;
-    left: 50%;
-    transform: translate(-50%);
-    width: 570px;
     border-radius: 10px;
   }
-
   .pop-content-inner {
     position: relative;
     font-size: 0;
-
+    .pop-content-img {
+      width: 570px;
+    }
     .pop-close {
       position: absolute;
       width: 70px;
