@@ -165,7 +165,9 @@ export default {
     async startScroll () {
       await this.sleep(this.intervals)
       await this.scrollHorizontal()
-      this.changeShow()
+      setTimeout(() => {
+        this.changeShow()
+      }, this.intervals)
     },
     /**
      * 改变显示的内容，这是触发事件
