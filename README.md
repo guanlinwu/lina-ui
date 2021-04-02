@@ -1144,8 +1144,6 @@ async handle1 () {
       'http://img.daimg.com/uploads/allimg/190716/1-1ZG6160132.jpg',
       'http://img.daimg.com/uploads/allimg/190712/1-1ZG2164231.jpg',
       'http://img.daimg.com/uploads/allimg/190628/1-1Z62R30555.jpg',
-      'http://qumi.inrice.top/carowner/images/zwlcr.jpg',
-      'http://qumi.inrice.top/carowner/images/zhuzhuche.jpg',
       'http://img.daimg.com/uploads/allimg/190711/1-1ZG1002105.jpg',
       'http://img.daimg.com/uploads/allimg/190711/1-1ZG11IZ6.jpg',
       'http://img.daimg.com/uploads/allimg/190711/1-1ZG11H912.jpg',
