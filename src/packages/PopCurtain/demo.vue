@@ -21,7 +21,7 @@
     <lina-pop-curtain :dialog.sync="dialog1"/>
     <!-- 内嵌slot -->
     <lina-pop-curtain :dialog.sync="dialog2">
-      <img style="width: 300px;" src="https://dummyimage.com/600x400/ff45ff/ffffff" alt="">
+      <img style="width: 350px;" src="https://dummyimage.com/600x400/ff45ff/ffffff" alt="">
     </lina-pop-curtain>
     <!-- 设置关闭按钮 -->
     <lina-pop-curtain :dialog.sync="dialog3" />

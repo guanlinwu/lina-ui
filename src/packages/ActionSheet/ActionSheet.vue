@@ -1,10 +1,7 @@
 <template>
-  <div class="lina-actionsheet">
-    <transition name="f-fade">
-      <div class="lina-actionsheet-mask" @click="clickActionSheetMask" v-show="isShow"></div>
-    </transition>
-    <transition name="f-slide-up">
-      <div class="lina-actionsheet-panel" v-show="isShow">
+  <lina-popup :isShow="isShow" @isShow="clickActionSheetMask" position="bottom" :is-hide-close="true">
+    <div class="lina-actionsheet">
+      <div class="lina-actionsheet-panel">
         <div class="lina-actionsheet-custom" v-if="$slots.custom">
           <slot name="custom" v-html="custom"></slot>
         </div>
@@ -27,8 +24,8 @@
         </ul>
         <div class="lina-actionsheet-cancel" v-if="cancelText" @click="closeActionSheet">{{cancelText}}</div>
       </div>
-    </transition>
-  </div>
+    </div>
+  </lina-popup>
 </template>
 
 <script>
@@ -104,19 +101,10 @@ export default {
 <style lang="scss" scope>
 //弹窗
 .lina-actionsheet {
+  width: 100vw;
   text-align: center;
-
-  .lina-actionsheet-mask {
-    @include fix-fullscreen();
-  }
-
   .lina-actionsheet-panel {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
     width: 100%;
-    z-index: 30;
     background-color: #f6f6f6;
   }
   .lina-actionsheet-modal {

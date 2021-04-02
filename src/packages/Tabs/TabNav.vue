@@ -1,36 +1,42 @@
+<template>
+  <ul
+    :class="[tabsConfig.isFixed && fixedTabsFlag ? 'lina-tabs-lists e-fixed' : 'lina-tabs-lists']"
+    :style="{ ...tabsConfig.customStyle, color: '#000' }"
+    ref="tabsListsRef"
+  >
+    <li
+      v-for="(el, idx) of tabsConfig.navData"
+      :class="[currentSelectIndex === idx ? 'e-active nav-item' : 'nav-item']"
+      :style="{color: (currentSelectIndex === idx && tabsConfig.customStyle && tabsConfig.customStyle.color) || 'currentColor'}"
+      :key="`tabsNav${idx}`"
+      ref="titles"
+      @click="handleInnerSelectTabs(el,idx, $event)"
+    >{{typeof el === 'string' ? el : el.title}}
+    </li>
+    <i class="icon-bar" ref="iconBarRef" :style="{ background: tabsConfig.customStyle && tabsConfig.customStyle.color || 'currentColor' }"/>
+  </ul>
+</template>
 <script>
 import throttleFn from '../../utils/throttle'
-function noop () {
-  // 搞个空操作,防止未传处理函数而报错
-}
+
 export default {
   name: 'TabNav',
-  data () {
+  data() {
     return {
       throttle: Function, // 存储监听的函数
       fixedTabsFlag: !1, // 控制是否固定tab
       currentSelectIndex: 0 // 默认选中第一个
     }
   },
-  props: {
-    navData: Array,
-    onTabClick: {
-      type: Function,
-      default: noop
-    },
-    customStyle: {},
-    isFixed: Boolean,
-    highlightTab: {
-      type: Number,
-      default: -1
-    }
-  },
   watch: {
-    highlightTab (n, o) {
+    highlightTab(n, o) {
       try {
         const ulNode = this.$refs.tabsListsRef
         const liNodeArr = Array.prototype.slice.call(ulNode.children).filter(node => node.tagName === 'LI')
-        if (n >= liNodeArr.length) { console.error('索引超过数组数量！！'); return undefined }
+        if (n >= liNodeArr.length) {
+          console.error('索引超过数组数量！！')
+          return undefined
+        }
         !!~n && (this.currentSelectIndex = n)
         !!~n && this.calculateTransform(liNodeArr[n])
       } catch (e) {
@@ -38,51 +44,12 @@ export default {
       }
     }
   },
-  inject: ['tabsWrapperInstance'], // 父组件实例
-  render (h) {
-    let {
-      onTabClick,
-      navData,
-      currentSelectIndex,
-      handleInnerSelectTabs, // 内部切换时使用的处理函数，不开放，只暴露onTabClick 😄
-      fixedTabsFlag,
-      customStyle
-    } = this
-    return (
-      <ul
-        class={ fixedTabsFlag ? 'lina-tabs-lists e-fixed' : 'lina-tabs-lists'}
-        style={{ ...customStyle, color: '#000' }}
-        ref='tabsListsRef'
-      >
-        {
-          navData.map((el, idx) => (
-            <li class={currentSelectIndex === idx ? 'e-active nav-item' : 'nav-item'}
-              style={currentSelectIndex === idx && ({ color: customStyle && customStyle.color })}
-              key={`tabsNav${idx}`}
-              on-click={e => {
-                e.target.tagName === 'LI' && onTabClick(el, idx, e)
-                handleInnerSelectTabs(idx, e)
-              }}
-            >
-              {typeof el === 'string' ? el : el.title}
-              {
-                /*
-                * 更多功能后续添加
-                */
-              }
-            </li>
-          )).concat(
-            <i class="icon-bar" ref="iconBarRef"
-              style={{ background: customStyle && customStyle.color }}/>
-          )
-        }
-      </ul>
-    )
-  },
+  inject: ['tabsConfig', 'tabsVm'],
   methods: {
     listenScroll: function () { // 监听滚动然后固定在顶部
       // console.count('listeningScrollTimes')
-      const { tabsRef } = this.tabsWrapperInstance.$refs
+      // console.log(this.tabsVm.$refs.tabsRef)
+      const { tabsRef } = this.tabsVm.$refs
       const tabsTop = tabsRef.getBoundingClientRect().top
       const ulNode = this.$refs.tabsListsRef
       if (!tabsRef || !ulNode) return undefined
@@ -92,17 +59,35 @@ export default {
       this.calculateTransform(liNodeArr[this.currentSelectIndex]) // 固定之后重新计算
       // console.timeEnd('calculateTranslateXaxis')
     },
-    handleInnerSelectTabs (index, e) {
+    handleInnerSelectTabs(item, index, e) {
       if (e.target.classList.contains('e-active')) return undefined
       this.currentSelectIndex = index
+      this.$emit('onTabClick', item, index, e)
       try {
         this.calculateTransform(e)
       } catch (e) {
-        console.log(e)
+        console.error(e)
       }
+      this.scrollIntoView(index)
     },
-    calculateTransform (e) { // e可能是事件对象，也可能是dom对象
-      // debugger
+    scrollIntoView(index) {
+      // 处理水平滚动
+      const { titles, tabsListsRef } = this.$refs
+
+      if (!titles || !titles[index]) {
+        return
+      }
+      const title = titles[index]
+      const to = title.offsetLeft - (tabsListsRef.offsetWidth - title.offsetWidth) / 2 // 计算需要滚动的距离
+      const from = tabsListsRef.scrollLeft // x轴的ul的横向滚动距离
+      tabsListsRef.scrollBy({
+        left: to - from,
+        top: 0,
+        behavior: 'smooth'
+      })
+    },
+    calculateTransform(e) {
+      // e可能是事件对象，也可能是dom对象
       const { iconBarRef, tabsListsRef } = this.$refs
       const { offsetLeft, offsetWidth, offsetHeight } = e.target || e // li元素的offset
       const { offsetWidth: iconOffsetWidth, offsetHeight: iconOffsetHeight } = iconBarRef // i元素的offset
@@ -117,21 +102,18 @@ export default {
           : `calc(50% - ${offsetHeight / 2}px + ${offsetHeight}px)`
       })
     }
-    // throttle () {
-    //   return throttleFn(this.listenScroll, 500)
-    // }
   },
-  beforeDestroy () {
+  beforeDestroy() {
     window.removeEventListener('scroll', this.throttle)
     console.log(`\u001b[3${~~(Math.random() * 8)}m${'-----tabComponent beforeDestroy------'}\u001b[0m`)
   },
-  mounted () {
+  mounted() {
     this.$nextTick(() => {
       try {
         const { tabsListsRef } = this.$refs
         this.calculateTransform(tabsListsRef.firstChild) // 刚开始进来默认把iconbar移动到第一个tab的下面
-        this.throttle = throttleFn(this.listenScroll, 500)
-        this.isFixed && window.addEventListener('scroll', this.throttle)
+        this.throttle = throttleFn(this.listenScroll)
+        this.tabsConfig.isFixed && window.addEventListener('scroll', this.throttle)
       } catch (e) {
         console.log(e)
       }
@@ -144,19 +126,28 @@ export default {
   .lina-tabs-lists {
     position: relative;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
     align-items: center;
     width: 100%;
     font-size: 25px;
-    /*overflow: hidden;*/
+    overflow-x: scroll;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      background-color: transparent;
+    }
 
     .nav-item {
       padding: 0 0 10px;
-      width: fit-content; // 如果👇面的flex有声明flex-basis属性（不管是不是0）此处的宽度都会失效
-      /*flex: 1;*/
+      width: 25%;
+      /*flex: 1 0 auto;*/
+      flex-shrink: 0;
       text-align: center;
       transition: color, transform 1s linear;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .icon-bar {
@@ -176,7 +167,8 @@ export default {
       $this: &; //缓存当前选择器
     }
   }
-  .e-fixed{
+
+  .e-fixed {
     position: fixed;
     top: 0;
     left: 0;
